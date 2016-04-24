@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+<h:head>
+</h:head>
+<h:body>
+	<h:form>
+
+
+		<p:outputLabel
+			value="Old name : #{employeeBean.selectedEmployee.name}"></p:outputLabel>
+		<b:tab>
+
+			<b:row>
+				<b:column>
+					<p:outputLabel value="New Name"></p:outputLabel>
+				</b:column>
+			</b:row>
+			<b:row>
+				<b:column>
+					<b:inputText placeholder="username"
+						value="#{employeeBean.selectedEmployee.name}"></b:inputText>
+				</b:column>
+			</b:row>
+			<b:row>
+				<b:column>
+					<b:selectOneMenu value="#{employeeBean.selectedEmployee.deptId}">
+						<f:selectItem itemValue="" itemLabel="Select Department"
+							itemDisabled="true" />
+						<f:selectItems value="#{departmentBean.allDepartments}"
+							var="department" itemValue="#{department}"
+							itemLabel="#{department.departmentName}" />
+					</b:selectOneMenu>
+				</b:column>
+			</b:row>
+			<b:row>
+				<b:column span="2">
+					<b:commandButton value="Update"
+						action="#{employeeBean.updateEmployee()}"></b:commandButton>
+				</b:column>
+			</b:row>
+		</b:tab>
+
+
+	</h:form>
+</h:body>
+</html>

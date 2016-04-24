@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+<h:head>
+
+<script >
+    function handleCreateRequest() {
+        if(departmentName!=null ) {
+        
+            PF('createDepartment').hide();
+         
+        }
+    }
+</script>
+</h:head>
+<h:body>
+
+
+ 
+<p:commandButton value="New Employee" onclick="PF('createEmployee').show();"/>
+		
+ 		<p:growl id="growl" sticky="true" showDetail="true" life="3000" /> 
+		
+ 
+	<h:form>
+	
+			<p:dialog header="create new employee" widgetVar="createEmployee" resizable="false" model="true" >
+			<h:panelGrid columns="2" cellpadding="5">
+				<h:outputLabel for="employeeName" value="Employee Name:" />
+				<p:inputText id="employeeName" required="true" label="employeeName" value="#{employeeBean.selectedEmployee.name}"/>
+					<h:outputLabel value="Department Name:" />
+					<b:selectOneMenu value="#{employeeBean.selectedEmployee.deptId}">
+						<f:selectItem itemValue="" itemLabel="Select Department"
+							itemDisabled="true" />
+						<f:selectItems value="#{departmentBean.allDepartments}" var="department"
+							itemValue="#{department}" itemLabel="#{department.departmentName}" />
+					</b:selectOneMenu>
+				<f:facet name="footer">
+					<p:commandButton value="create" update="growl" actionListener="#{employeeBean.createEmployee()}" oncomplete="PF('createEmployee').hide();"  />
+				</f:facet>
+			</h:panelGrid>
+		</p:dialog>
+	</h:form>
+</h:body>
+
+</html>
