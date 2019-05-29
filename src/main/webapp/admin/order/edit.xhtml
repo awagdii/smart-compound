@@ -1,0 +1,110 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<p:dialog id="editOrderDialog" widgetVar="editOrderDialog" 
+		resizable="false" closeOnEscape="true"
+		header="#{msgs.SMART_COMPOUND_ORDER_PAGE_EDIT_DIALOG}">
+		<p:ajax event="close" resetValues="true" update="editOrderForm"
+			immediate="true" />
+		<h:form id="editOrderForm">
+
+			<p:panelGrid columns="3" style="width:800px" styleClass="noBorder">
+
+				<p:outputLabel for="tenantName"
+					value="#{msgs.SMART_COMPOUND_ORDER_PAGE_TENANT_NAME}" />
+				<p:autoComplete id="tenantName" minQueryLength="3"
+					forceSelection="true" completeMethod="#{orderBean.completeTenant}"
+					required="true"
+					requiredMessage="#{msgs.SMART_COMPOUND_ORDER_PAGE_TENANT_NAME_REQUIRED_MESSAGE} "
+					value="#{orderBean.selectedOrder.tenant}" var="tenant"
+					itemLabel="#{tenant.username}" itemValue="#{tenant}"
+					converter="#{tenantConverter}">
+					<p:ajax event="itemSelect"
+						listener="#{orderBean.initialFacilitiesByTenant}" update="@form" />
+				</p:autoComplete>
+				<p:message for="tenantName" display="text"></p:message>
+
+				<p:outputLabel for="service"
+					value="#{msgs.SMART_COMPOUND_ORDER_PAGE_SERVICE_NAME}" />
+				<p:selectOneMenu id="service"
+					value="#{orderBean.selectedOrder.service}" required="true"
+					converter="#{serviceConverter}"
+					requiredMessage="#{msgs.SMART_COMPOUND_ORDER_PAGE_SERVICE_NAME_REQUIRED_MESSAGE}">
+					<f:selectItem itemValue=""
+						itemLabel="#{msgs.SMART_COMPOUND_ORDER_PAGE_SELECT_SERVICE}"
+						itemDisabled="true" />
+					<f:selectItems value="#{orderBean.services}" var="service"
+						itemValue="#{service}" itemLabel="#{service.serviceName}" />
+				</p:selectOneMenu>
+				<p:message for="service" display="text"></p:message>
+
+				<p:outputLabel for="completeFacility"
+					value="#{msgs.SMART_COMPOUND_ORDER_PAGE_FACILITY_NUMBER}" />
+				<p:selectOneMenu id="completeFacility"
+					value="#{orderBean.selectedOrder.facility}"
+					converter="#{facilityConverter}">
+					<f:selectItem itemValue=""
+						itemLabel="#{msgs.SMART_COMPOUND_ORDER_PAGE_SELECT_FACILITY}"
+						itemDisabled="true" />
+					<f:selectItems value="#{orderBean.facilities}" var="facility"
+						itemValue="#{facility}"
+						itemLabel="#{facility.buildingNumber} #{facility.floorNumber} #{facility.facilityNumber}" />
+				</p:selectOneMenu>
+				<p:message for="completeFacility" display="text"></p:message>
+
+				<p:outputLabel for="status"
+					value="#{msgs.SMART_COMPOUND_ORDER_PAGE_STATUS}" />
+				<p:selectOneMenu id="status" converter="#{lookupConverter}"
+					value="#{orderBean.selectedOrder.statusLookup}">
+					<f:selectItem itemValue=""
+						itemLabel="#{msgs.SMART_COMPOUND_ORDER_PAGE_STATUS}"
+						itemDisabled="true" />
+					<f:selectItems value="#{orderBean.orderStatusLookups}"
+						var="orderStatus" itemValue="#{orderStatus}"
+						itemLabel="#{orderStatus.lookupName}" />
+				</p:selectOneMenu>
+				<p:message for="status" display="text"></p:message>
+
+				<p:outputLabel for="notes"
+					value="#{msgs.SMART_COMPOUND_ORDER_PAGE_NOTES}" />
+				<p:inputTextarea id="notes" value="#{orderBean.selectedOrder.notes}">
+
+					<f:validateLength maximum="100" />
+				</p:inputTextarea>
+				<p:message for="notes" display="text"></p:message>
+
+
+				<p:outputLabel for="locationDesc"
+					value="#{msgs.SMART_COMPOUND_ORDER_PAGE_SERVICE_LOCATION_DESCRIPTION}" />
+				<p:inputTextarea id="locationDesc"
+					value="#{orderBean.selectedOrder.serviceLocationDesc}"
+					validatorMessage="#{msgs.SMART_COMPOUND_INVALID_DATA}">
+					<f:validateLength maximum="100" />
+
+				</p:inputTextarea>
+				<p:message for="locationDesc" display="text"></p:message>
+
+				<ui:remove>
+					<h:outputLabel for="acceptanceDate"
+						value="#{msgs.SMART_COMPOUND_ORDER_PAGE_ACCEPTANCE_DATE}" />
+					<p:calendar id="acceptanceDate"
+						value="#{orderBean.selectedOrder.acceptanceDate}" />
+					<p:message for="acceptanceDate" display="text"></p:message>
+				</ui:remove>
+			</p:panelGrid>
+				<p:panelGrid columns="2">
+					<p:commandButton actionListener="#{orderBean.insertOrder}"
+						update=":orderListForm :editOrderForm"
+						oncomplete="if(args &amp;&amp; !args.validationFailed)  if(handleDialogSubmit(xhr,status,args)) PF('editOrderDialog').hide();"
+						value="#{msgs.SMART_COMPOUND_ORDER_PAGE_EDIT_BUTTON }" />
+					<p:commandButton immediate="true"
+						onclick="PF('editOrderDialog').hide()"
+						value="#{msgs.SMART_COMPOUND_ORDER_PAGE_CANCEL_BUTTON}" />
+
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+</ui:composition>

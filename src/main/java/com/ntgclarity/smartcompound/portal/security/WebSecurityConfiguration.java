@@ -8,13 +8,15 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfiguration {
 
 	@Autowired
 	private CustomAuthenticationProvider customAuthenticationProvider;
+
+	@Autowired
+	private CustomAccessDescionManager customAccessDescionManager;
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder amb) {
@@ -27,25 +29,39 @@ public class WebSecurityConfiguration {
 		@Autowired
 		private CustomAccessDescionManager customAccesDescionManager;
 
+		@Autowired
+		private CustomAccessDeniedHandler customAccessDeniedHandler;
+		
 		@Override
 		public void configure(HttpSecurity http) throws Exception {
 			http.csrf().disable();   
-//			http.authorizeRequests().antMatchers("/login.xhtml").permitAll()
-//					.and().formLogin().loginPage("/login.html").permitAll()
-//					.and().logout().permitAll().logoutSuccessUrl("/login.html")
-//					.and().authorizeRequests().antMatchers("/admin/**").hasAuthority("admin")
-//					.anyRequest().fullyAuthenticated().and().formLogin()
-//					.loginPage("/login.xhtml").failureUrl("/login?error")
-//					.usernameParameter("email").permitAll().and().logout()
-//					.logoutUrl("/logout").deleteCookies("remember-me")
-//					.logoutSuccessUrl("/").permitAll().and().rememberMe(); 
+			/**START HEBA'S WORK**/
+			//Access CSS, JS and image files
+			http.authorizeRequests().antMatchers("/css/**", "/js/**", "/img/**").permitAll();
+			/**END HEBA'S WORK**/
+	/*		http.authorizeRequests().antMatchers("/login.xhtml").permitAll()  
+					.and().formLogin().loginPage("/login.xhtml").permitAll()
+					.and().logout().permitAll().logoutSuccessUrl("/login.xhtml")
+					.and().authorizeRequests().antMatchers("/admin/**.xhtml").access("isFullyAuthenticated()")
+					.accessDecisionManager(customAccesDescionManager)
+					.anyRequest().fullyAuthenticated().and().formLogin()
+					.loginPage("/login.xhtml").failureUrl("/login.xhtml?error")
+					.usernameParameter("email").permitAll().and().logout()
+					.logoutUrl("/logout").deleteCookies("remember-me")
+					.logoutSuccessUrl("/").permitAll().and().rememberMe(); 
+	*/
+			/**START HEBA'S WORK**/
+//			http.exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
+			/**END HEBA'S WORK**/
 		}
 
 		@Override
 		public void configure(WebSecurity web) throws Exception {
-			// TODO Auto-generated method stub
 			web.ignoring().antMatchers("/javax.faces.resource/**");
 			web.ignoring().antMatchers("/*.xhtml"); 
+			web.ignoring().antMatchers("/ws/**");   
+			web.ignoring().antMatchers("/imageResolver");  
+
 
 		}
 	}

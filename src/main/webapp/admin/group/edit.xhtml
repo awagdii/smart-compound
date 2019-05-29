@@ -1,0 +1,74 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<p:dialog id="editGroupDialog" widgetVar="editGroupDialog" modal="true"
+		resizable="false" closeOnEscape="true"
+		header="#{msgs.SMART_COMPOUND_GROUP_EDIT}" width="600px">
+
+
+		<h:form id="editGroupForm">
+
+
+			<h:panelGrid columns="3" columnClasses="label, value">
+
+				<p:outputLabel value="#{msgs.SMART_COMPOUND_GROUP_COMPOUND}"
+					style="color:black;font-size: 100%;"
+					rendered="#{ groupBean.isSuperAdmin()}" />
+				<p:selectOneMenu id="compounds" style="width:200px"
+					rendered="#{ groupBean.isSuperAdmin()}"
+					value="#{groupBean.group.compound}" required="true"
+					requiredMessage="#{msgs.SMART_COMPOUND_GROUP_COMPOUND_REQ}"
+					converter="#{compoundConverter}">
+					<f:selectItem itemValue="#{null}"
+						itemLabel="#{msgs.SMART_COMPOUND_GROUP_COMPOUND}"
+						itemDisabled="true" />
+					<f:selectItems value="#{groupBean.compounds}" var="compound"
+						itemValue="#{compound}" itemLabel="#{compound.compoundName}" />
+				</p:selectOneMenu>
+				<p:message for="compounds" display="text" />
+
+
+
+				<p:outputLabel value="#{msgs.SMART_COMPOUND_GROUP_NAME}"
+					style="color:black;font-size: 100%;" />
+
+				<p:inputText id="groupName" value="#{groupBean.group.groupName}"
+					required="true"
+					requiredMessage="#{msgs.SMART_COMPOUND_GROUP_NAME_REQ}"
+					validatorMessage="#{msgs.SMART_COMPOUND_GROUP_NAME_VALIDATION}">
+					<f:validateRegex pattern="^[A-Za-z]*$|^[A-Za-z][A-Za-z ]*[A-Za-z]$"></f:validateRegex>
+
+					<f:validateLength maximum="30" />
+				</p:inputText>
+
+				<p:message for="groupName" display="text"/>
+
+
+
+			</h:panelGrid>
+
+			<p:commandButton value="#{msgs.SMART_COMPOUND_GROUP_EDIT}"
+				look="success" actionListener="#{groupBean.updateGroup()}"
+				oncomplete="if (args &amp;&amp; !args.validationFailed) PF('editGroupDialog').hide()"
+				update="editGroupForm :groupListForm"></p:commandButton>
+
+			<p:commandButton value="#{msgs.SMART_COMPOUND_GROUP_HIDE}"
+				onclick="PF('editGroupDialog').hide()" look="success" update=":groupListForm"
+				immediate="true"></p:commandButton>
+		</h:form>
+
+	</p:dialog>
+</ui:composition>
+
+
+
+
+
+
+
+
+
+

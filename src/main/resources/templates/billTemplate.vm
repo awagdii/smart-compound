@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+  
+    
+  </head>
+  <body>
+    <header class="clearfix">
+      <div id="logo">
+$bill.compound.compoundName
+      </div>
+-------------------------------------------------------------------------------------------------------------
+     
+      <div id="compound" class="clearfix">
+        <div>$bill.compound.compoundName</div>
+        <div>$city,<br /> $bill.compound.country</div>
+        <div><a href="Compound Email">$bill.compound.FirstEmail</a></div>
+      </div>
+-------------------------------------------------------------------------------------------------------------
+<br><br>
+      <div id="bill">
+        <div><span>Bill Number:</span>$bill.billNumber</div>
+        <div><span>From:</span>$bill.billFrom</div>
+        <div><span>To:</span>$bill.billTo</div>
+        <div><span>Issue DATE:</span>$bill.issueDate</div>
+      </div>
+-------------------------------------------------------------------------------------------------------------
+      <div id="tenant">
+        <div><span>Customer Name:</span>$bill.tenant.firstName</div>
+        <div><span>Address:</span>$bill.tenant.address</div>
+        <div><span>phone:</span>$bill.tenant.PhoneNumber1</div>
+      </div>
+-------------------------------------------------------------------------------------------------------------
+    </header>
+    <body>
+ 
+ #foreach( $billDetail in $billDetails )
+         <div> 
+
+ #if( !$billDetail.service.serviceName   && $billDetail.service.serviceName != "")
+<div>Service: $billDetail.service.serviceName</div><br>
+#end
+ #if( $billDetail.nrc != 0.0 )
+<div>NRC: $billDetail.nrcValue</div><br>
+#end
+#if($billDetail.mrc != 0.0)
+<div>MRC:  $billDetail.mrcValue</div><br>
+#end
+#if($billDetail.installation != 0.0)
+<div>Installation Price:$billDetail.installation</div><br>
+#end
+ #if($billDetail.totalAmount != 0.0)
+<div>Total Amount $billDetail.totalAmount</div><br>
+#end
+     </div>   
+____________________________________________________________________________________  
+#end  
+     
+
+  
+  </body>
+</html>

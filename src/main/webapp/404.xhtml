@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta charset="utf-8"></meta>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+	<meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+
+	<a href="http://www.os-templates.com/template-terms"></a>
+	<h:outputStylesheet library="css" name="css/404.css" />
+	
+</h:head>
+
+<h:body>
+	<h:form>
+		<div class="wrapper row2">
+			<div id="container" class="clear">
+				<!-- ####################################################################################################### -->
+				<!-- ####################################################################################################### -->
+				<!-- ####################################################################################################### -->
+				<!-- ####################################################################################################### -->
+				<div id="fof" class="clear">
+					<!-- ####################################################################################################### -->
+					<div class="hgroup clear">
+						<h1>404</h1>
+						<h2>
+							Error ! <span>Page Not Found</span>
+						</h2>
+					</div>
+					<p>For Some Reason The Page You Requested Could Not Be Found On
+						Our Server</p>
+
+					<h:outputText value=" Click on this link to return to index page " />
+					<p:commandLink id="nonAjax"
+						actionListener="#{accessDeniedBean.goToIndex}" ajax="false">
+						<h:outputText value="Index page" />
+					</p:commandLink>
+
+					<!-- ####################################################################################################### -->
+				</div>
+				<!-- ####################################################################################################### -->
+				<!-- ####################################################################################################### -->
+				<!-- ####################################################################################################### -->
+				<!-- ####################################################################################################### -->
+			</div>
+		</div>
+	</h:form>
+</h:body>
+
+</html>

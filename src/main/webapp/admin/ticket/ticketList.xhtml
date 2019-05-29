@@ -1,0 +1,189 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+	<h:form id="TicketListForm">
+		<p:dataTable var="ticket" rows="10" paginator="true"
+			value="#{ticketBean.lazyTicketModel}" resizableColumns="true"
+			draggableColumns="true" rowKey="#{ticket.id}" lazy="true"
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			rowsPerPageTemplate="5,10,15" selectionMode="single" dynamic="true"
+			selection="#{ticketBean.selectedTicket}" id="ticketTable"
+			widgetVar="ticketTable">
+
+			<p:ajax event="rowSelect" update=":TicketListForm" />
+			<p:ajax event="rowToggle" listener="#{ticketBean.ticketExpanded}" update="ticketHistory"></p:ajax>
+			<p:column style="width:30px">
+				<p:rowToggler />
+
+			</p:column>
+
+			<p:column
+				headerText="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_PROBLEM_DATE}">
+				<h:outputText value="#{ticket.problemDate}" />
+			</p:column>
+
+
+
+			<p:column
+				headerText="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_SERVICE}"
+				filterBy="#{ticket.service.serviceName}">
+				<h:outputText value="#{ticket.service.serviceName}" />
+			</p:column>
+
+			<p:column
+				headerText="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_TENANT_NAME}">
+				<h:outputText value="#{ticket.relatedTenant.username} " />
+			</p:column>
+
+
+
+			<p:column
+				headerText="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_FACILITY_ID}">
+				<h:outputText
+					value="#{ticket.facility.buildingNumber}-#{ticket.facility.floorNumber}-#{ticket.facility.facilityNumber}" />
+			</p:column>
+
+			<p:column
+				headerText="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_ASSIGNED_TO_GROUP}"
+				filterBy="#{ticket.assignedGroup}" filterMatchMode="exact">
+				<h:outputText value="#{ticket.assignedGroup.groupName}" />
+				<f:facet name="filter">
+					<p:selectOneMenu id="group" onchange="PF('ticketTable').filter()"
+						converter="#{groupConverter}">
+						<f:selectItem itemLabel="Select One" itemValue="#{null}"
+							noSelectionOption="true" />
+						<f:selectItems value="#{ticketBean.groupList}" var="assignedGroup"
+							itemLabel="#{assignedGroup.groupName}"
+							itemValue="#{assignedGroup}" />
+					</p:selectOneMenu>
+				</f:facet>
+			</p:column> 
+
+			<p:column headerText="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_STATUS}"
+				filterBy="#{ticket.ticketStatus}" filterMatchMode="exact">
+				<h:outputText value="#{ticket.ticketStatus.name}" />
+				<f:facet name="filter">
+					<p:selectOneMenu id="lastStatus"
+						onchange="PF('ticketTable').filter()"
+						converter="#{ticketStatusConverter}">
+
+						<f:selectItem itemLabel="Select One" itemValue="#{null}"
+							noSelectionOption="true" />
+
+						<f:selectItems value="#{ticketBean.allTicketStatuses}"
+							var="ticketStatus" itemLabel="#{ticketStatus.name}"
+							itemValue="#{ticketStatus}" />
+					</p:selectOneMenu>
+				</f:facet>
+
+			</p:column>
+
+
+			<p:column
+				headerText="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_CALLER_TICKET_DESCRIPTION}"
+				style='text-align: center'>
+				<p:commandButton update=":desc" oncomplete="PF('descDialog').show()"
+					icon="ui-icon-search" title="click to show ticket description ">
+					<f:setPropertyActionListener value="#{ticket}"
+						target="#{ticketBean.selectedTicket}" />
+				</p:commandButton>
+				<p:commandLink rendered="#{not empty ticket.images}"
+					actionListener="#{ticketBean.setSelectedTicket(ticket)}"
+					update=":ticketImagesForm" oncomplete="PF('ticketImages').show()">
+					<p:graphicImage library="img/icon" name="images.png" />
+				</p:commandLink>
+			</p:column>
+
+			<!-- Row Expansion -->
+			<p:rowExpansion>
+				<p:panelGrid>
+					<p:dataTable var="ticketHistory" rows="10" id="ticketHistory"
+						value="#{ticketBean.selectedTicketHistoryList}"
+						resizableColumns="true" draggableColumns="true"
+						rowKey="#{ticketHistory.id}" dynamic="true"
+						selection="#{ticketHistoryBean.selectedTicketHistory}"
+						widgetVar="ticketHistoryTable" lazy="true">
+
+
+						<p:column
+							headerText="#{msgs.SMART_COMPOUND_TICKET_HISTORY_PAGE_FROM_STATUS}">
+							<h:outputText value="#{ticketHistory.previousStatus}" />
+						</p:column>
+
+						<p:column
+							headerText="#{msgs.SMART_COMPOUND_TICKET_HISTORY_PAGE_TO_STATUS}">
+							<h:outputText value="#{ticketHistory.currentStatus}" />
+						</p:column>
+
+
+						<p:column
+							headerText="#{msgs.SMART_COMPOUND_TICKET_HISTORY_PAGE_ACTION_BY}">
+							<h:outputText value="#{ticketHistory.actionBy.username}" />
+						</p:column>
+						<p:column
+							headerText="#{msgs.SMART_COMPOUND_TICKET_HISTORY_PAGE_ACTION_Date}">
+							<h:outputText value="#{ticketHistory.actionDate}" />
+						</p:column>
+						<p:column
+							headerText="#{msgs.SMART_COMPOUND_TICKET_HISTORY_PAGE_COMMENT}">
+							<h:outputText value="#{ticketHistory.comment}" />
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+
+			</p:rowExpansion>
+
+		</p:dataTable>
+
+		<p:commandButton
+			value="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_CREATE_NEW_TICKET}"
+			actionListener="#{ticketBean.initiateNewTicket()}"
+			update=":createTicketForm"
+			oncomplete="PF('createTicketDialog').show()"></p:commandButton>
+
+
+		<p:commandButton disabled="#{empty ticketBean.selectedTicket.id}"
+			id="editTicketDialog"
+			actionListener="#{ticketBean.initiateTicketStatusList}"
+			value="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_EDIT_SELECTED_TICKET}"
+			update=":editTicketForm" oncomplete="PF('editTicketDialog').show()"></p:commandButton>
+
+
+		<p:commandButton disabled="#{empty ticketBean.selectedTicket.id}"
+			id="viewTicketDialog" actionListener="#{ticketBean.loadSelectedTicketStatusHistoryList()}" 
+			value="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_VIEW_SELECTED_TICKET}"
+			update=":viewTicketForm" oncomplete="PF('viewTicketDialog').show()"></p:commandButton>
+
+
+	</h:form>
+	<p:dialog id="ticketImages" widgetVar="ticketImages"   modal="true" dynamic="true"
+		resizable="false" closeOnEscape="true">
+		<h:form id="ticketImagesForm">
+			<p:galleria value="#{ticketBean.selectedTicket.images}"  autoPlay="false" 
+				var="ticktImage" panelWidth="500" panelHeight="313">
+				<p:graphicImage width="490" height="300" title="  " alt="  "
+					value="/imageResolver?fileName=#{ticktImage.imageUrl}&amp;fileType=1" />
+			</p:galleria>
+		</h:form>
+	</p:dialog>
+
+
+	<p:dialog id="descDialog" widgetVar="descDialog" modal="true"
+		resizable="false" closeOnEscape="true"
+		header="#{msgs.SMART_COMPOUND_EDIT_TICKET_DESCRIPTION}">
+
+		<p:outputPanel id="desc" style="text-align:center;">
+			<p:panelGrid
+				rendered="#{not empty ticketBean.selectedTicket.description}">
+				<p:editor id="editor" widgetVar="editorWidget" disabled="true"
+					value="#{ticketBean.selectedTicket.description}" width="600"
+					height="120" />
+			</p:panelGrid>
+		</p:outputPanel>
+	</p:dialog>
+
+
+	
+</ui:composition>

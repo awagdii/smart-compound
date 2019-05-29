@@ -1,0 +1,206 @@
+<!-- /** Author: Nazer**/-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<p:dialog id="editTicketDialog" widgetVar="editTicketDialog"
+		modal="true" resizable="false" closeOnEscape="true"
+		header="#{msgs.SMART_COMPOUND_EDIT_TICKET_PAGE_TITLE}">
+		<h:form id="editTicketForm">
+
+			<p:panelGrid>
+
+
+				<p:row>
+					<p:column medium-screen="2">
+						<p:outputLabel
+							value="#{msgs.SMART_COMPOUND_TICKET_PAGE_TENANT_NAME}" />
+					</p:column>
+
+
+					<p:column medium-screen="4">
+
+						<p:selectOneMenu id="relatedTenant" required="true"
+							style="width:200px;"
+							requiredMessage="#{msgs.THIS_FIELD_IS_REQUIRED}"
+							value="#{ticketBean.selectedTicket.relatedTenant}"
+							converter="#{tenantConverter}">
+							<f:selectItem itemLabel="select one" itemValue="#{null}"
+								itemDisabled="true" />
+							<f:selectItems value="#{ticketBean.tenants}" var="tenant"
+								itemLabel="#{tenant.firstName}" itemValue="#{tenant}" />
+							<p:ajax event="change"
+								listener="#{ticketBean.getAllTenantFacilities(ticketBean.selectedTicket.relatedTenant)}"
+								update="@form"></p:ajax>
+						</p:selectOneMenu>
+
+					</p:column>
+
+					<p:column>
+						<p:outputLabel
+							value="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_STATUS}"
+							for="lastStatus" />
+					</p:column>
+					<p:column>
+
+						<p:selectOneMenu id="lastStatus"
+							requiredMessage="#{msgs.THIS_FIELD_IS_REQUIRED}"
+							value="#{ticketBean.selectedTicket.ticketStatus}"
+							converter="#{ticketStatusConverter}">
+							<ui:remove>
+								<f:selectItem
+									itemLabel="#{ticketBean.selectedTicket.lastStatus}"
+									itemValue="#{ticketBean.selectedTicket}" />
+							</ui:remove>
+							<f:selectItems value="#{ticketBean.ticketStatusList}"
+								var="ticketStatus" itemLabel="#{ticketStatus.name}"
+								itemValue="#{ticketStatus}" />
+						</p:selectOneMenu>
+
+					</p:column>
+
+					<ui:remove>
+						<p:column>
+							<p:outputLabel for="assignedGroup"
+								value=" #{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_ASSIGNED_TO_GROUP}" />
+
+						</p:column>
+
+
+						<p:column>
+
+							<p:selectOneMenu id="assignedGroup" required="true"
+								requiredMessage="#{msgs.THIS_FIELD_IS_REQUIRED}"
+								value="#{ticketBean.selectedTicket.assignedGroup}"
+								converter="#{groupConverter}">
+								<f:selectItem itemLabel="select one" itemValue="#{null}"
+									itemDisabled="true" />
+
+								<f:selectItems value="#{ticketBean.groupList}" var="group"
+									itemLabel="#{group.groupName}" itemValue="#{group}" />
+							</p:selectOneMenu>
+
+						</p:column>
+					</ui:remove>
+				</p:row>
+
+
+				<p:row>
+					<p:column>
+						<p:outputLabel value="Is Facility Related: " />
+					</p:column>
+					<p:column>
+						<h:panelGrid columns="2" style="margin-bottom:10px"
+							cellpadding="5">
+							<p:selectOneRadio
+								value="#{ticketBean.selectedTicket.isFacilityBased}">
+								<p:ajax event="change" process="@this" update="@form "></p:ajax>
+								<f:selectItem itemLabel="YES" itemValue="#{1}" />
+								<f:selectItem itemLabel="NO" itemValue="#{0}" />
+
+							</p:selectOneRadio>
+						</h:panelGrid>
+
+
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+
+						<p:panel id="showFacility" styleClass="noBorder"
+							rendered="#{ticketBean.selectedTicket.isFacilityBased==1}">
+
+
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TICKET_PAGE_TENANT_FACILITIES}" />
+
+							<p:column>
+								<p:selectOneMenu id="tenantFacilities" required="true"
+									requiredMessage="#{msgs.THIS_FIELD_IS_REQUIRED}"
+									value="#{ticketBean.selectedTicket.facility}"
+									converter="#{facilityConverter}">
+									<p:ajax event="change"
+										listener="#{ticketBean.getAllFacilityServices()}"
+										update="Services"></p:ajax>
+									<f:selectItem itemLabel="select one" itemValue="#{null}"
+										itemDisabled="true" />
+
+									<f:selectItems value="#{ticketBean.tenantFacilities}"
+										var="facility"
+										itemLabel="#{facility.buildingNumber}-#{facility.floorNumber}-#{facility.facilityNumber}"
+										itemValue="#{facility}" />
+								</p:selectOneMenu>
+							</p:column>
+							<p:column>
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TICKET_PAGE_SERVICE_NAME}" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="Services" required="true"
+									requiredMessage="#{msgs.THIS_FIELD_IS_REQUIRED}"
+									value="#{ticketBean.selectedTicket.service}"
+									converter="#{serviceConverter}">
+									<f:selectItem itemLabel="select one" itemValue="#{null}"
+										itemDisabled="true" />
+
+									<f:selectItems value="#{ticketBean.facilityServices}"
+										var="service" itemLabel="#{service.serviceName}"
+										itemValue="#{service}" />
+								</p:selectOneMenu>
+							</p:column>
+
+						</p:panel>
+					</p:column>
+				</p:row>
+
+
+				<p:row>
+					<p:column>
+						<p:outputLabel
+							value="#{msgs.SMART_COMPOUND_TICKET_PAGE_CALLER_TICKET_DESCRIPTION}"
+							for="editor" />
+					</p:column>
+					<p:column medium-screen="4" colspan="3">
+						<p:editor id="editor" widgetVar="editorWidget" required="true"
+							requiredMessage="#{msgs.THIS_FIELD_IS_REQUIRED}"
+							value="#{ticketBean.selectedTicket.description}" width="570"
+							validatorMessage="#{msgs.SMART_COMPOUND_INVALID_DATA}"
+							height="120">
+						</p:editor>
+						<p:message for="editor" />
+					</p:column>
+
+				</p:row>
+
+
+
+
+			</p:panelGrid>
+			<center>
+				<p:panelGrid columns="2">
+
+					<p:commandButton
+						value="Edit"
+						actionListener="#{ticketBean.updateTicket()}"
+						update=":TicketListForm :editTicketForm "
+						oncomplete="if (args &amp;&amp; !args.validationFailed) if(handleDialogSubmit(xhr,status,args)) PF('editTicketDialog').hide()" />
+
+
+					<p:commandButton
+						value="#{msgs.SMART_COMPOUND_TICKET_PAGE_CANCEL_BUTTON}"
+						actionListener="#{ticketBean.initiateNewTicket}"
+						update=":TicketListForm :editTicketForm"
+						onclick="PF('editTicketDialog').hide()" immediate="true" />
+
+
+				</p:panelGrid>
+			</center>
+		</h:form>
+
+		<p:ajax update=":TicketListForm" />
+	</p:dialog>
+
+
+</ui:composition>

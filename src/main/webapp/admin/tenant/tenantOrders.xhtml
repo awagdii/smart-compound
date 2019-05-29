@@ -1,0 +1,107 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+
+	<p:dialog widgetVar="tenantOrdersDialog" modal="true" resizable="false"
+		closeOnEscape="true" width="85%" height="370px"
+		header="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_ORDERS}">
+		<h:form id="tenantOrdersForm">
+			<p:dataTable var="order" rows="10" paginator="true"
+				value="#{tenantBean.tenantOrders}" resizableColumns="true"
+				draggableColumns="true"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="5,10,15" dynamic="true" id="orderTable"
+				widgetVar="orderTable">
+
+
+				<p:column
+					headerText="#{msgs.SMART_COMPOUND_ORDER_LIST_PAGE_Tenant_Username}"
+					filterBy="#{order.tenant.username}">
+					<h:outputText value="#{order.tenant.username}" />
+				</p:column>
+
+				<p:column
+					headerText="#{msgs.SMART_COMPOUND_ORDER_LIST_PAGE_SERVICE_NAME}"
+					filterBy="#{order.serviceName}">
+					<h:outputText value="#{order.serviceName}" />
+				</p:column>
+
+				<p:column
+					headerText="Facility &lt;br/&gt; Building-floor-facility">
+					<h:outputText
+						value="#{order. facility.buildingNumber}-#{order.facility.floorNumber}-#{order.facility.facilityNumber}" />
+				</p:column>
+
+
+
+				<p:column filterBy="#{order.requestDate}"
+					sortBy="#{order.requestDate}"
+					headerText="#{msgs.SMART_COMPOUND_ORDER_LIST_PAGE_CREATION_DATE}"
+					filterMatchMode="gt">
+					<h:outputText value="#{order.requestDate}" />
+					<f:facet name="filter">
+						<p:calendar pattern="MM/dd/yyyy">
+							<p:ajax event="dateSelect" oncomplete="PF('orderTable').filter()" />
+						</p:calendar>
+					</f:facet>
+				</p:column>
+				<ui:remove>
+					<p:column
+						headerText="#{msgs.SMART_COMPOUND_ORDER_LIST_PAGE_ACCEPTANCE_DATE}"
+						filterBy="#{order.acceptanceDate}" filterMatchMode="gt">
+						<h:outputText value="#{order.acceptanceDate}" />
+						<f:facet name="filter">
+							<p:calendar pattern="MM/dd/yyyy">
+								<p:ajax event="dateSelect"
+									oncomplete="PF('orderTable').filter()" />
+							</p:calendar>
+						</f:facet>
+					</p:column>
+				</ui:remove>
+				<p:column
+					headerText="#{msgs.SMART_COMPOUND_ORDER_LIST_PAGE_ORDER_STATUS}"
+					filterBy="#{order.statusLookup}">
+					<h:outputText value="#{order.statusLookup.lookupName}" />
+					<f:facet name="filter">
+						<p:selectOneMenu converter="#{lookupConverter}">
+							<p:ajax oncomplete="PF('orderTable').filter()" />
+
+							<f:selectItem itemValue="#{null}" itemLabel="All Statues" />
+							<f:selectItems value="#{orderBean.orderStatusLookups}"
+								var="status" itemValue="#{status}"
+								itemLabel="#{status.lookupName}" />
+						</p:selectOneMenu>
+					</f:facet>
+				</p:column>
+
+
+				<ui:remove>
+					<p:column
+						headerText="#{msgs.SMART_COMPOUND_ORDER_LIST_PAGE_LOCATION}">
+						<p:commandButton id="btn" icon="ui-icon-pin-s"
+							actionListener="#{orderBean.addMarker}"
+							update=":orderListForm:gmapDetail" oncomplete="PF('dlg').show()" />
+					</p:column>
+				</ui:remove>
+			</p:dataTable>
+
+			<ui:remove>
+				<p:dialog id="gmapDialog" widgetVar="dlg" width="625" height="400"
+					modal="true">
+					<p:outputPanel id="gmapDetail" style="text-align:center;">
+						<p:panelGrid rendered="#{not empty orderBean.selectedOrder}">
+							<p:gmap center="36.890257,30.707417" zoom="13" type="HYBRID"
+								style="width:100%;height:400px" model="#{orderBean.simpleModel}" />
+						</p:panelGrid>
+					</p:outputPanel>
+				</p:dialog>
+			</ui:remove>
+		</h:form>
+	</p:dialog>
+
+
+
+</ui:composition>

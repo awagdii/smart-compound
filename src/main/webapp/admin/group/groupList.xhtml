@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<h:form id="groupListForm">
+	<p:messages  showDetail="true" closable="true"  />
+		<p:dataTable var="group" rows="10" paginator="true"
+			value="#{groupBean.lazyGroupModel}" resizableColumns="true"
+			draggableColumns="true" rowKey="#{group.id}"
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			rowsPerPageTemplate="5,10,15" selectionMode="single" dynamic="true"
+			selection="#{groupBean.group}" id="groupTable" lazy="true">
+			<p:ajax event="rowSelect" update="groupListForm" />
+
+			<p:ajax event="page" listener="#{groupBean.disableButton()}"
+				update=":groupListForm:outpnl"></p:ajax>
+			<ui:remove>
+				<p:column headerText="#{msgs.SMART_COMPOUND_GROUP_ID}"
+					filterBy="#{group.id}" filterMatchMode="contains">
+					<h:outputText value="#{group.id}" />
+				</p:column>
+			</ui:remove>
+			<p:column headerText="#{msgs.SMART_COMPOUND_GROUP_NAME}"
+				filterBy="#{group.groupName}" filterMatchMode="contains">
+				<h:outputText value="#{group.groupName}" />
+			</p:column>
+			<p:column headerText="#{msgs.SMART_COMPOUND_GROUP_COMPOUND}"
+				filterBy="#{group.compound.compoundName}" filterMatchMode="contains">
+				<h:outputText value="#{group.compound.compoundName}" />
+			</p:column>
+			<p:column headerText="#{msgs.SMART_COMPOUND_GROUP_CREATEDBY}"
+				filterBy="#{group.createdBy.username}" filterMatchMode="contains">
+				<h:outputText value="#{group.createdBy.username}" />
+			</p:column>
+		</p:dataTable>
+		<p:outputPanel id="outpnl">
+			<p:commandButton value="#{msgs.SMART_COMPOUND_GROUP_CREATE}"
+				actionListener="#{groupBean.initiateNewGroup()}"
+				oncomplete="PF('createGroupDialog').show();"
+				update="createGroupForm" />
+
+			<p:commandButton id="editButton"
+				disabled="#{empty groupBean.group.id}"
+				value="#{msgs.SMART_COMPOUND_GROUP_EDIT}"
+				oncomplete="PF('editGroupDialog').show()" update="editGroupForm" />
+		</p:outputPanel>
+
+	</h:form>
+</ui:composition>

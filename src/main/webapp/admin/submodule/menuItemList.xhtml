@@ -1,0 +1,77 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<h:form id="menuItemListForm">
+	<p:messages autoUpdate="true"  closable="true"  />
+		<p:dataTable var="menuItem" rows="10" paginator="true"
+			widgetVar="menuItemTable" value="#{menuItemBean.lazyMenuItemModel}"
+			resizableColumns="true" draggableColumns="true"
+			rowKey="#{menuItem.id}"
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			rowsPerPageTemplate="5,10,15" selectionMode="single" dynamic="true"
+			selection="#{menuItemBean.menuItem}" id="menuItemTable" lazy="true">
+
+			<p:ajax event="rowSelect" update="@form"></p:ajax>
+			<p:ajax event="page" listener="#{menuItemBean.disableButton()}"
+				update=":menuItemListForm:outpnl"></p:ajax>
+
+			<p:column filterBy="#{menuItem.name}"
+				headerText="#{msgs.SMART_COMPOUND_MENUITEM_LIST_PAGE_MENUITEM_NAME}">
+				<h:outputText value="#{menuItem.name}" />
+			</p:column>
+
+			<p:column filterBy="#{menuItem.menu.name}"
+				headerText="#{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_MENU}"
+				filterMatchMode="exact">
+				<f:facet name="filter">
+					<p:selectOneMenu onchange="PF('menuItemTable').filter()">
+						<p:ajax listener="#{menuItemBean.disableButton()}" update="@form" />
+						<f:selectItem
+							itemLabel="#{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_MENU_LABEL}"
+							noSelectionOption="true" />
+						<f:selectItems value="#{menuItemBean.allMenus}" var="menu"
+							itemValue="#{menu.name}" itemLabel="#{menu.name}" />
+					</p:selectOneMenu>
+				</f:facet>
+				<h:outputText value="#{menuItem.menu.name}" />
+			</p:column>
+
+			<p:column filterBy="#{menuItem.status.lookupName}"
+				filterMatchMode="exact"
+				headerText="#{msgs.SMART_COMPOUND_MENUITEM_LIST_PAGE_MENUITEM_STATUS}">
+				<f:facet name="filter">
+					<p:selectOneMenu onchange="PF('menuItemTable').filter()">
+						<p:ajax listener="#{menuItemBean.disableButton()}" update="@form" />
+						<f:selectItem
+							itemLabel="#{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_STATUS_LABEL}"
+							noSelectionOption="true" />
+						<f:selectItems value="#{menuItemBean.allLookup}" var="status"
+							itemValue="#{status.lookupName}" itemLabel="#{status.lookupName}" />
+					</p:selectOneMenu>
+				</f:facet>
+				<h:outputText value="#{menuItem.status.lookupName}" />
+			</p:column>
+			<p:column filterBy="#{menuItem.url}"
+				headerText="#{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_URL}">
+				<h:outputText value="#{menuItem.url}" />
+			</p:column>
+
+			<p:column
+				headerText="#{msgs.SMART_COMPOUND_MENU_LIST_PAGE_MENU_DESCRIPTION}"
+				filterBy="#{menuItem.description}">
+				<h:outputText value="#{menuItem.description}" />
+			</p:column>
+		</p:dataTable>
+		<p:outputPanel id="outpnl">
+			<p:commandButton icon="ui-icon-refresh"
+				value="#{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_EDIT_BUTTON}"
+				update=":editMenuItemDialog"
+				disabled="#{ empty menuItemBean.menuItem.id}"
+				oncomplete="PF('editMenuItemDialog').show()"></p:commandButton>
+		</p:outputPanel>
+	</h:form>
+
+</ui:composition>

@@ -31,7 +31,7 @@ public class EmployeeConverter extends BaseConverter implements Converter {
 
 	@Override
 	public String getAsString(FacesContext arg0, UIComponent arg1, Object object) {
-		if(object!=null)
+		if(object!=null && !(object instanceof String))
 		{
 			if(object instanceof Employee)
 			{
@@ -39,7 +39,7 @@ public class EmployeeConverter extends BaseConverter implements Converter {
 				return id+"";
 			}else
 			{
-				throw new IllegalStateException("object is not instaoce of employee ");
+				throw new IllegalStateException("object is not instance of employee ");
 			}
 		}
 		return "";

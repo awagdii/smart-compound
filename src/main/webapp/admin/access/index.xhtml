@@ -1,0 +1,88 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui"
+	template="/WEB-INF/template/master.xhtml">
+	<ui:define name="title">#{msgs.SMART_COMPOUND_MENUITEMGROUP_PAGE_TITLE}</ui:define>
+	<ui:define name="contentTitle">#{msgs.SMART_COMPOUND_MENUITEMGROUP_PAGE_TITLE}</ui:define>
+
+
+	<ui:define name="content">
+		<h:form id="menuItemGroupForm">
+
+			<p:messages autoUpdate="true" />
+			<p:panelGrid style="width:100%">
+				<p:row>
+					<p:column rendered="#{ menuItemGroupBean.isSuperAdmin()}" >
+						<p:outputLabel
+							value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_COMPOUND}"
+							style="color:black;font-size: 100%;"
+							/>
+					</p:column>
+					<p:column rendered="#{ menuItemGroupBean.isSuperAdmin()}">
+
+						<p:selectOneMenu id="compounds"
+							
+							value="#{menuItemGroupBean.selectCompound}" required="true"
+							requiredMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_COMPOUND_REQ}"
+							converter="#{compoundConverter}">
+							<p:ajax listener="#{menuItemGroupBean.onCompoundChange()}"
+								update="@form" />
+							<f:selectItem itemValue="#{null}"
+								itemLabel="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_COMPOUND}"
+								itemDisabled="true" />
+							<f:selectItems value="#{menuItemGroupBean.compounds}"
+								var="compound" itemValue="#{compound}"
+								itemLabel="#{compound.compoundName}" />
+						</p:selectOneMenu>
+					</p:column>
+
+					<p:column rendered="#{menuItemGroupBean.isSuperAdmin()}">
+						<p:message for="compounds"
+							 />
+					</p:column>
+
+
+					<p:column medium-screen="2">
+						<p:outputLabel
+							value="#{msgs.SMART_COMPOUND_MENUITEMGROUP_PAGE_GROUPS_LABEL}" />
+					</p:column>
+					<p:column medium-screen="2">
+						<p:selectOneMenu value="#{menuItemGroupBean.selectedGroup}"
+							converter="#{groupConverter}">
+							<p:ajax listener="#{menuItemGroupBean.onGroupChange()}"
+								update="menuItemGroupForm" />
+							<f:selectItem itemValue="#{null}"
+								itemLabel="#{msgs.SMART_COMPOUND_MENUITEMGROUP_PAGE_GROUPS_SELECT_GROUP}"
+								noSelectionOption="true" itemDisabled="true" />
+							<f:selectItems value="#{menuItemGroupBean.allGroup}" var="group"
+								itemValue="#{group}" itemLabel="#{group.groupName}" />
+						</p:selectOneMenu>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+			<p:panelGrid>
+				<p:row>
+					<p:column colspan="3" rendered="#{not empty menuItemGroupBean.selectedGroup.id}">
+					<p:selectManyCheckbox id="grid" columns="1"
+						
+						value="#{menuItemGroupBean.selectedItems}" layout="grid"
+						converter="#{menuItemConverter}">
+						<f:selectItems value="#{menuItemGroupBean.allMenuItem}"
+							var="menuItem" itemLabel="#{menuItem.name}"
+							itemValue="#{menuItem}" />
+					</p:selectManyCheckbox>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+			<p:commandButton
+				rendered="#{not empty menuItemGroupBean.selectedGroup.id}"
+				value="#{msgs.SMART_COMPOUND_MENUITEMGROUP_PAGE_SAVE_BUTTON}"
+				look="success" update="@form"
+				actionListener="#{menuItemGroupBean.saveSelectedMenus()}"></p:commandButton>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

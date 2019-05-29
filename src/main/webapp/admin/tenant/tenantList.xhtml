@@ -1,0 +1,126 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<h:form id="tenantListForm">
+		<p:messages id="msg" showDetail="true" closable="true" />
+
+		<p:dataTable var="tenant" rows="10" paginator="true"
+			value="#{tenantBean.lazyTenantModel}" resizableColumns="true"
+			draggableColumns="true" rowKey="#{tenant.id}"
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			rowsPerPageTemplate="5,10,15" selectionMode="single" dynamic="true"
+			selection="#{tenantBean.tenant}" id="tenantTable" lazy="true"
+			widgetVar="tenantTable">
+			<p:ajax event="rowSelect" update="tenantListForm" />
+			<p:ajax event="page" listener="#{tenantBean.disableButton()}"
+				update=":tenantListForm:outpnl"></p:ajax>
+
+			<!-- 	<f:facet name="header">
+			#{msgs.SMART_COMPOUND_TENANT_PAGE_DATATABLE_TITLE}
+        	<p:commandButton id="toggler" type="button" value="Columns"
+					style="float:right" icon="ui-icon-calculator" />
+				<p:columnToggler datasource="tenantTable" trigger="toggler" />
+			</f:facet>
+ -->
+
+
+
+			<p:column headerText="#{msgs.SMART_COMPOUND_TENANT_PAGE_SALUTATION}"
+				filterBy="#{tenant.salutation}" filterMatchMode="exact">
+				<f:facet name="filter">
+					<p:selectOneMenu onchange="PF('tenantTable').filter()">
+						<p:ajax listener="#{tenantBean.disableButton()}" update="@form" />
+						<f:selectItem itemLabel="Select One" itemValue="#{null}"
+							noSelectionOption="true" />
+						<f:selectItems value="#{tenantBean.salutationLookup}"
+							var="salutation" itemValue="#{salutation.lookupName}"
+							itemLabel="#{salutation.lookupName}" />
+					</p:selectOneMenu>
+				</f:facet>
+				<h:outputText value="#{tenant.salutation}" />
+			</p:column>
+			<ui:remove>
+				<p:column headerText="#{msgs.SMART_COMPOUND_TENANT_PAGE_FIRSTNAME}"
+					filterBy="#{tenant.firstName}" filterMatchMode="contains">
+					<h:outputText value="#{tenant.firstName}" />
+				</p:column>
+				<p:column headerText="#{msgs.SMART_COMPOUND_TENANT_PAGE_LASTNAME}"
+					filterBy="#{tenant.lastName}" filterMatchMode="contains">
+					<h:outputText value="#{tenant.lastName}" />
+				</p:column>
+			</ui:remove>
+
+			<p:column headerText="#{msgs.SMART_COMPOUND_TENANT_PAGE_USERNAME}"
+				filterBy="#{tenant.lastName}" filterMatchMode="contains">
+				<h:outputText value="#{tenant.username}" />
+			</p:column>
+			<ui:remove>
+				<p:column headerText="#{msgs.SMART_COMPOUND_TENANT_PAGE_EMAIL}"
+					filterBy="#{tenant.email}" filterMatchMode="contains">
+					<h:outputText value="#{tenant.email}" />
+				</p:column>
+
+				<p:column headerText="#{msgs.SMART_COMPOUND_TENANT_PAGE_JOB}"
+					filterBy="#{tenant.job}" filterMatchMode="contains">
+					<h:outputText value="#{tenant.job}" />
+				</p:column>
+			</ui:remove>
+
+
+			<p:column
+				headerText="#{msgs.SMART_COMPOUND_TENANT_PAGE_MOBILE_NUMBER1}"
+				filterBy="#{tenant.mobileNumber1}" filterMatchMode="contains">
+				<h:outputText value="#{tenant.mobileNumber1}" />
+			</p:column>
+			<ui:remove>
+				<p:column
+					headerText="#{msgs.SMART_COMPOUND_TENANT_PAGE_MOBILE_NUMBER2}"
+					filterBy="#{tenant.mobileNumber2}" filterMatchMode="contains">
+					<h:outputText value="#{tenant.mobileNumber2}" />
+				</p:column>
+
+			</ui:remove>
+
+			<p:column>
+				<p:commandButton value="Tickets"
+					actionListener="#{tenantBean.loadTenantTickets(tenant)}"
+					update=":tenantTicketsForm"
+					oncomplete="PF('tenantTicketsDialog').show()" />
+				<p:commandButton value="Orders"
+					actionListener="#{tenantBean.loadTenentOrders(tenant)}"
+					update=":tenantOrdersForm"
+					oncomplete="PF('tenantOrdersDialog').show()" />
+				<p:commandButton value="Bills"
+					actionListener="#{tenantBean.loadTenentBills(tenant)}"
+					update=":tenantBillsForm"
+					oncomplete="PF('tenantBillsDialog').show()" />
+
+			</p:column>
+
+		</p:dataTable>
+		<p:outputPanel id="outpnl">
+			<p:commandButton
+				value="#{msgs.SMART_COMPOUND_TENANT_PAGE_CREATE_BUTTON}"
+				actionListener="#{tenantBean.initiateNewTenent()}"
+				oncomplete="PF('createTenantDialog').show();"
+				update=":tenantForm :tenantListForm"></p:commandButton>
+
+			<p:commandButton id="editButton"
+				disabled="#{empty tenantBean.tenant.id}"
+				value="#{msgs.SMART_COMPOUND_TENANT_PAGE_EDIT_BUTTON}"
+				actionListener="#{tenantBean.trimUsername()}"
+				oncomplete="PF('editTenantDialog').show()"
+				update=":editTenantForm :tenantListForm"></p:commandButton>
+
+			<p:commandButton id="viewButton"
+				disabled="#{empty tenantBean.tenant.id}"
+				value="#{msgs.SMART_COMPOUND_TENANT_PAGE_VIEW_BUTTON}"
+				oncomplete="PF('viewTenantDialog').show()" update="viewTenantForm"></p:commandButton>
+
+		</p:outputPanel>
+
+	</h:form>
+</ui:composition>

@@ -1,0 +1,123 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+
+	<h:form id="employeeListForm">
+		<p:messages id="PageMSG" />
+		<p:dataTable var="employee" rows="10" paginator="true"
+			value="#{employeeBean.lazyEmployeeModel}" resizableColumns="true"
+			draggableColumns="true" rowKey="#{employee.id}"
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			rowsPerPageTemplate="5,10,15" selectionMode="single" dynamic="true"
+			selection="#{employeeBean.selectedEmployee}" id="employeeTable"
+			lazy="true">
+			
+			<p:ajax event="rowSelect" update=":employeeListForm" />
+			<p:ajax event="page" listener="#{employeeBean.disableButton()}"
+				update=":employeeListForm:outpnl"></p:ajax>
+
+			<p:column headerText="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_USERNAME}" filterBy="#{employee.username}">
+				<h:outputText value="#{employee.username}" />				
+			</p:column>
+
+			<p:column headerText="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_FIRSTNAME}"
+			filterBy="#{employee.firstName}">
+				<h:outputText value="#{employee.firstName}" />
+			</p:column>
+	
+			<!--<p:column
+				headerText="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_MIDDLENAME}">
+				<h:outputText value="#{employee.middleName}" />
+			</p:column>-->
+
+			<p:column headerText="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_LASTNAME}"
+			filterBy="#{employee.lastName}">
+				<h:outputText value="#{employee.lastName}" />
+			</p:column>
+
+			<!--<p:column headerText="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_EMAIL}">
+				<h:outputText value="#{employee.email}" />
+			</p:column>  -->
+
+			<p:column headerText="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_ADDRESS}"
+			filterBy="#{employee.address}">
+				<h:outputText value="#{employee.address}" />
+			</p:column> 
+			
+			
+			<!--  <p:column headerText="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_IDENTIFICATION_TYPE}">
+				<h:outputText value="#{employee.identificationType}" />
+			</p:column>-->
+
+			<!--  <p:column
+				headerText="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_IDENTIFICATION_NUMBER}">
+				<h:outputText value="#{employee.identificationNumber}" />
+			</p:column>-->
+
+			<p:column headerText="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_JOB}"
+			filterBy="#{employee.job}">
+				<h:outputText value="#{employee.job}" />
+			</p:column>
+
+			<p:column
+				headerText="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_MOBILE_NUMBER_1}"
+				filterBy="#{employee.mobileNumber1}">
+				<h:outputText value="#{employee.mobileNumber1}" />
+			</p:column>
+
+			<!--  <p:column
+				headerText="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_MOBILE_NUMBER_2}">
+				<h:outputText value="#{employee.mobileNumber2}" />
+			</p:column>-->
+
+
+			<!--  <p:column
+				headerText="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_PHONE_NUMBER_1}">
+				<h:outputText value="#{employee.phoneNumber1}" />
+			</p:column>-->
+
+			<!--  <p:column
+				headerText="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_PHONE_NUMBER_2}">
+				<h:outputText value="#{employee.phoneNumber2}" />
+			</p:column>-->
+			
+			
+			<!-- <p:column headerText="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_HIRE_DATE}">
+				<h:outputText value="#{employee.hireDate}" />
+			</p:column> -->
+			
+			
+		</p:dataTable>
+		<p:outputPanel id="outpnl">
+		<p:commandButton
+			value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_CREATE_EMPLOYEE}"
+			id="createEmployeeDialog"
+			action="#{employeeBean.refreshPage}"
+			actionListener="#{employeeBean.initiateEmployee}"
+			update=":createEmployeeForm"  
+			oncomplete="PF('createEmployeeDialog').show()"></p:commandButton>
+
+		<p:commandButton
+			disabled="#{empty employeeBean.selectedEmployee.id}"
+			id="editEmployeeDialog"
+			value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_EDIT_EMPLOYEE}"
+			actionListener="#{employeeBean.loadEmployeeGroups}"
+			action="#{employeeBean.trimUsername()}"
+			update=":editEmployeeForm"
+			oncomplete="PF('editEmployeeDialog').show()"></p:commandButton>
+
+		<p:commandButton
+			disabled="#{empty employeeBean.selectedEmployee.id}"
+			id="viewEmployeeDialog"
+			value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_VIEW_EMPLOYEE}"
+			actionListener="#{employeeBean.loadEmployeeGroups}"
+			update=":viewEmployeeForm"
+			oncomplete="PF('viewEmployeeDialog').show()"></p:commandButton>
+		</p:outputPanel>
+			
+	</h:form>
+</ui:composition>
+

@@ -1,0 +1,107 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+	<h:form id="CompoundListForm">
+		<p:dataTable var="compound" rows="10" paginator="true"
+			value="#{compoundBean.lazyCompoundModel}" resizableColumns="true"
+			draggableColumns="true" rowKey="#{compound.id}"  
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			rowsPerPageTemplate="5,10,15" selectionMode="single" dynamic="true"
+			selection="#{compoundBean.selectedCompound}" id="compoundTable"
+			widgetVar="compoundTable" lazy="true">
+
+			<p:ajax event="rowSelect" update=":CompoundListForm" />
+			<p:ajax event="rowSelect"
+				listener="#{compoundBean.initSelectedCompoundModel}" />
+			<p:ajax event="page" listener="#{compoundBean.disableButton()}"
+				update=":CompoundListForm:outpnl"></p:ajax>
+
+			<p:column headerText="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_NAME}"
+				sortBy="#{compound.compoundName}"
+				filterBy="#{compound.compoundName}" filterMatchMode="exact">
+				<h:outputText value="#{compound.compoundName}" />
+				<f:facet name="filter">
+
+					<p:selectOneMenu onchange="PF('compoundTable').filter()" id="tt">
+						<p:ajax listener="#{compoundBean.disableButton()}" update="@form" />
+						<f:selectItem itemLabel="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_SELECT_COMPOUND}" itemValue="#{null}"
+							noSelectionOption="true" />
+						<f:selectItems value="#{compoundBean.compoundNamesList}" />
+					</p:selectOneMenu>
+				</f:facet>
+
+			</p:column>
+			<p:column
+				headerText="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_OWNER_NAME}"
+				filterBy="#{compound.ownerName}" sortBy="#{compound.ownerName}">
+				<h:outputText value="#{compound.ownerName}" />
+			</p:column>
+			<p:column headerText="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_COUNTRY}"
+				filterBy="#{compound.country}" sortBy="#{compound.country}">
+				<h:outputText value="#{compound.country}" />
+			</p:column>
+			<p:column headerText="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_CITY}"
+				filterBy="#{compound.city}" sortBy="#{compound.city}">
+				<h:outputText value="#{compound.city}" />
+			</p:column>
+
+			<ui:remove>
+			<p:column headerText="#{msgs.SMART_COMPOUND_COMPOUND_LOCATION}">
+				<center>
+					<p:commandLink update=":locationForm"
+						oncomplete="PF('locDialog').show()">
+
+						<p:graphicImage library="img/icon" name="map.png"></p:graphicImage>
+						<f:setPropertyActionListener value="#{compound}"
+							target="#{compoundBean.selectedCompound}" />
+					</p:commandLink>
+				</center>
+			</p:column>
+			</ui:remove>			
+		</p:dataTable>
+		<p:outputPanel id="outpnl">
+		<p:commandButton
+			value="#{msgs.SMART_COMPOUND_COMPOUND_LIST_PAGE_CREATE_NEW_COMPOUND}"
+			actionListener="#{compoundBean.initiateNewCompound}"
+			update=":createCompoundForm"
+			oncomplete="initMap();PF('createCompoundDialog').show()"></p:commandButton>
+
+			<p:commandButton disabled="#{empty compoundBean.selectedCompound.id}"
+				value="#{msgs.SMART_COMPOUND_COMPOUND_LIST_PAGE_VIEW_SELECTED_COMPOUND}"
+				update=":viewCompoundForm "
+				oncomplete="PF('viewCompoundDialog').show() "></p:commandButton>
+
+			<p:commandButton disabled="#{empty compoundBean.selectedCompound.id}"
+				value="#{msgs.SMART_COMPOUND_COMPOUND_LIST_PAGE_EDIT_SELECTED_COMPOUND}"
+				update=":editCompoundForm"
+				oncomplete="PF('editCompoundDialog').show()"></p:commandButton>
+		</p:outputPanel>
+	</h:form>
+
+	<p:dialog id="locDialog" widgetVar="locDialog" modal="true"
+		resizable="false" closeOnEscape="true"
+		header=" #{msgs.SMART_COMPOUND_COMPOUND_LIST_PAGE_MY_COMPOUND_LOCATION}">
+		<h:form id="locationForm">
+			<center>
+				<p:outputLabel value="#{compoundBean.selectedCompound.compoundName}" />
+			</center>
+			<p:panelGrid>
+				<p:gmap id="gmap" zoom="18"
+					rendered="#{not empty compoundBean.selectedCompound.lattitude and not empty compoundBean.selectedCompound.longtude}"
+					center="#{compoundBean.selectedCompound.lattitude},#{compoundBean.selectedCompound.longtude}"
+					model="#{compoundBean.selectedCompoundModel}" type="HYBRID"
+					style="width:600px;height:400px" widgetVar="map">
+
+
+				</p:gmap>
+
+
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+
+
+</ui:composition>

@@ -1,0 +1,1 @@
+ALTER TABLE ng_nts_employees ADD COLUMN super_admin_flag integer;

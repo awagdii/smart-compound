@@ -1,0 +1,246 @@
+<!-- /** Author: Nazer**/-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<p:dialog id="viewTicketDialog" widgetVar="viewTicketDialog"
+		appendToBody="true" modal="true" resizable="false"
+		closeOnEscape="true"
+		header="#{msgs.SMART_COMPOUND_SHOW_TICKET_PAGE_TITLE}">
+		<h:form id="viewTicketForm">
+
+			<p:panelGrid>
+				<p:row>
+					<p:column rowspan="2">
+
+						<p:panelGrid>
+
+							<p:row>
+								<p:column>
+									<h:outputText
+										value="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_OPEN_DATE}" />
+								</p:column>
+								<p:column medium-screen="4">
+									<h:outputText value="#{ticketBean.selectedTicket.openDate}" />
+								</p:column>
+							</p:row>
+
+							<p:row>
+								<p:column>
+									<h:outputText
+										value="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_STATUS}" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{ticketBean.selectedTicket.lastStatus}" />
+								</p:column>
+							</p:row>
+
+
+							<p:row>
+								<p:column>
+									<h:outputText
+										value="#{msgs.SMART_COMPOUND_TICKET_PAGE_SERVICE_NAME}" />
+								</p:column>
+								<p:column medium-screen="4">
+									<h:outputText
+										value="#{ticketBean.selectedTicket.service.serviceName}" />
+								</p:column>
+							</p:row>
+
+
+
+							<p:row>
+								<p:column medium-screen="2">
+									<h:outputText
+										value="#{msgs.SMART_COMPOUND_TICKET_PAGE_TENANT_NAME}" />
+								</p:column>
+								<p:column medium-screen="4">
+									<h:outputText
+										value="#{ticketBean.selectedTicket.relatedTenant.username}  #{ticketBean.selectedTicket.relatedTenant.lastName}" />
+								</p:column>
+							</p:row>
+
+							<p:row>
+								<p:column medium-screen="2">
+									<h:outputText
+										value="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_CHANNEL}" />
+								</p:column>
+								<p:column>
+
+									<h:outputText value="#{ticketBean.selectedTicket.channel}" />
+								</p:column>
+
+							</p:row>
+
+							<p:row>
+								<p:column medium-screen="2">
+									<h:outputText
+										value="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_FACILITY_ID}" />
+								</p:column>
+
+								<p:column>
+									<h:outputText
+										value="#{ticketBean.selectedTicket.facility.buildingNumber}-#{ticketBean.selectedTicket.facility.floorNumber}-#{ticketBean.selectedTicket.facility.facilityNumber}" />
+								</p:column>
+							</p:row>
+
+							<p:row>
+
+
+								<p:column medium-screen="2">
+									<h:outputText
+										value="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_OPEN_BY}" />
+								</p:column>
+
+								<p:column medium-screen="4">
+									<h:outputText
+										value="#{ticketBean.selectedTicket.openedBy.username}" />
+								</p:column>
+							</p:row>
+
+							<ui:remove>
+								<p:row>
+									<p:column medium-screen="2">
+										<h:outputText
+											value="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_ASSIGNED_TO_GROUP}" />
+									</p:column>
+
+									<p:column medium-screen="4">
+										<h:outputText
+											value="#{ticketBean.selectedTicket.assignedGroup.groupName}" />
+									</p:column>
+								</p:row>
+							</ui:remove>
+
+							<p:row>
+								<p:column>
+									<h:outputText
+										value="#{msgs.SMART_COMPOUND_TICKET_PAGE_FACILITY_TYPE}" />
+								</p:column>
+								<p:column medium-screen="4">
+									<h:outputText
+										value="#{ticketBean.selectedTicket.facility.facilityType}" />
+
+								</p:column>
+							</p:row>
+
+
+
+
+							<p:row>
+								<p:column medium-screen="2">
+									<h:outputText
+										value="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_PROBLEM_DATE}" />
+								</p:column>
+
+								<p:column medium-screen="4">
+									<h:outputText value="#{ticketBean.selectedTicket.problemDate}" />
+								</p:column>
+							</p:row>
+
+
+
+
+							<p:row>
+								<p:column medium-screen="2">
+									<h:outputText
+										value="#{msgs.SMART_COMPOUND_TICKET_LIST_PAGE_CALLER_TICKET_DESCRIPTION	}" />
+								</p:column>
+								<p:column medium-screen="2">
+									<p:editor id="editor" widgetVar="editorWidget" disabled="true"
+										value="#{ticketBean.selectedTicket.description}" width="400"
+										height="120" />
+								</p:column>
+							</p:row>
+
+
+
+							<p:row>
+								<p:column medium-screen="2" colspan="2">
+									<center>
+										<p:commandButton
+											value="#{msgs.SMART_COMPOUND_TICKET_PAGE_HIDE_BUTTON}"
+											onclick="PF('viewTicketDialog').hide()" immediate="true" />
+									</center>
+
+								</p:column>
+							</p:row>
+
+
+
+
+
+
+						</p:panelGrid>
+					</p:column>
+
+
+					<p:column>
+
+						<p:panelGrid style="height:470px;max-width:500px">
+							<p:row>
+								<p:column>
+									<p:galleria value="#{ticketBean.selectedTicket.images}"
+										rendered="#{not empty ticketBean.selectedTicket.images}"
+										autoPlay="false" var="ticktImage" panelWidth="500"
+										panelHeight="313">
+										<p:graphicImage width="490" height="300" title="  " alt="  "
+											value="/imageResolver?fileName=#{ticktImage.imageUrl}&amp;fileType=1" />
+									</p:galleria>
+									<center>
+										<p:outputLabel value="Ticket has no images"
+											rendered="#{empty ticketBean.selectedTicket.images}" />
+									</center>
+
+								</p:column>
+							</p:row>
+
+							<p:row>
+								<p:column>
+
+									<p:dataTable var="ticketHistory" rows="10"
+										value="#{ticketBean.selectedTicketHistoryList}"
+										resizableColumns="true" draggableColumns="true"
+										rowKey="#{ticketHistory.id}" dynamic="true"
+										selection="#{ticketHistoryBean.selectedTicketHistory}"
+										widgetVar="ticketHistoryTable" id="ticketHistoryTable"
+										lazy="true">
+
+
+										<p:column headerText="From">
+											<h:outputText value="#{ticketHistory.previousStatus}" />
+										</p:column>
+
+										<p:column headerText="To">
+											<h:outputText value="#{ticketHistory.currentStatus}" />
+										</p:column>
+
+
+										<p:column headerText="By">
+											<h:outputText value="#{ticketHistory.actionBy.username}" />
+										</p:column>
+										<p:column headerText="Date">
+											<h:outputText value="#{ticketHistory.actionDate}" />
+										</p:column>
+										<p:column headerText="Comment">
+											<h:outputText value="#{ticketHistory.comment}" />
+										</p:column>
+									</p:dataTable>
+								</p:column>
+
+							</p:row>
+
+						</p:panelGrid>
+					</p:column>
+
+				</p:row>
+			</p:panelGrid>
+		</h:form>
+
+
+	</p:dialog>
+
+
+</ui:composition>

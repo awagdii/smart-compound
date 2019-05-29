@@ -1,0 +1,160 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<p:dialog id="viewEmployeeDialog" widgetVar="viewEmployeeDialog"
+		header="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_VIEW_EMPLOYEE}"
+		appendToBody="true" modal="true" resizable="false" width="800"
+		height="450" closeOnEscape="true"
+		onHide="PF('wiz').loadStep('account', false)">
+		<h:form id="viewEmployeeForm">
+
+
+			<p:panel>
+
+				<h:panelGrid columns="4" class="viewEmployee">
+					<h:outputText value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_USERNAME}"
+						rendered="#{not empty employeeBean.selectedEmployee.username}"
+						style="font-weight:bold" />
+					<h:outputText value="#{employeeBean.selectedEmployee.username}"
+						rendered="#{not empty employeeBean.selectedEmployee.username}" />
+
+					<h:outputText
+						value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_FIRSTNAME}"
+						rendered="#{not empty employeeBean.selectedEmployee.firstName}"
+						style="font-weight:bold" />
+					<h:outputText value="#{employeeBean.selectedEmployee.firstName}"
+						rendered="#{not empty employeeBean.selectedEmployee.firstName}" />
+
+					<h:outputText
+						value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_MIDDLENAME}"
+						rendered="#{not empty employeeBean.selectedEmployee.middleName}"
+						style="font-weight:bold" />
+					<h:outputText value="#{employeeBean.selectedEmployee.middleName}"
+						rendered="#{not empty employeeBean.selectedEmployee.middleName}" />
+
+					<h:outputText value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_LASTNAME}"
+						rendered="#{not empty employeeBean.selectedEmployee.lastName}"
+						style="font-weight:bold" />
+					<h:outputText value="#{employeeBean.selectedEmployee.lastName}"
+						rendered="#{not empty employeeBean.selectedEmployee.lastName}" />
+
+					<h:outputText
+						value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_SALUATION}"
+						rendered="#{not empty employeeBean.selectedEmployee.salutationLookup.lookupName}"
+						style="font-weight:bold" />
+					<h:outputText
+						value="#{employeeBean.selectedEmployee.salutationLookup.lookupName}"
+						rendered="#{not empty employeeBean.selectedEmployee.salutationLookup.lookupName}" />
+
+					<h:outputText value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_GENDER}"
+						rendered="#{not empty employeeBean.selectedEmployee.genderLookup.lookupName}"
+						style="font-weight:bold" />
+					<h:outputText
+						value="#{employeeBean.selectedEmployee.genderLookup.lookupName}"
+						rendered="#{not empty employeeBean.selectedEmployee.genderLookup.lookupName}" />
+
+					<h:outputText
+						value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_IDENTIFICATION_TYPE}"
+						rendered="#{not empty employeeBean.selectedEmployee.identificationTypeLookup.lookupName}"
+						style="font-weight:bold" />
+					<h:outputText
+						value="#{employeeBean.selectedEmployee.identificationTypeLookup.lookupName}"
+						rendered="#{not empty employeeBean.selectedEmployee.identificationTypeLookup.lookupName}" />
+
+					<h:outputText
+						value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_IDENTIFICATION_NUMBER}"
+						rendered="#{not empty employeeBean.selectedEmployee.identificationNumber}"
+						style="font-weight:bold" />
+					<h:outputText
+						value="#{employeeBean.selectedEmployee.identificationNumber}"
+						rendered="#{not empty employeeBean.selectedEmployee.identificationNumber}" />
+
+					<h:outputText value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_ADDRESS}"
+						rendered="#{not empty employeeBean.selectedEmployee.address}"
+						style="font-weight:bold" />
+					<h:outputText value="#{employeeBean.selectedEmployee.address}"
+						rendered="#{not empty employeeBean.selectedEmployee.address}" />
+
+
+					<h:outputText value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_EMAIL}"
+						rendered="#{not empty employeeBean.selectedEmployee.email}"
+						style="font-weight:bold" />
+					<h:outputText value="#{employeeBean.selectedEmployee.email}" 
+					rendered="#{not empty employeeBean.selectedEmployee.email}"/>
+
+					<h:outputText
+						value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_PHONE_NUMBER_1}"
+						rendered="#{not empty employeeBean.selectedEmployee.phoneNumber1}"
+						style="font-weight:bold" />
+					<h:outputText value="#{employeeBean.selectedEmployee.phoneNumber1}"
+						rendered="#{not empty employeeBean.selectedEmployee.phoneNumber1}" />
+
+					<h:outputText
+						value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_PHONE_NUMBER_2}"
+						rendered="#{not empty employeeBean.selectedEmployee.phoneNumber2}"
+						style="font-weight:bold" />
+					<h:outputText value="#{employeeBean.selectedEmployee.phoneNumber2}" 
+					rendered="#{not empty employeeBean.selectedEmployee.phoneNumber2}"/>
+
+					<h:outputText
+						value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_MOBILE_NUMBER_1}"
+						rendered="#{not empty employeeBean.selectedEmployee.mobileNumber1}"
+						style="font-weight:bold" />
+					<h:outputText
+						value="#{employeeBean.selectedEmployee.mobileNumber1}"
+						rendered="#{not empty employeeBean.selectedEmployee.mobileNumber1}" />
+
+					<h:outputText
+						value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_MOBILE_NUMBER_2}"
+						rendered="#{not empty employeeBean.selectedEmployee.mobileNumber2}"
+						style="font-weight:bold" />
+					<h:outputText
+						value="#{employeeBean.selectedEmployee.mobileNumber2}" 
+						rendered="#{not empty employeeBean.selectedEmployee.mobileNumber2}"/>
+
+
+					<h:outputText value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_JOB}"
+						rendered="#{not empty employeeBean.selectedEmployee.job}"
+						style="font-weight:bold" />
+					<h:outputText value="#{employeeBean.selectedEmployee.job}"
+						rendered="#{not empty employeeBean.selectedEmployee.job}" />
+
+					<h:outputText value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_STATUS}"
+						rendered="#{not empty employeeBean.selectedEmployee.statusLookup.lookupName}"
+						style="font-weight:bold" />
+					<h:outputText
+						value="#{employeeBean.selectedEmployee.statusLookup.lookupName}"
+						rendered="#{not empty employeeBean.selectedEmployee.statusLookup.lookupName}" />
+
+					<h:outputText
+						value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_HIRE_DATE}"
+						rendered="#{not empty employeeBean.selectedEmployee.hireDate}"
+						style="font-weight:bold" />
+					<h:outputText value="#{employeeBean.selectedEmployee.hireDate}"
+						rendered="#{not empty employeeBean.selectedEmployee.hireDate}" />
+				</h:panelGrid>
+				<h:panelGrid class="viewEmployee" style="width:100%">
+								<p:dataList value="#{employeeBean.selectedGroups}" var="group"
+									type="ordered" style="font-weight:bold; text-align:center"
+									itemType="none" paginator="true" rows="2" styleClass="paginated"
+									paginatorPosition="bottom" lazy="true"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+									<f:facet name="header">
+                                            Groups
+                                        </f:facet>
+                                          #{group.groupName}
+                                     </p:dataList>
+				</h:panelGrid>
+			</p:panel>
+			<center class="viewButton">
+				<p:commandButton oncomplete="PF('viewEmployeeDialog').hide()"
+					value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_OK_BUTTON}"
+					look="success" />
+			</center>
+
+		</h:form>
+	</p:dialog>
+</ui:composition>

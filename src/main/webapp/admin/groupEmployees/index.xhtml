@@ -1,0 +1,87 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui"
+	template="/WEB-INF/template/master.xhtml">
+	<ui:define name="title">#{msgs.SMART_COMPOUND_EMPLOYEE_GROUP_PAGE_TITLE}</ui:define>
+	<ui:define name="contentTitle">#{msgs.SMART_COMPOUND_EMPLOYEE_GROUP_PAGE_TITLE}</ui:define>
+
+
+	<ui:define name="content">
+		<h:form>
+		<p:messages  showDetail="true" closable="true" id="message" autoUpdate="true" />
+			<p:panelGrid style="width:100%" columnClasses="noBorders">				<p:row>
+					<p:column rendered="#{ groupBean.isSuperAdmin()}">
+						<p:outputLabel value="#{msgs.SMART_COMPOUND_GROUP_COMPOUND}"
+							style="color:black;font-size: 100%;"
+							 />
+					</p:column>
+					<p:column rendered="#{ groupEmployeeBean.isSuperAdmin()}">
+						<p:selectOneMenu id="compounds"
+							
+							value="#{groupEmployeeBean.selectedCompound}" required="true"
+							requiredMessage="#{msgs.SMART_COMPOUND_GROUP_COMPOUND_REQ}"
+							converter="#{compoundConverter}">
+							<p:ajax update="@form"
+								listener="#{groupEmployeeBean.onCompoundChange()}" />
+							<f:selectItem itemValue="#{null}"
+								itemLabel="#{msgs.SMART_COMPOUND_GROUP_COMPOUND_SELECT}"
+								itemDisabled="true" />
+							<f:selectItems value="#{groupBean.compounds}" var="compound"
+								itemValue="#{compound}" itemLabel="#{compound.compoundName}" />
+						</p:selectOneMenu>
+						<p:message for="compounds" />
+					</p:column>
+
+
+					<p:column medium-screen="2">
+						<p:outputLabel
+							value="#{msgs.SMART_COMPOUND_MENUITEMGROUP_PAGE_GROUPS_LABEL}"
+							rendered="#{not empty groupEmployeeBean.selectedCompound.id}" />
+
+					</p:column>
+					<p:column medium-screen="2" rendered="#{not empty groupEmployeeBean.selectedCompound.id}">
+						<p:selectOneMenu value="#{groupEmployeeBean.selectedGroup}"
+							converter="#{groupConverter}"
+							rendered="#{not empty groupEmployeeBean.selectedCompound.id}">
+							<p:ajax listener="#{groupEmployeeBean.onGroupChange()}"
+								update="@form" />
+							<f:selectItem itemValue="#{null}"
+								itemLabel="#{msgs.SMART_COMPOUND_MENUITEMGROUP_PAGE_GROUP_LABEL}"
+								noSelectionOption="true" />
+							<f:selectItems value="#{groupEmployeeBean.allGroup}" var="group"
+								itemValue="#{group}" itemLabel="#{group.groupName}" />
+						</p:selectOneMenu>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+			<p:separator />
+			<center>
+			<p:pickList id="pickList" value="#{groupEmployeeBean.employees}" rendered="#{not empty groupEmployeeBean.selectedGroup}"
+				var="employee" itemLabel="#{employee.username}" effect="bounce" 
+				showSourceControls="true" showTargetControls="true"
+				 itemValue="#{employee}"
+				converter="#{employeeConverter}" showSourceFilter="true" 
+				showTargetFilter="true" filterMatchMode="contains">
+				<f:facet name="sourceCaption">Non Group Members</f:facet>
+				<f:facet name="targetCaption">Group Members</f:facet>
+				<p:ajax event="select" listener="#{groupEmployeeBean.onSelect}"></p:ajax>
+				<p:ajax event="transfer" listener="#{groupEmployeeBean.onTransfer}" update="message"></p:ajax>
+
+
+			</p:pickList>
+			</center>
+
+			<!-- <p:commandButton id="citySubmit" value="Submit"
+				update="displayCities" oncomplete="PF('cityDialog').show()"
+				style="margin-top:5px" />
+ -->
+
+
+
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

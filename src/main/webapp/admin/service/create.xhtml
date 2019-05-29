@@ -1,0 +1,270 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<p:dialog id="createServiceDialog" widgetVar="createServiceDialog"
+		modal="true" resizable="false" closeOnEscape="true"
+		header="#{msgs.SMART_COMPOUND_SERVICE_PAGE_CREATE_SERVICE_TITLE}"
+		minHeight="30" width="850" height="400">
+		<p:ajax event="close" resetValues="true" update="createServiceForm"
+			immediate="true" />
+		<h:form id="createServiceForm">
+			
+			<p:panelGrid style="width:800px" id="pg">
+
+				<p:row>
+					<p:column>
+						<p:outputLabel for="name"
+							value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_NAME}" />
+					</p:column>
+					<p:column>
+						<p:inputText id="name"
+							value="#{serviceBean.createdService.serviceName}" required="true"
+							requiredMessage="#{msgs.SMART_COMPOUND_SERVICE_PAGE_NAME_REQUIRED}"
+							validatorMessage="#{msgs.SMART_COMPOUND_SERVICE_PAGE_NAME_REGEX}"
+							validator="#{serviceBean.checkServiceNameUniqueness}">
+							<f:validateRegex pattern="[a-zA-Z]+[a-zA-Z0-9_ ]+[a-zA-Z0-9]+" />
+						</p:inputText>
+						<p:message id="nameid" for="name" display="text" />
+					</p:column>
+
+				</p:row>
+
+				<p:row>
+					<p:column>
+						<p:outputLabel
+							value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_FLAT_OR_USAGE}" for="type"/>
+					</p:column>
+					<p:column>
+						<p:selectOneMenu id="type" style="width:100%"
+							converter="#{lookupConverter}"
+							value="#{serviceBean.createdService.flatOrUsageLookup}"
+							required="true"
+							requiredMessage="#{msgs.SMART_COMPOUND_SERVICE_PAGE_TYPE_REQUIRED}">
+							<p:ajax process="@this name price nrcInput mrcInput dlvr munit"
+								listener="#{serviceBean.updateServiceType}" update="pg">
+							</p:ajax>
+							<f:selectItem itemLabel="Select One" itemValue="#{null}"
+								itemDisabled="true" />
+							<f:selectItems value="#{serviceBean.statusesList}" var="status"
+								itemValue="#{status}" itemLabel="#{status.lookupName}" />
+						</p:selectOneMenu>
+						<p:message for="type" display="text" />
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						<p:outputLabel
+							value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_UNIT_OF_MEASURE}" />
+					</p:column>
+					<p:column>
+						<p:selectOneMenu style="width:100%" converter="#{lookupConverter}"
+							value="#{serviceBean.createdService.measuringUnitLookupId}"
+							id="munit">
+							<f:selectItem itemLabel="Select One" itemValue="#{null}"
+								itemDisabled="true" />
+							<f:selectItems value="#{serviceBean.measuringUnits}" var="unit"
+								itemLabel="#{unit.lookupName}" itemValue="#{unit}" />
+
+						</p:selectOneMenu>
+					</p:column>
+				</p:row>
+				<p:row
+					rendered="#{serviceBean.flatIsSelected or serviceBean.usageIsSelected}">
+					<p:column>
+						<p:outputLabel
+							value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_INSTALLATION_PRICE}" />
+					</p:column>
+					<p:column>
+						<p:inputText id="price"
+							value="#{serviceBean.createdService.installationPrice}"
+							validatorMessage="#{msgs.SMART_COMPOUND_SERVICE_PAGE_POSITIVE_VALIDATION}"
+							type="number">
+							<f:validateDoubleRange minimum="0.0" maximum="2147483646" />
+						</p:inputText>
+						<p:message id="priceMsg" for="price" display="text" />
+					</p:column>
+
+				</p:row>
+				<p:row>
+
+					<p:column>
+						<p:outputLabel id="nrc"
+							value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_NRC}" />
+						<p:tooltip for="nrc" value="Non-Recurring Charge"
+							trackMouse="true" />
+
+					</p:column>
+					<p:column>
+						<p:inputText id="nrcInput" type="number"
+							value="#{serviceBean.createdService.nrc}"
+							validatorMessage="#{msgs.SMART_COMPOUND_SERVICE_PAGE_INTEGER_VALIDATION}">
+							<f:validateLongRange minimum="0" maximum="2147483646" />
+
+						</p:inputText>
+						<p:message id="nrcMsg" for="nrcInput" display="text" />
+					</p:column>
+
+				</p:row>
+				<p:row
+					rendered="#{serviceBean.flatIsSelected or serviceBean.usageIsSelected}">
+					<p:column>
+						<p:outputLabel id="mrc"
+							value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_MRC}" />
+						<p:tooltip for="mrc" value="Monthly Recurring Charge"
+							trackMouse="true" />
+					</p:column>
+					<p:column>
+						<p:inputText id="mrcInput" type="number"
+							value="#{serviceBean.createdService.mrc}"
+							validatorMessage="#{msgs.SMART_COMPOUND_SERVICE_PAGE_INTEGER_VALIDATION}">
+							<f:validateLongRange minimum="0" maximum="2147483646" />
+
+						</p:inputText>
+						<p:message id="mrcMsg" for="mrcInput" display="text" />
+					</p:column>
+
+				</p:row>
+				<p:row>
+					<p:column>
+						<p:outputLabel
+							value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_ESTIMATED_DELIVERY_DAYS}" />
+					</p:column>
+					<p:column>
+						<p:inputText
+							value="#{serviceBean.createdService.estimatedDeliveryDays}"
+							id="dlvr"
+							validatorMessage="#{msgs.SMART_COMPOUND_SERVICE_PAGE_INTEGER_VALIDATION}"
+							type="number">
+							<f:validateLongRange minimum="0" maximum="2147483646" />
+
+						</p:inputText>
+						<p:message id="dlvrMsg" for="dlvr" display="text" />
+					</p:column>
+
+				</p:row>
+				<p:row>
+					<p:column>
+						<p:outputLabel
+							value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_FACILITY_RELATED}" />
+					</p:column>
+					<p:column>
+						<p:selectBooleanButton value="#{serviceBean.facilityRelated}"
+							onLabel="#{msgs.SMART_COMPOUND_SERVICE_PAGE_YES_LABEL}"
+							offLabel="#{msgs.SMART_COMPOUND_SERVICE_PAGE_NO_LABEL}"
+							onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:60px" />
+					</p:column>
+				</p:row>
+				<p:row rendered="#{serviceBean.usageIsSelected}">
+
+					<p:column colspan="2">
+						<p:panel id="usageDataTableRow" style="width:100%">
+
+							<p:dataTable id="createdRate" rowIndexVar="index"
+								rendered="#{serviceBean.createdService.isUsage()}"
+								var="currentRate"
+								value="#{serviceBean.createdService.serviceUsageRates}">
+								<p:column
+									headerText="#{msgs.SMART_COMPOUND_SERVICE_PAGE_FROM_HEADER}"
+									style="width:90px;">
+									<p:outputLabel value="#{currentRate.usageAmountFrom}" />
+
+								</p:column>
+								<p:column
+									headerText="#{msgs.SMART_COMPOUND_SERVICE_PAGE_TO_HEADER}">
+									<p:panelGrid columns="3">
+										<p:inputText required="true" min="0" type="number"
+											rendered="#{currentRate.editMode}"
+											value="#{currentRate.usageAmountTo}" id="toEntery"
+											validatorMessage="#{msgs.SMART_COMPOUND_SERVICE_PAGE_INVALID}"
+											requiredMessage="#{msgs.SMART_COMPOUND_SERVICE_PAGE_REQUIRED}"
+											style="width:70px;">
+											<f:validateLongRange minimum="#{serviceBean.to}"
+												maximum="2147483646" />
+										</p:inputText>
+										<p:outputLabel rendered="#{!currentRate.editMode}"
+											value="#{currentRate.usageAmountTo}" />
+										<p:message for="toEntery" display="text" style="width:60px;" />
+									</p:panelGrid>
+								</p:column>
+								<p:column
+									headerText="#{msgs.SMART_COMPOUND_SERVICE_PAGE_PRICE_HEADER}">
+									<p:panelGrid columns="3">
+										<p:inputText required="true" value="#{currentRate.unitPrice}"
+											type="number" rendered="#{currentRate.editMode}" id="price"
+											validatorMessage="#{msgs.SMART_COMPOUND_SERVICE_PAGE_INVALID}"
+											requiredMessage="#{msgs.SMART_COMPOUND_SERVICE_PAGE_REQUIRED}"
+											style="width:70px;">
+											<f:validateDoubleRange minimum="0.0" maximum="2147483646" />
+										</p:inputText>
+										<p:outputLabel rendered="#{!currentRate.editMode}"
+											value="#{currentRate.unitPrice}" />
+										<p:message for="price" display="text" style="width:60px;" />
+									</p:panelGrid>
+								</p:column>
+								<p:column
+									headerText="#{msgs.SMART_COMPOUND_SERVICE_PAGE_ACTION_HEADER}">
+									<p:panelGrid columns="1">
+										<p:commandButton
+											value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_SAVE_BUTTON}"
+											rendered="#{currentRate.editMode}"
+											actionListener="#{serviceBean.saveUsageRate(currentRate)}"
+											process=":createServiceForm:usageDataTableRow"
+											update=":createServiceForm:usageDataTableRow"
+											style="width:150px;">
+										</p:commandButton>
+
+										<p:commandButton
+											value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_ADD_BUTTON}"
+											rendered="#{index == serviceBean.createdService.serviceUsageRates.size()-1}"
+											actionListener="#{serviceBean.addUsageRateRow()}"
+											process=":createServiceForm:usageDataTableRow"
+											update=":createServiceForm:usageDataTableRow"
+											style="width:150px;">
+										</p:commandButton>
+
+										<p:commandButton
+											value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_DELETE_BUTTON}"
+											immediate="true"
+											rendered="#{index !=0 and index == serviceBean.createdService.serviceUsageRates.size()-1}"
+											actionListener="#{serviceBean.deleteRate(index)}"
+											process=":createServiceForm:usageDataTableRow"
+											update=":createServiceForm:usageDataTableRow"
+											style="width:150px;">
+										</p:commandButton>
+									</p:panelGrid>
+								</p:column>
+							</p:dataTable>
+							<br />
+						</p:panel>
+					</p:column>
+
+				</p:row>
+
+				<p:row>
+					<p:column>
+					<!-- update ? ! createServiceForm:messages -->
+						<p:commandButton
+							value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_SUBMIT_BUTTON}"
+							look="success" style="width:100%"
+							update="@form :serviceListForm "
+							
+							oncomplete="if (args &amp;&amp; !args.validationFailed) if(handleDialogSubmit(xhr,status,args)) PF('createServiceDialog').hide()"
+							actionListener="#{serviceBean.insertService}" />
+					</p:column>
+					<p:column>
+						<p:commandButton
+							value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_CANCEL_BUTTON}"
+							look="warning" immediate="true"
+							onclick="PF('createServiceDialog').hide()" />
+					</p:column>
+				</p:row>
+
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+
+</ui:composition>

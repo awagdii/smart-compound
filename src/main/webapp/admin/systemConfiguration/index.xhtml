@@ -1,0 +1,15 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui"
+	template="/WEB-INF/template/master.xhtml">
+	<ui:define name="title">#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_INDEX_PAGE}</ui:define>
+	<ui:define name="contentTitle">#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_INDEX_PAGE_TITLE}</ui:define>
+
+	<ui:define name="content">
+		<ui:include src="systemConfigurationList.xhtml"></ui:include>
+		<ui:include src="create.xhtml"></ui:include>
+		<ui:include src="edit.xhtml"></ui:include>
+	</ui:define>
+</ui:composition>

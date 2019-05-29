@@ -1,0 +1,129 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<p:dialog id="editMenuItemDialog" widgetVar="editMenuItemDialog"
+		modal="true" resizable="false" closeOnEscape="true"
+		header="#{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_EDIT_DIALOG_TITLE}"
+		width="590">
+
+		<h:form id="editMenuItemForm">
+			<h:panelGrid columns="3" cellpadding="5" id="pnl">
+				<p:outputLabel for="menuitemName"
+					value="#{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_NAME}" />
+				<p:inputText id="menuitemName" value="#{menuItemBean.menuItem.name}"
+					required="true" label="menuitemName" style="width:205px"
+					requiredMessage="#{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_REQUIRED_MENUITEM_NAME_ERROR_MESSAGE}"
+					validator="#{menuItemBean.checkMenuItemName}"
+					validatorMessage="#{msgs.SMART_COMPOUND_INVALID_DATA}">
+					<f:validateRegex pattern="^[A-Za-z]*$|^[A-Za-z][A-Za-z ]*[A-Za-z]$" />
+					<p:ajax event="blur" update="menuNameMsg" ignoreAutoUpdate="false" />
+				</p:inputText>
+				<p:message id="menuNameMsg" for="menuitemName" display="text" />
+
+				<p:outputLabel
+					value="#{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_URL}"
+					for="menuitemURL" />
+				<ui:remove>
+					<p:autoComplete id="menuitemURL" required="true"
+						forceSelection="true" disabled="#{!baseBean.superAdmin}"
+						requiredMessage="#{msgs.SMART_COMPOUND_MENU_PAGE_MENU_REQUIRED_URL_REQUIRED_MESSAGE}"
+						completeMethod="#{menuItemBean.completePagesURL}"
+						value="#{menuItemBean.menuItem.url}" var="path"
+						itemLabel="#{path}" itemValue="#{path}"></p:autoComplete>
+				</ui:remove>
+				<p:outputLabel id="menuitemURL"  value="#{menuItemBean.menuItem.url}"/>
+					
+				<p:message for="menuitemURL" display="text" />
+
+				<p:outputLabel
+					value=" #{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_STATUS}"
+					for="menuitemStatus" />
+				<p:selectOneMenu value="#{menuItemBean.menuItem.status}"
+					id="menuitemStatus" converter="#{lookupConverter}"
+					style="width:205px" required="true"
+					requiredMessage="#{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_REQUIRED_MENUITEM_STATUS_ERROR_MESSAGE}"
+					label="menuitemStatus">
+					<f:selectItem
+						itemLabel="#{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_STATUS_LABEL}"
+						itemDisabled="true" />
+					<f:selectItems value="#{menuItemBean.allLookup}" var="status"
+						itemValue="#{status}" itemLabel="#{status.lookupName}" />
+				</p:selectOneMenu>
+				<p:message for="menuitemStatus" display="text" />
+
+				<p:outputLabel
+					value=" #{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_MENU}"
+					for="menuitemMenu" />
+				<p:selectOneMenu value="#{menuItemBean.menuItem.menu}"
+					converter="#{menuConverter}" id="menuitemMenu" style="width:205px"
+					required="true"
+					requiredMessage="#{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_REQUIRED_MENUITEM_MENU_ERROR_MESSAGE}"
+					label="menuitemMenu">
+					<f:selectItem
+						itemLabel="#{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_MENU_LABEL}"
+						itemDisabled="true" />
+					<f:selectItems value="#{menuItemBean.allMenus}" var="menu"
+						itemValue="#{menu}" itemLabel="#{menu.name}" />
+				</p:selectOneMenu>
+				<p:message for="menuitemMenu" display="text" />
+				<p:outputLabel
+					value="#{msgs.SMART_COMPOUND_MENU_LIST_PAGE_MENU_DESCRIPTION}"
+					for="desc" />
+				<p:inputTextarea id="desc"
+					value="#{menuItemBean.menuItem.description}" style="width:205px"
+					validatorMessage="#{msgs.SMART_COMPOUND_MENU_LIST_PAGE_MENU_DESCRIPTION_VALIDATION}">
+					<f:validateRegex
+						pattern="([a-zA-Z0-9]+[a-zA-Z0-9_ ]+[a-zA-Z0-9]+)*" />
+				</p:inputTextarea>
+				<p:message for="desc" display="text" />
+
+
+
+				<p:commandButton
+					value="#{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_EDIT_BUTTON}"
+					actionListener="#{menuItemBean.updateMenuItem()}"
+					update="editMenuItemForm :menuItemListForm"
+					oncomplete="if(args &amp;&amp; !args.validationFailed) PF('editMenuItemDialog').hide();"></p:commandButton>
+
+				<p:commandButton
+					value="#{msgs.SMART_COMPOUND_MENU_PAGE_MENU_CANCEL_BUTTON}"
+					immediate="true" onclick="PF('editMenuItemDialog').hide();"></p:commandButton>
+			</h:panelGrid>
+		</h:form>
+	</p:dialog>
+
+
+
+</ui:composition>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,176 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<p:dialog id="editFacilityDialog" widgetVar="editFacilityDialog"
+		modal="true" resizable="false" closeOnEscape="true"
+		header="#{msgs.SMART_COMPOUND_FACILITY_PAGE_EDIT_DIALOG}">
+		<p:ajax event="close" resetValues="true" update="editFacilityForm"
+			immediate="true" />
+		<h:form id="editFacilityForm">
+
+			<p:panelGrid columns="3" style="width:800px">
+
+				<p:outputLabel for="facilityType"
+					value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_FACILITY_TYPE}" />
+				<p:selectOneMenu id="facilityType"
+					value="#{facilityBean.selectedFacility.facilityTypeLookup}"
+					required="true" converter="#{lookupConverter}"
+					requiredMessage="#{msgs.SMART_COMPOUND_FACILITY_PAGE_FACILITY_TYPE_REQUIRED}"
+					style="width:170px;">
+					<f:selectItem itemValue=""
+						itemLabel="#{msgs.SMART_COMPOUND_FACILITY_PAGE_FACILITY_TYPE}"
+						itemDisabled="true" />
+					<f:selectItems value="#{facilityBean.facilityTypeLookups}"
+						var="facilityType" itemValue="#{facilityType}"
+						itemLabel="#{facilityType.lookupName}" />
+				</p:selectOneMenu>
+				<p:message for="facilityType" display="text"></p:message>
+
+				<p:outputLabel for="tenantName"
+					value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_TENANT_NAME}" />
+				<p:autoComplete id="tenantName" minQueryLength="3"
+					forceSelection="true"
+					completeMethod="#{facilityBean.completeTenant}"
+					value="#{facilityBean.selectedFacility.tenant}" var="tenant"
+					itemLabel="#{tenant.username}" itemValue="#{tenant}"
+					converter="#{tenantConverter}">
+					<p:ajax process="@this"></p:ajax>
+				</p:autoComplete>
+				<p:message for="tenantName" display="text"></p:message>
+
+
+				<p:outputLabel for="block"
+					value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_BLOCK}" />
+				<p:inputText id="block" required="true" type="number" maxlength="3"
+					requiredMessage="#{msgs.SMART_COMPOUND_FACILITY_PAGE_BLOCK_REQUIRED}"
+					value="#{facilityBean.selectedFacility.block}">
+					<f:validateRegex pattern="[a-zA-Z0-9]+" />
+					<f:validateLength maximum="11" />
+				</p:inputText>
+				<p:message for="block" display="text"></p:message>
+
+				<p:outputLabel for="street"
+					value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_STREET}" />
+				<p:inputText id="street" required="true"
+					requiredMessage="#{msgs.SMART_COMPOUND_FACILITY_PAGE_STREET_REQUIRED}"
+					value="#{facilityBean.selectedFacility.street}"
+					validatorMessage="#{msgs.SMART_COMPOUND_INVALID_DATA}">
+
+					<f:validateRegex pattern="[a-zA-Z0-9]+" />
+					<f:validateLength maximum="11" />
+				</p:inputText>
+				<p:message for="street" display="text"></p:message>
+
+				<p:outputLabel for="buildingNumber"
+					value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_BUILDING_NUMBER}" />
+				<p:inputText id="buildingNumber" type="number"
+					value="#{facilityBean.selectedFacility.buildingNumber}"
+					validatorMessage="#{msgs.SMART_COMPOUND_FACILITY_PAGE_INVALID_ENTRY}">
+
+
+					<f:validateLength maximum="11" />
+					<f:validateLongRange minimum="0" />
+				</p:inputText>
+				<p:message for="buildingNumber" display="text"></p:message>
+
+				<p:outputLabel for="floorNumber"
+					value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_FLOOR_NUMBER}" />
+				<p:inputText id="floorNumber" type="number"
+					value="#{facilityBean.selectedFacility.floorNumber}"
+					validatorMessage="#{msgs.SMART_COMPOUND_FACILITY_PAGE_INVALID_ENTRY}">
+
+
+					<f:validateLength maximum="11" />
+					<f:validateLongRange minimum="0" />
+				</p:inputText>
+				<p:message for="floorNumber" display="text"></p:message>
+
+				<p:outputLabel for="facilityNumber"
+					value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_FACILITY_NUMBER}" />
+				<p:inputText required="true" id="facilityNumber" type="number"
+					requiredMessage="#{msgs.SMART_COMPOUND_FACILITY_PAGE_FACILITY_NUMBER_REQUIRED}"
+					value="#{facilityBean.selectedFacility.facilityNumber}"
+					validatorMessage="#{msgs.SMART_COMPOUND_FACILITY_PAGE_INVALID_ENTRY}">
+					<f:validateLength maximum="11" />
+					<f:validateLongRange minimum="0" />
+
+
+				</p:inputText>
+				<p:message for="facilityNumber" display="text"></p:message>
+
+				<p:outputLabel for="area"
+					value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_AREA}" />
+				<p:panelGrid>
+					<p:inputText id="area"
+						value="#{facilityBean.selectedFacility.area}"
+						validatorMessage="#{msgs.SMART_COMPOUND_INVALID_DATA}"
+						type="number">
+
+						<f:validateLength maximum="11" />
+					</p:inputText>
+					<p:outputLabel value=" M " style="padding:10px;">
+						<sup>2</sup>
+					</p:outputLabel>
+				</p:panelGrid>
+				<p:message for="area" display="text"></p:message>
+				<ui:remove>  
+				<p:outputLabel for="status"
+					value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_STATUS}" />
+				<p:selectOneMenu id="status" converter="#{lookupConverter}"
+					value="#{facilityBean.selectedFacility.statusLookup}"
+					style="width:170px;">
+					<f:selectItem itemValue=""
+						itemLabel="#{msgs.SMART_COMPOUND_FACILITY_PAGE_STATUS}"
+						itemDisabled="true" />
+					<f:selectItems value="#{facilityBean.facilityStatusLookups}"
+						var="facilityStatus" itemValue="#{facilityStatus}"
+						itemLabel="#{facilityStatus.lookupName}" />
+				</p:selectOneMenu>
+				<p:message for="status" display="text"></p:message>
+				
+
+					<p:outputLabel for="isForRent"
+						value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_IS_FOR_RENT}" />
+					<p:selectBooleanButton id="isForRent"
+						value="#{facilityBean.facilityForRent}"
+						onLabel="#{msgs.SMART_COMPOUND_FACILITY_PAGE_YES_LABEL}"
+						offLabel="#{msgs.SMART_COMPOUND_FACILITY_PAGE_NO_LABEL}"
+						onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:80px" />
+					<p:message for="isForRent" display="text" />
+				</ui:remove>
+
+				<p:outputLabel for="description"
+					value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_DESCRIPTION}" />
+				<p:inputTextarea id="description"
+					value="#{facilityBean.selectedFacility.description}" cols="40"
+					validatorMessage="#{msgs.SMART_COMPOUND_INVALID_DATA}">
+					<f:validateLength maximum="100" />
+				</p:inputTextarea>
+				<p:message for="description" display="text"></p:message>
+
+
+			</p:panelGrid>
+			<center>
+				<p:panelGrid columns="2" columnClasses="noBorder">
+					<p:commandButton actionListener="#{facilityBean.insertFacility}"
+						update="editFacilityForm :facilityListForm"
+						oncomplete="if(args &amp;&amp; !args.validationFailed) if(handleDialogSubmit(xhr,status,args)) PF('editFacilityDialog').hide()"
+						value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_EDIT_BUTTON}" />
+					<p:commandButton onclick="PF('editFacilityDialog').hide()"
+						immediate="true"
+						value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_CANCEL_BUTTON}" />
+				</p:panelGrid>
+			</center>
+		</h:form>
+	</p:dialog>
+</ui:composition>
+
+
+
+
+
+
+

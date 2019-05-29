@@ -1,0 +1,138 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui"
+	template="/WEB-INF/template/master.xhtml">
+	<ui:define name="title">#{msgs.SMART_COMPOUND_CALC_BILLING_PAGE}</ui:define>
+	<ui:define name="contentTitle">#{msgs.SMART_COMPOUND_CALC_BILLING_PAGE_TITLE}</ui:define>
+
+
+	<ui:define name="content">
+		<h:form id="createBillingForm">
+		#{enterTenantUsagesBean.checkCompoundBillCycleStatus()}
+			<p:messages autoUpdate="true" showDetail="false" display="text"></p:messages>
+			<p:panelGrid rendered="#{enterTenantUsagesBean.flag}">
+				<p:row>
+					<p:column>
+						<p:outputLabel for="calcBillingTenant"
+							value="#{msgs.SMART_COMPOUND_CALC_BILLING_PAGE_TENANT_NAME}" />
+					</p:column>
+					<p:column>
+						<p:autoComplete
+							completeMethod="#{enterTenantUsagesBean.completeTenant}"
+							forceSelection="true" id="calcBillingTenant" required="true"
+							minQueryLength="3"
+							requiredMessage="#{msgs.SMART_COMPOUND_CALC_BILLING_PAGE_TENANT_REQUIRED_MESSAGE}"
+							value="#{enterTenantUsagesBean.tenant}" var="tenant"
+							itemLabel="#{tenant.username}" itemValue="#{tenant}"
+							converter="#{tenantConverter}">
+							<p:ajax event="itemSelect"
+								listener="#{enterTenantUsagesBean.completeFacilities}"
+								update="@form" />
+						</p:autoComplete>
+						<p:message for="calcBillingTenant" />
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						<p:outputLabel for="calcBillingFacility"
+							value="#{msgs.SMART_COMPOUND_CALC_BILLING_PAGE_FACILITY_NUMBER}" />
+					</p:column>
+					<p:column>
+
+						<p:selectOneMenu required="true" id="calcBillingFacility"
+							converter="#{facilityConverter}"
+							disabled="#{ empty enterTenantUsagesBean.tenant.username}"
+							value="#{enterTenantUsagesBean.facility}"
+							requiredMessage="#{msgs.SMART_COMPOUND_CALC_BILLING_PAGE_FACILITY_REQUIRED_MESSAGE}">
+							<f:selectItem itemLabel="Select one" itemValue="#{null}" />
+							<f:selectItems value="#{enterTenantUsagesBean.facilities}"
+								var="facility" itemValue="#{facility}"
+								itemLabel="#{facility.buildingNumber} #{facility.facilityNumber} #{facility.facilityNumber}" />
+
+							<p:ajax event="change"
+								listener="#{enterTenantUsagesBean.completeServices}"
+								update="@form" />
+						</p:selectOneMenu>
+						<p:message for="calcBillingFacility" />
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column medium-screen="2">
+						<p:outputLabel
+							value="#{msgs.SMART_COMPOUND_CALC_BILLING_PAGE_SERVICE_NAME}"
+							for="calcBillingService" />
+					</p:column>
+
+					<p:column medium-screen="4">
+
+						<p:selectOneMenu required="true"
+							value="#{enterTenantUsagesBean.service}"
+							converter="#{serviceConverter}"
+							disabled="#{ empty enterTenantUsagesBean.facility.id}"
+							requiredMessage="#{msgs.SMART_COMPOUND_CALC_BILLING_PAGE_SERVICE_REQUIRED_MESSAGE}"
+							id="calcBillingService">
+							<f:selectItem itemLabel="Select one" itemValue="#{null}" />
+							<f:selectItems value="#{enterTenantUsagesBean.services}"
+								var="service" itemLabel="#{service.serviceName}"
+								itemValue="#{service}" />
+							<p:ajax event="change" update="@form"
+								listener="#{enterTenantUsagesBean.getTenantOrder}" />
+						</p:selectOneMenu>
+						<p:message for="calcBillingService" />
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						<p:outputLabel id="meterLastReading"
+							value="#{msgs.SMART_COMPOUND_CALC_BILLING_PAGE_METER_LAST_READING}" />
+					</p:column>
+					<p:column>
+						<h:outputText
+							value="#{enterTenantUsagesBean.billCalculation.previousMeterReading}" />
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						<p:outputLabel
+							value="#{msgs.SMART_COMPOUND_CALC_BILLING_PAGE_CURRENT_READING}"
+							for="calcBillingCurrentMeterReading" />
+					</p:column>
+					<p:column>
+						<p:inputText type="number" id="calcBillingCurrentMeterReading"
+							maxlength="12"
+							value="#{enterTenantUsagesBean.billCalculation.currentMeterReading}"
+							required="true"
+							requiredMessage="#{msgs.SMART_COMPOUND_CALC_BILLING_PAGE_CURRENT_METER_READING_REQUIRED_MESSAGE}"
+							validatorMessage="#{msgs.SMART_COMPOUND_CALC_BILLING_PAGE_CURRENT_METER_READING_INVALID_LENGTH_MESSAGE}">
+						
+						</p:inputText>
+						<p:message for="calcBillingCurrentMeterReading"
+							id="msgCalcBillingCurrentMeterReading" />
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column medium-screen="2">
+						<p:commandButton
+							actionListener="#{enterTenantUsagesBean.updateBillCalculation}"
+							update="@form"
+							value="Save" />
+					</p:column>
+					<p:column>
+						<p:commandButton immediate="true"
+							actionListener="#{enterTenantUsagesBean.resetBill()}"
+							update=":createBillingForm"
+							value="#{msgs.SMART_COMPOUND_CALC_BILLING_PAGE_RESET_BUTTON}" />
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

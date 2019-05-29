@@ -1,1 +1,54 @@
 <!-- out custom css will be loaded here for example to override something or make our custom style -->
+.ui-menu
+{
+	background:transparent !important;
+	color:white !important;
+}
+
+.ui-menu.ui-widget .ui-menu-list .ui-widget-header {
+	background-color:  transparent !important; 
+	color: white !important;
+	font-weight: bold !important;
+	font-size: medium !important;
+	font-style: italic !important;
+
+	}
+	
+	.ui-icon-triangle-1-s
+	{
+	
+		color: red !important;
+	}
+	
+	.ui-message-error
+	{
+	 background-color:  transparent !important; 
+	 border : none !important;
+	
+	}
+	
+	.ui-state-error
+	{
+		 background-color:  transparent !important; 
+	
+	}
+	
+	.ui-widget {  
+		font-size: medium !important;
+	}
+	    
+	.ui-menuitem-text
+	{
+	color:#b8c7ce !important;
+	}
+	
+	.noBorder tr td
+	{
+		border:none !important;
+	
+	}
+	.noBorder 
+	{
+		border:none !important;
+	
+	}

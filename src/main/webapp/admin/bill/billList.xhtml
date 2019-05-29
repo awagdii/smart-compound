@@ -1,0 +1,119 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+	<h:form id="BillListForm">
+		<p:dataTable var="bill" rows="10" paginator="true"
+			value="#{billBean.lazyBillModel}" resizableColumns="true"
+			draggableColumns="true" rowKey="#{bill.id}"
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			rowsPerPageTemplate="5,10,15" selectionMode="single" dynamic="true"
+			selection="#{billBean.selectedBill}" id="billTable" 
+			widgetVar="billTable" lazy="true">
+
+			<p:ajax event="rowSelect" update="@form" />
+			<p:ajax event="rowToggle" listener="#{billBean.billExpanded}" update="detailsPanel"
+				 />
+
+			<p:column style="width:50px">
+				<p:rowToggler />
+			</p:column>         
+			<p:column headerText="#{msgs.SMART_COMPOUND_BILL_PAGE_BILL_NUMBER}"
+					filterBy="#{bill.billNumber}" sortBy="#{bill.billNumber}">
+					<h:outputText value="#{bill.billNumber}" />
+				</p:column>
+				
+				<p:column headerText="#{msgs.SMART_COMPOUND_BILL_PAGE_ISSUE_DATE}"
+					filterBy="#{bill.issueDate}" sortBy="#{bill.issueDate}"
+					filterMatchMode="gt">
+					<h:outputText value="#{bill.issueDate}" />
+					<f:facet name="filter">
+						<p:calendar pattern="MM/dd/yyyy">
+							<p:ajax event="dateSelect" oncomplete="PF('billTable').filter()" />
+						</p:calendar>
+					</f:facet>
+				</p:column>
+
+				<p:column headerText="#{msgs.SMART_COMPOUND_BILL_PAGE_BILL_FROM}"
+					filterBy="#{bill.billFrom}" sortBy="#{bill.billFrom}"
+					filterMatchMode="gt">
+					<h:outputText value="#{bill.billFrom}" />
+					<f:facet name="filter">
+						<p:calendar pattern="MM/dd/yyyy">
+							<p:ajax event="dateSelect" oncomplete="PF('billTable').filter()" />
+						</p:calendar>
+					</f:facet>
+				</p:column>
+
+				<p:column headerText="#{msgs.SMART_COMPOUND_BILL_PAGE_BILL_TO}"
+					filterBy="#{bill.billTo}" sortBy="#{bill.billTo}"
+					filterMatchMode="gt">
+					<h:outputText value="#{bill.billTo}" />
+					<f:facet name="filter">
+						<p:calendar pattern="MM/dd/yyyy">
+							<p:ajax event="dateSelect" oncomplete="PF('billTable').filter()" />
+						</p:calendar>
+					</f:facet>
+				</p:column>
+
+				<p:column
+					headerText="#{msgs.SMART_COMPOUND_BILL_PAGE_TENANT_NAME}"
+					filterBy="#{bill.tenant.username}" sortBy="#{bill.tenant.username}"
+					>
+					<h:outputText value="#{bill.tenant.username}" />
+				
+				</p:column>
+				
+
+			<p:rowExpansion>
+				<p:panelGrid id="detailsPanel" style="width:100%">
+					<p:dataTable var="billDetails" rows="10"
+						value="#{billBean.billDetailsforSelectedBill}"
+						resizableColumns="true" draggableColumns="true"
+						rowKey="#{billDetails.id}" dynamic="true"
+						widgetVar="billDetailsTable" id="billDetails"
+						rowsPerPageTemplate="5,10,15">
+
+
+						<p:column
+							headerText="#{msgs.SMART_COMPOUND_TENANT_BILL_PAGE_SERVICE}">
+							<h:outputText value="#{billDetails.service.serviceName}" />
+						</p:column>
+						<p:column
+							headerText="#{msgs.SMART_COMPOUND_TENANT_BILL_PAGE_FACILITY}">
+							<h:outputText value="#{billDetails.facility.buildingNumber} #{billDetails.facility.floorNumber} #{billDetails.facility.facilityNumber}" />
+						</p:column>
+						<p:column
+							headerText="#{msgs.SMART_COMPOUND_TENANT_BILL_PAGE_INSTLATION_PRICE}">
+							<h:outputText value="#{billDetails.installation}" />
+						</p:column>
+						<p:column headerText="#{msgs.SMART_COMPOUND_TENANT_BILL_PAGE_NRC}">
+							<h:outputText value="#{billDetails.nrcValue}" />
+						</p:column>
+						<p:column headerText="#{msgs.SMART_COMPOUND_TENANT_BILL_PAGE_MRC}">
+							<h:outputText value="#{billDetails.mrcValue}" />
+						</p:column>
+
+						<p:column headerText="#{msgs.SMART_COMPOUND_TENANT_BILL_USAGE}">
+							<h:outputText value="#{billDetails.usageValue}" />
+						</p:column>
+
+						<p:column
+							headerText="#{msgs.SMART_COMPOUND_TENANT_BILL_PAGE_TOTAL_AMOUNT}">
+							<h:outputText value="#{billDetails.totalAmount}" />
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+
+			</p:rowExpansion>
+		</p:dataTable>
+		<ui:remove>
+		<p:column>
+			<p:commandButton value="print Bill  Details"
+				actionListener="#{billBean.printBill()}"></p:commandButton>
+		</p:column>
+</ui:remove>
+	</h:form>
+
+</ui:composition>

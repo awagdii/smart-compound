@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<p:dialog id="createSystemConfigurationDialog"
+		widgetVar="createSystemConfigurationDialog" modal="true"
+		resizable="false" closeOnEscape="true"
+		header="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_PAGE_CREATE_HEADER}">
+		<p:ajax event="close" resetValues="true" update="createFacilityForm"
+			immediate="true" />
+		<h:form id="createSystemConfigurationForm">
+
+			<p:panelGrid>
+
+				<p:row>
+					<p:column>
+						<p:outputLabel for="systemConfigurationKey"
+							value="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_PAGE_KEY}" />
+					</p:column>
+					<p:column>
+						<p:inputText required="true" id="systemConfigurationKey"
+							value="#{systemConfigurationBean.selectedSystemConfiguration.key}"
+							requiredMessage="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_PAGE_KEY_REQUIRED_MESSAGE} " />
+						<p:message for="systemConfigurationKey" />
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column medium-screen="2">
+						<p:outputLabel for="systemConfigurationValue"
+							value="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_LIST_PAGE_VALUE}" />
+					</p:column>
+					<p:column medium-screen="4">
+						<p:inputText required="true" id="systemConfigurationValue"
+							value="#{systemConfigurationBean.selectedSystemConfiguration.value}"
+							requiredMessage="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_PAGE_VALUE_REQUIRED_MESSAGE} " />
+						<p:message for="systemConfigurationValue" />
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<p:commandButton
+							actionListener="#{systemConfigurationBean.insertSystemConfiguration()}"
+							update=":systemConfigurationListForm :createSystemConfigurationForm "
+							oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('createSystemConfigurationDialog').hide()"
+							value="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_PAGE_SUBMIT_BUTTON}"
+							look="success" style="width:100%">
+						</p:commandButton>
+					</p:column>
+					<p:column>
+						<p:commandButton immediate="true"
+							value="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_PAGE_CANCEL_BUTTON}"
+							onclick="PF('createSystemConfigurationDialog').hide()" />
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+		</h:form>
+
+
+	</p:dialog>
+
+
+</ui:composition>

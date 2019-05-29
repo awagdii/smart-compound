@@ -1,0 +1,186 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+	<p:dialog id="viewCompoundDialog" widgetVar="viewCompoundDialog"
+		style="margin-top:10px;" height="100%" width="70%" modal="true"
+		resizable="false" closeOnEscape="true" header="Compound Information">
+		<h:form id="viewCompoundForm" widgetVar="viewCompoundForm">
+			<center>
+
+				<p:panelGrid style="width: 100%; height:100%">
+					<p:row>
+						<p:column medium-screen="2">
+							<p:outputLabel for="compoundName"
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_NAME}" />
+						</p:column>
+
+						<p:column medium-screen="4">
+
+							<h:outputText id="compoundName"
+								value="#{compoundBean.selectedCompound.compoundName}">
+							</h:outputText>
+							<p:message for="compoundName" id="compoundNameMsg" display="text"></p:message>
+						</p:column>
+						<ui:remove>
+							<p:column medium-screen="4" colspan="2" rowspan="9">
+								<p:gmap id="gmap"
+									rendered="#{not empty compoundBean.selectedCompound.lattitude and not empty compoundBean.selectedCompound.longtude}"
+									center="#{compoundBean.selectedCompound.lattitude},#{compoundBean.selectedCompound.longtude}"
+									zoom="#{compoundBean.zoom}" type="HYBRID"
+									style="width:100%;height:400px"
+									model="#{compoundBean.selectedCompoundModel}" widgetVar="map">
+									<p:ajax event="stateChange"
+										listener="#{compoundBean.onStateChange}" />
+									<p:ajax event="pointSelect" immediate="true"
+										listener="#{compoundBean.onPointSelect}"
+										update="gmap country city" />
+								</p:gmap>
+
+
+							</p:column>
+						</ui:remove>
+
+						<p:column medium-screen="2">
+							<p:outputLabel for="ownerName"
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_OWNER_NAME}" />
+						</p:column>
+						<p:column>
+							<h:outputText id="ownerName"
+								value="#{compoundBean.selectedCompound.ownerName}">
+							</h:outputText>
+							<p:message id="ownerNameMsg" for="ownerName"></p:message>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column medium-screen="2">
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_FIRST_EMAIL}"
+								for="firstEmail" />
+						</p:column>
+						<p:column medium-screen="4">
+							<h:outputText id="firstEmail"
+								value="#{compoundBean.selectedCompound.firstEmail}">
+							</h:outputText>
+							<p:message id="firstEmailMsg" for="firstEmail"></p:message>
+						</p:column>
+						<p:column medium-screen="2">
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_SECOND_EMAIL}"
+								for="secondEmail" />
+						</p:column>
+
+						<p:column medium-screen="4">
+							<h:outputText id="secondEmail"
+								value="#{compoundBean.selectedCompound.secondEmail}">
+
+							</h:outputText>
+							<p:message id="secondEmailMsg" for="secondEmail"></p:message>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column medium-screen="2">
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_THIRD_EMAIL}"
+								for="thirdEmail" />
+						</p:column>
+						<p:column medium-screen="4">
+							<h:outputText id="thirdEmail"
+								value="#{compoundBean.selectedCompound.thirdEmail}">
+							</h:outputText>
+							<p:message id="thirdEmailMsg" for="thirdEmail"></p:message>
+						</p:column>
+						<p:column medium-screen="2">
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_FIRST_PHONE_NUMBER}"
+								for="firstPhoneNumber" />
+						</p:column>
+						<p:column medium-screen="4">
+							<h:outputText id="firstPhoneNumber"
+								value="#{compoundBean.selectedCompound.firstPhoneNumber}">
+							</h:outputText>
+							<p:message id="firstPhoneNumberMsg" for="firstPhoneNumber"></p:message>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column medium-screen="2">
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_SECOND_PHONE_NUMBER}"
+								for="secondPhoneNumber" />
+						</p:column>
+						<p:column medium-screen="4">
+							<h:outputText id="secondPhoneNumber"
+								value="#{compoundBean.selectedCompound.secondPhoneNumber}">
+							</h:outputText>
+							<p:message id="secondPhoneNumberMsg" for="secondPhoneNumber"></p:message>
+						</p:column>
+						<p:column medium-screen="2">
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_THIRD_PHONE_NUMBER}"
+								for="thirdPhoneNumber" />
+						</p:column>
+						<p:column medium-screen="4">
+							<h:outputText id="thirdPhoneNumber"
+								value="#{compoundBean.selectedCompound.thirdPhoneNumber}">
+							</h:outputText>
+							<p:message id="thirdPhoneNumberMsg" for="thirdPhoneNumber"></p:message>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column medium-screen="2">
+							<p:outputLabel for="country"
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_COUNTRY}" />
+						</p:column>
+						<p:column medium-screen="4">
+							<h:outputText id="country"
+								value="#{compoundBean.selectedCompound.country}">
+							</h:outputText>
+							<p:message id="selectedCountryMsg" for="country"></p:message>
+						</p:column>
+						<p:column medium-screen="2">
+
+							<p:outputLabel value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_CITY}"
+								for="city" />
+						</p:column>
+						<p:column medium-screen="4">
+							<h:outputText id="city"
+								value="#{compoundBean.selectedCompound.city}">
+							</h:outputText>
+
+							<p:message id="selectedCityMsg" for="city"></p:message>
+						</p:column>
+
+
+
+					</p:row>
+
+
+
+
+				</p:panelGrid>
+
+				<p:panelGrid>
+					<p:row>
+						<p:column colspan="4">
+							<center>
+								<p:commandButton oncomplete="PF('viewCompoundDialog').hide()"
+									immediate="true"
+									value="#{msgs.SMART_COMPOUND_ORDER_PAGE_HIDE_BUTTON}"
+									style="width:130px;" />
+							</center>
+						</p:column>
+					</p:row>
+
+				</p:panelGrid>
+			</center>
+
+		</h:form>
+		<p:ajax update=":CompoundListForm"></p:ajax>
+	</p:dialog>
+
+</ui:composition>

@@ -1,0 +1,374 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<p:dialog id="createEmployeeDialog" widgetVar="createEmployeeDialog"
+		header="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_CREATE_EMPLOYEE}"
+		onHide="PF('wiz').loadStep('account', true)" modal="true"
+		resizable="false" closeOnEscape="true" width="1100" height="400">
+		<p:ajax event="close" update=":createEmployeeForm" immediate="true" resetValues="true" />
+		<h:form id="createEmployeeForm">
+
+			<p:wizard widgetVar="wiz">
+
+
+				<p:tab id="account"
+					title="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_CREATE_EMPLOYEE_TAB_ACCOUNT_TITLE}">
+					<p:panel
+						header="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_CREATE_EMPLOYEE_ACCOUNT_PANEL_HEADER}">
+						<h:panelGrid columns="5" styleClass="employeePanel" >
+
+							<p:outputLabel 
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_COMPOUND}"
+								style="color:black;font-size: 100%;"
+								rendered="#{ employeeBean.isSuperAdmin()}" />
+							<p:spacer width="25" />
+
+							<p:selectOneMenu id="compounds"
+								rendered="#{ employeeBean.isSuperAdmin()}"
+								value="#{employeeBean.selectedCompound}" required="true"
+								requiredMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_COMPOUND_REQ}"
+								converter="#{compoundConverter}">
+								<p:ajax listener="#{employeeBean.onCompoundChange()}"
+									update="createEmployeeForm createEmployeeForm:userNameAtDomain" />
+								<f:selectItem itemValue="#{null}"
+									itemLabel="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_COMPOUND}"
+									itemDisabled="true" />
+								<f:selectItems value="#{employeeBean.compounds}" var="compound"
+									itemValue="#{compound}" itemLabel="#{compound.compoundName}" />
+							</p:selectOneMenu>
+
+							<p:message for="compounds"
+								rendered="#{ employeeBean.isSuperAdmin()}" />
+							<p:spacer width="5" rendered="#{ employeeBean.isSuperAdmin()}"  />
+
+							<p:outputLabel for="username"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_USERNAME}" />
+															<p:spacer width="25" />
+								
+							<p:inputText required="true" id="username"
+								requiredMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_USERNAME_REQUIRED}"
+								value="#{employeeBean.selectedEmployee.username}"
+								disabled="#{empty employeeBean.selectedCompound}"
+								validator="#{employeeBean.checkUserName}"
+								validatorMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_USERNAME_INVALID}">
+								<f:validateRegex
+									pattern="^[A-Za-z]*$|^[A-Za-z_][A-Za-z_]*[A-Za-z]$"></f:validateRegex>
+								<p:ajax event="blur" update="userNameMsg" />
+							</p:inputText>
+
+							<p:outputLabel id="userNameAtDomain"
+								rendered="#{employeeBean.isNotSuperAdmin()}"
+								value="@ #{employeeBean.currentCompound.domain}" />
+							<p:outputLabel id="userNameAtDomain1"
+								rendered="#{employeeBean.isSuperAdmin() }"
+								value="@ #{employeeBean.selectedCompound.domain}" />
+							<p:message id="userNameMsg" for="username" />
+
+							<p:outputLabel for="password"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_PASSWORD}" />
+							<p:spacer width="25" />
+
+							<p:password required="true" id="password" redisplay="true"
+								requiredMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_PASSWORD_REQUIRED}"
+								value="#{employeeBean.selectedEmployee.password}"
+								validatorMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_PASSWORD_INVALID}">
+
+								<f:validateLength minimum="6" maximum="25" />
+							</p:password>
+
+							<p:message for="password" />
+							<p:spacer width="5" />
+
+							<p:outputLabel for="firstName"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_FIRSTNAME}" />
+							<p:spacer width="25" />
+
+							<p:inputText required="true" id="firstName"
+								requiredMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_FIRSTNAME_REQUIRED}"
+								value="#{employeeBean.selectedEmployee.firstName}"
+								validatorMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_FIRSTNAME_INVALID}">
+								<f:validateRegex pattern="^[a-zA-Z]+$" />
+								<f:validateLength maximum="12" />
+							</p:inputText>
+
+							<p:message for="firstName" />
+							<p:spacer width="5" />
+
+							<p:outputLabel for="middleName"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_MIDDLENAME}" />
+							<p:spacer width="25" />
+
+							<p:inputText id="middleName"
+								value="#{employeeBean.selectedEmployee.middleName}"
+								validatorMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_MIDDLENAME_INVALID}">
+								<f:validateRegex
+									pattern="^[A-Za-z]*$|^[A-Za-z][A-Za-z ]*[A-Za-z]$"></f:validateRegex>
+								<f:validateLength maximum="12" />
+							</p:inputText>
+
+							<p:message for="middleName" />
+							<p:spacer width="5" />
+
+							<p:outputLabel for="lastName"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_LASTNAME}" />
+							<p:spacer width="25" />
+
+							<p:inputText required="true" id="lastName"
+								requiredMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_LASTNAME_REQUIRED}"
+								value="#{employeeBean.selectedEmployee.lastName}"
+								validatorMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_LASTNAME_INVALID}">
+								<f:validateRegex
+									pattern="^[A-Za-z]*$|^[A-Za-z][A-Za-z ]*[A-Za-z]$"></f:validateRegex>
+								<f:validateLength maximum="12" />
+							</p:inputText>
+
+							<p:message for="lastName" />
+							<p:spacer width="5" />
+
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+				<p:tab id="personal"
+					title="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_CREATE_EMPLOYEE_TAB_PERSONAL_TITLE}">
+					<p:panel
+						header="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_CREATE_EMPLOYEE_PERSONAL_PANEL_HEADER}">
+
+						<h:panelGrid columns="4">
+
+							<p:outputLabel for="salutation"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_SALUATION}" />
+							<p:spacer width="25" />
+							<p:selectOneMenu style="width:100%" required="true"
+								id="salutation"
+								requiredMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_SALUTATION_REQUIRED}"
+								value="#{employeeBean.selectedEmployee.salutaion}"
+								converter="#{lookupConverter}">
+								<f:selectItems value="#{employeeBean.salutationLookup}"
+									var="lookup" itemLabel="#{lookup.lookupName}"
+									itemValue="#{lookup}" />
+							</p:selectOneMenu>
+							<p:message for="salutation" />
+
+							<p:outputLabel for="gender"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_GENDER}" />
+							<p:spacer width="25" />
+							<p:selectOneMenu style="width:100%" required="true" id="gender"
+								requiredMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_GENDER_REQUIRED}"
+								value="#{employeeBean.selectedEmployee.genderLookup}"
+								converter="#{lookupConverter}">
+								<f:selectItems value="#{employeeBean.genderLookup}" var="lookup"
+									itemLabel="#{lookup.lookupName}" itemValue="#{lookup}" />
+
+							</p:selectOneMenu>
+
+							<p:message for="gender" />
+
+							<p:outputLabel for="identificationType"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_IDENTIFICATION_TYPE}" />
+							<p:spacer width="25" />
+							<p:selectOneMenu style="width:100px" required="true"
+								id="identificationType"
+								requiredMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_IDENTIFICATION_TYPE_REQUIRED}"
+								value="#{employeeBean.selectedEmployee.identificationTypeLookup}"
+								converter="#{lookupConverter}">
+
+								<f:selectItem itemValue="#{null}"
+									itemLabel="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_IDENTIFICATION_TYPE_SELECT}"
+									itemDisabled="true" />
+								<f:selectItems value="#{employeeBean.identificationTypeLookup}"
+									var="lookup" itemLabel="#{lookup.lookupName}"
+									itemValue="#{lookup}" />
+								<p:ajax update="@form" />
+							</p:selectOneMenu>
+
+							<p:message for="identificationType" />
+
+							<p:outputLabel for="passportIdentificationNumber"
+								rendered="#{employeeBean.selectedEmployee.identificationTypeLookup.lookupName eq 'Passport'}"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_PASSPORT_IDENTIFICATION_NUMBER}" />
+							<p:spacer width="25"
+								rendered="#{employeeBean.selectedEmployee.identificationTypeLookup.lookupName eq 'Passport'}" />
+							<p:inputText required="true" id="passportIdentificationNumber"
+								rendered="#{employeeBean.selectedEmployee.identificationTypeLookup.lookupName eq 'Passport'}"
+								requiredMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_IDENTIFICATION_NUMBER_REQUIRED}"
+								value="#{employeeBean.selectedEmployee.identificationNumber}"
+								validatorMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_IDENTIFICATION_NUMBER_PASSPORT_INVALID}">
+								<f:validateRegex pattern="^(?:[a-zA-Z]{1}[0-9]{9})$" />
+							</p:inputText>
+							<p:message for="passportIdentificationNumber"
+								rendered="#{employeeBean.selectedEmployee.identificationTypeLookup.lookupName eq 'Passport'}" />
+
+
+							<p:outputLabel for="nationalIDIdentificationNumber"
+								rendered="#{employeeBean.selectedEmployee.identificationTypeLookup.lookupName eq 'National ID'}"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_NATIONAL_ID_IDENTIFICATION_NUMBER}" />
+							<p:spacer width="25"
+								rendered="#{employeeBean.selectedEmployee.identificationTypeLookup.lookupName eq 'National ID'}" />
+							<p:inputText required="true" id="nationalIDIdentificationNumber"
+								rendered="#{employeeBean.selectedEmployee.identificationTypeLookup.lookupName eq 'National ID'}"
+								requiredMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_IDENTIFICATION_NUMBER_REQUIRED}"
+								value="#{employeeBean.selectedEmployee.identificationNumber}"
+								validatorMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_IDENTIFICATION_NUMBER_NATIONAL_ID_INVALID}">
+								<f:validateRegex pattern="^(?:[0-9]{14})$" />
+							</p:inputText>
+							<p:message for="nationalIDIdentificationNumber"
+								rendered="#{employeeBean.selectedEmployee.identificationTypeLookup.lookupName eq 'National ID'}" />
+
+
+
+						
+							<p:outputLabel for="address"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_ADDRESS}" />
+							<p:spacer width="25" />
+							<p:inputTextarea required="true" id="address"
+								requiredMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_ADDRESS_REQUIRED}"
+								value="#{employeeBean.selectedEmployee.address}"
+								validatorMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_ADDRESS_INVALID}">
+								<f:validateLength maximum="100" />
+							</p:inputTextarea>
+							<p:message for="address" />
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+				<p:tab id="contact"
+					title="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_CREATE_EMPLOYEE_TAB_CONTACT_TITLE}">
+					<p:panel
+						header="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_CREATE_EMPLOYEE_CONTACT_PANEL_HEADER}">
+
+						<h:panelGrid columns="3">
+							<p:outputLabel for="email"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_EMAIL}" />
+
+							<p:inputText id="email"
+								value="#{employeeBean.selectedEmployee.email}"
+								validatorMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_EMAIL_INVALID}">
+								<f:validateRegex
+									pattern="(^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$)?" />
+								<f:validateLength maximum="30" />
+							</p:inputText>
+
+							<p:message for="email" />
+
+							<p:outputLabel for="phoneNumber1"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_PHONE_NUMBER_1}" />
+
+							<p:inputText id="phoneNumber1"
+								value="#{employeeBean.selectedEmployee.phoneNumber1}"
+								validatorMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_PHONE_NUMBER_1_INVALID}">
+								<f:validateRegex pattern="^(?:[0-9]{8}|[0-9]{10}|)$" />
+							</p:inputText>
+							<p:message for="phoneNumber1" />
+
+							<p:outputLabel for="phoneNumber2"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_PHONE_NUMBER_2}" />
+
+							<p:inputText id="phoneNumber2"
+								value="#{employeeBean.selectedEmployee.phoneNumber2}"
+								validatorMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_PHONE_NUMBER_2_INVALID}">
+								<f:validateRegex pattern="^(?:[0-9]{8}|[0-9]{10}|)$" />
+							</p:inputText>
+
+							<p:message for="phoneNumber2" />
+
+							<p:outputLabel for="mobileNumber1"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_MOBILE_NUMBER_1}" />
+
+							<p:inputText id="mobileNumber1"
+								value="#{employeeBean.selectedEmployee.mobileNumber1}"
+								validatorMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_MOBILE_NUMBER_1_INVALID}">
+								<f:validateRegex pattern="^(?:[0-9]{11}|)$" />
+							</p:inputText>
+
+							<p:message for="mobileNumber1" />
+
+							<p:outputLabel for="mobileNumber2"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_MOBILE_NUMBER_2}" />
+
+							<p:inputText id="mobileNumber2"
+								value="#{employeeBean.selectedEmployee.mobileNumber2}"
+								validatorMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_MOBILE_NUMBER_2_INVALID}">
+								<f:validateRegex pattern="^(?:[0-9]{11}|)$" />
+							</p:inputText>
+
+							<p:message for="mobileNumber2" />
+
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+				<p:tab id="job"
+					title="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_CREATE_EMPLOYEE_TAB_JOB_TITLE}">
+					<p:panel
+						header="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_CREATE_EMPLOYEE_JOB_PANEL_HEADER}">
+
+						<h:panelGrid columns="3">
+							<p:outputLabel for="jobb"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_JOB}" />
+
+							<p:inputText required="true" id="jobb"
+								requiredMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_JOB_REQUIRED}"
+								value="#{employeeBean.selectedEmployee.job}"
+								validatorMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_JOB_INVALID}">
+								<f:validateRegex
+									pattern="^[A-Za-z]*$|^[A-Za-z][A-Za-z ]*[A-Za-z]$"></f:validateRegex>
+								<f:validateLength maximum="30" />
+							</p:inputText>
+							<p:message for="jobb" />
+
+							<p:outputLabel for="popup"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_HIRE_DATE}" />
+
+							<p:calendar id="popup" maxdate="calwidget.today()"
+								widgetVar="calwidget"
+								value="#{employeeBean.selectedEmployee.hireDate}" />
+
+							<p:message for="popup" />
+
+							<p:outputLabel for="menu"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_GROUPS}" />
+
+							<p:selectCheckboxMenu id="menu" converter="#{groupConverter}"
+								required="true" value="#{employeeBean.selectedGroups}"
+								label="Groups"
+								requiredMessage="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_GROUPS_REQUIRED}"
+								filter="true" filterMatchMode="startsWith"
+								panelStyle="width:250px"
+								disabled="#{empty employeeBean.selectedCompound and employeeBean.isSuperAdmin()}">
+								<p:ajax event="toggleSelect" process="@this" />
+								<f:selectItems value="#{employeeBean.groups}" var="group"
+									itemValue="#{group}" itemLabel="#{group.groupName}" />
+							</p:selectCheckboxMenu>
+
+							<p:message for="menu" />
+
+						</h:panelGrid>
+						<center>
+							<p:commandButton actionListener="#{employeeBean.insertEmployee}"
+								update=":employeeListForm :createEmployeeForm"
+								oncomplete="if(args &amp;&amp; !args.validationFailed) if(handleDialogSubmit(xhr,status,args)) PF('createEmployeeDialog').hide();"
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_CREATE_BUTTON}"
+								look="success" style="align:left;" />
+							<p:commandButton
+								value="#{msgs.SMART_COMPOUND_EMPLOYEE_PAGE_CANCEL_BUTTON}"
+								onclick="PF('createEmployeeDialog').hide()" look="warning"
+								style="align:right;" immediate="true" />
+						</center>
+					</p:panel>
+
+				</p:tab>
+
+			</p:wizard>
+
+		</h:form>
+
+	</p:dialog>
+</ui:composition>
+
+
+
+
+
+
+

@@ -1,0 +1,163 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<p:dialog id="viewTenantDialog" widgetVar="viewTenantDialog" header="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_VIEW_TITLE}"
+		modal="true" resizable="false" closeOnEscape="true" width="70%"
+		height="70%">
+	
+		<h:form id="viewTenantForm" title="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_VIEW_TITLE}">
+			<p:panel header="View Tenant">
+
+				<p:wizard>
+					<p:tab id="personal" title="Personal">
+						<p:panel header="Personal Details">
+							<p:messages />
+							<h:panelGrid columns="4" columnClasses="label, value"
+								width="100%">
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_FIRSTNAME}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.firstName}" />
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_MIDDLENAME}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.middleName}" />
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_LASTNAME}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.lastName}" />
+								<p:outputLabel value="#{msgs.SMART_COMPOUND_TENANT_PAGE_JOB}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.job}" />
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_DATE_OF_BIRTH}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.dateOfBirth}" />
+								<p:outputLabel value="#{msgs.SMART_COMPOUND_TENANT_PAGE_GENDER}"
+									style="color:black;font-size: 100%;" />
+
+								<p:outputLabel
+									value="#{tenantBean.tenant.genderLookup.lookupName}" />
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_NATIONALITY}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.nationality}" />
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_IDENTIFICATION_TYPE}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.identificationType}" />
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_IDENTIFICATION_NUMBER}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.identificationNumber}" />
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_BEST_CONNECTION_METHOD}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.bestConnectionMethod}" />
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_SALUTATION}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel
+									value="#{tenantBean.tenant.salutationLookup.lookupName}" />
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_USERNAME}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.username}" />
+
+								<p:outputLabel value="#{msgs.SMART_COMPOUND_TENANT_PAGE_EMAIL}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.email}" />
+
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_PASSWORD}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.password}" />
+
+							</h:panelGrid>
+						</p:panel>
+					</p:tab>
+
+
+
+
+					<p:tab id="contacts" title="Contacts">
+						<p:panel header="Contacts">
+							<p:messages />
+							<h:panelGrid columns="4" columnClasses="label, value"
+								width="100%">
+
+
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_PHONE_NUMBER1}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.phoneNumber1}"
+									label="#{msgs.SMART_COMPOUND_TENANT_PAGE_PHONE_NUMBER1}" />
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_PHONE_NUMBER2}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.phoneNumber2}"
+									label="#{msgs.SMART_COMPOUND_TENANT_PAGE_PHONE_NUMBER2}" />
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_MOBILE_NUMBER1}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.mobileNumber1}"
+									label="#{msgs.SMART_COMPOUND_TENANT_PAGE_MOBILE_NUMBER1}" />
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_MOBILE_NUMBER2}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.mobileNumber2}"
+									label="#{msgs.SMART_COMPOUND_TENANT_PAGE_MOBILE_NUMBER2}" />
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_FACEBOOK}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.facebook}"
+									label="#{msgs.SMART_COMPOUND_TENANT_PAGE_FACEBOOK}" />
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_WHATSAPP}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.whatsapp}"
+									label="#{msgs.SMART_COMPOUND_TENANT_PAGE_WHATSAPP}" />
+
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_ADDRESS}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.address}"
+									label="#{msgs.SMART_COMPOUND_TENANT_PAGE_ADDRESS}" />
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_COUNTRY}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.country}"
+									label="#{msgs.SMART_COMPOUND_TENANT_PAGE_COUNTRY}" />
+								<p:outputLabel value="#{msgs.SMART_COMPOUND_TENANT_PAGE_CITY}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.city}"
+									label="#{msgs.SMART_COMPOUND_TENANT_PAGE_CITY}" />
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_POSTAL_CODE}"
+									style="color:black;font-size: 100%;" />
+								<p:outputLabel value="#{tenantBean.tenant.postalCode}"
+									label="#{msgs.SMART_COMPOUND_TENANT_PAGE_POSTAL_CODE}" />
+							</h:panelGrid>
+							<p:commandButton
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_HIDE_BUTTON}"
+								oncomplete="PF('viewTenantDialog').hide()"  immediate="true"/>
+						</p:panel>
+					</p:tab>
+				</p:wizard>
+			</p:panel>
+		</h:form>
+	</p:dialog>
+</ui:composition>
+
+
+
+
+
+
+
+
+
+

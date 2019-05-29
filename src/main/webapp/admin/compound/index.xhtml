@@ -1,0 +1,107 @@
+<!-- /** Author: Ahmed El Nazer**/-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui"
+	template="/WEB-INF/template/master.xhtml">
+	<ui:define name="title">#{msgs.SMART_COMPOUND_COMPOUND_LIST_PAGE}</ui:define>
+	<ui:define name="contentTitle">#{msgs.SMART_COMPOUND_COMPOUND_LIST_PAGE_TITLE}</ui:define>
+	<ui:define name="customHeader">
+		<style>
+html,body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+#map {
+	height: 100%;
+}
+
+.controls {
+	margin-top: 10px;
+	border: 1px solid transparent;
+	border-radius: 2px 0 0 2px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	height: 32px;
+	outline: none;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+#pac-input-create {
+	background-color: #fff;
+	font-family: Roboto;
+	font-size: 15px;
+	font-weight: 300;
+	margin-left: 12px;
+	padding: 0 11px 0 13px;
+	text-overflow: ellipsis;
+	width: 300px;
+}
+
+#pac-input:focus {
+	border-color: #4d90fe;
+}
+
+.pac-container {
+	font-family: Roboto;
+	z-index: 10000 !important;
+}
+
+#type-selector {
+	color: #fff;
+	background-color: #4d90fe;
+	padding: 5px 11px 0px 11px;
+}
+
+#type-selector label {
+	font-family: Roboto;
+	font-size: 13px;
+	font-weight: 300;
+}
+</style>
+
+		<script>
+	function initMap(){
+		var inputForCreate = 
+	            document.getElementById('createCompoundForm:pac-input-create');
+
+	       
+
+	        var autocompleteForCreate = new google.maps.places.Autocomplete(inputForCreate);
+
+	        
+
+	        autocompleteForCreate.addListener('place_changed', function() {
+	          var place = autocompleteForCreate.getPlace();
+	          if (!place.geometry) {
+	            window.alert("Autocomplete's returned place contains no geometry");
+	            return;
+	          }
+	          var createCompoundMap = PF('createCompoundMap');
+	          createCompoundMap.getMap().setCenter(new google.maps.LatLng(place.geometry.location.lat() , place.geometry.location.lng()));
+	          createCompoundMap.getMap().setZoom(21);
+			  }
+			  );
+
+
+	      
+		}
+
+	</script>
+
+	</ui:define>
+
+	<ui:define name="content">
+
+		<ui:include src="compoundList.xhtml"></ui:include>
+		<ui:include src="create.xhtml"></ui:include>
+		<ui:include src="view.xhtml"></ui:include>
+		<ui:include src="edit.xhtml"></ui:include>
+
+
+	</ui:define>
+
+</ui:composition>

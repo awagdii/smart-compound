@@ -1,0 +1,73 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<p:dialog id="editMenuDialog" widgetVar="editMenuDialog" modal="true"
+		header="#{msgs.SMART_COMPOUND_MENU_PAGE_MENU_EDIT_DIALOG_TITLE}"
+		width="560" resizable="false" closeOnEscape="true">
+
+		<h:form id="editMenuForm">
+			<h:panelGrid columns="3" cellpadding="5" id="pnl">
+				<h:outputLabel for="menuName"
+					value="#{msgs.SMART_COMPOUND_MENU_PAGE_MENU_NAME}" />
+				<p:inputText id="menuName" required="true" label="menuName"
+					value="#{menuBean.menu.name}" style="width:150px"
+					requiredMessage="#{msgs.SMART_COMPOUND_MENU_PAGE_MENU_REQUIRED_MENU_NAME_ERROR_MESSAGE}"
+	             	validatorMessage="#{msgs.SMART_COMPOUND_INVALID_DATA}">
+					<p:ajax event="blur" update="menuNameMsg" ignoreAutoUpdate="false" />
+					<f:validateRegex pattern="^[A-Za-z]*$|^[A-Za-z][A-Za-z ]*[A-Za-z]$" />
+
+				</p:inputText>
+				<p:message id="menuNameMsg" for="menuName" display="text" />
+
+				<h:outputLabel for="menuStatus"
+					value="#{msgs.SMART_COMPOUND_MENU_PAGE_MENU_STATUS}" />
+				<p:selectOneMenu value="#{menuBean.menu.status}" id="menuStatus"
+					required="true" label="menuStatus" converter="#{lookupConverter}"
+					style="width:150px"
+					requiredMessage="#{msgs.SMART_COMPOUND_MENU_PAGE_MENU_REQUIRED_MENU_STATUS_ERROR_MESSAGE}">
+					<f:selectItem
+						itemLabel="#{msgs.SMART_COMPOUND_MENU_PAGE_MENU_STATUS_LABEL}"
+						itemDisabled="true" />
+					<f:selectItems value="#{menuBean.allLookup}" var="status"
+						itemValue="#{status}" itemLabel="#{status.lookupName}" />
+				</p:selectOneMenu>
+				<p:message for="menuStatus" display="text" />
+
+				<p:outputLabel
+					value="#{msgs.SMART_COMPOUND_MENU_LIST_PAGE_MENU_DESCRIPTION}"
+					for="desc" />
+				<p:inputTextarea id="desc" value="#{menuBean.menu.description}"
+					 style="width:150px"
+					validatorMessage="#{msgs.SMART_COMPOUND_MENU_LIST_PAGE_MENU_DESCRIPTION_VALIDATION}">
+					<f:validateRegex pattern="([a-zA-Z0-9]+[a-zA-Z0-9_ ]+[a-zA-Z0-9]+)*" />
+				</p:inputTextarea>
+				<p:message for="desc" display="text" />
+
+				<p:commandButton
+					value="#{msgs.SMART_COMPOUND_MENU_PAGE_MENU_EDIT_BUTTON}"
+					update="editMenuForm :menuListForm"
+					oncomplete="if(args &amp;&amp; !args.validationFailed) PF('editMenuDialog').hide();"
+					actionListener="#{menuBean.updateMenu()}"></p:commandButton>
+
+				<p:commandButton
+					value="#{msgs.SMART_COMPOUND_MENU_PAGE_MENU_CANCEL_BUTTON}"
+					immediate="true" onclick="PF('editMenuDialog').hide();"></p:commandButton>
+			</h:panelGrid>
+		</h:form>
+
+
+	</p:dialog>
+
+</ui:composition>
+
+
+
+
+
+
+
+
+

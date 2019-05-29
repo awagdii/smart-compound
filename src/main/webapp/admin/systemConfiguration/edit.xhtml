@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<p:dialog id="editSystemConfigurationDialog" widgetVar="editSystemConfigurationDialog" modal="true"
+		resizable="false" closeOnEscape="true"  header="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_PAGE_EDIT_HEADER}">
+		<h:form id="editSystemConfigurationForm">
+
+			<p:panelGrid>
+				<p:row>
+					<p:column medium-screen="2">
+				<p:outputLabel for="editSystemConfigurationKey"
+							value="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_PAGE_KEY}" />
+					</p:column>
+					<p:column>
+						<p:inputText required="true" id="editSystemConfigurationKey"
+							value="#{systemConfigurationBean.selectedSystemConfiguration.key}"
+							requiredMessage="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_PAGE_KEY_REQUIRED_MESSAGE} " />
+								<p:message for="editSystemConfigurationKey"/>
+					</p:column>
+					
+				</p:row>
+			
+				<p:row>
+					<p:column>
+							<p:outputLabel for="editSystemConfigurationValue"
+							value="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_PAGE_VALUE}" />
+					</p:column>
+					<p:column>
+						<p:inputText required="true" id="editSystemConfigurationValue"
+							value="#{systemConfigurationBean.selectedSystemConfiguration.value}"
+							requiredMessage="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_PAGE_VALUE_REQUIRED_MESSAGE} " />
+							<p:message for="editSystemConfigurationValue"/>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column >
+						<p:commandButton actionListener="#{systemConfigurationBean.insertSystemConfiguration}"
+							update=":systemConfigurationListForm :editSystemConfigurationForm" 
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('editSystemConfigurationDialog').hide()"
+							value="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_PAGE_SUBMIT_BUTTON}"
+							 style="width:100%" />
+					</p:column>
+					<p:column >
+						<p:commandButton immediate="true"
+							value="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_PAGE_CANCEL_BUTTON}"  onclick="PF('editSystemConfigurationDialog').hide()"/>
+					</p:column>
+				</p:row>
+				
+			</p:panelGrid>
+		</h:form>
+
+
+	</p:dialog>
+
+
+</ui:composition>

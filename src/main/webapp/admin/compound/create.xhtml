@@ -1,0 +1,260 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+
+	<p:dialog id="createCompoundDialog" widgetVar="createCompoundDialog"
+		style="margin-top:20px;" width="80%" height="80%" modal="true"
+		resizable="false" closeOnEscape="true" header="Create Compound">
+		<center>
+			<h:form id="createCompoundForm" widgetVar="createCompoundForm">
+
+
+				<p:panelGrid style="width: 100%; height:100%">
+					<p:row>
+						<p:column medium-screen="2">
+							<p:outputLabel for="compoundName"
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_NAME}" />
+						</p:column>
+
+						<p:column medium-screen="4">
+							<p:inputText required="true" id="compoundName"
+								requiredMessage="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_NAME_REQUIRED}"
+								value="#{compoundBean.selectedCompound.compoundName}"
+								validatorMessage="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_STRING_VALIDATE}  from 3 to 25 chars in length">
+								<f:validateRegex pattern="^[A-Za-z\x20]+[\w-_\x20]{2,26}$" />
+
+							</p:inputText>
+							<p:message for="compoundName" id="compoundNameMsg" display="text"></p:message>
+						</p:column>
+						<ui:remove>
+							<p:column medium-screen="4" colspan="2" rowspan="9">
+								<p:gmap id="gmap"
+									rendered="#{not empty compoundBean.selectedCompound.lattitude and not empty compoundBean.selectedCompound.longtude}"
+									center="#{compoundBean.selectedCompound.lattitude},#{compoundBean.selectedCompound.longtude}"
+									zoom="#{compoundBean.zoom}" type="HYBRID"
+									style="width:100%;height:400px"
+									model="#{compoundBean.selectedCompoundModel}" widgetVar="map">
+									<p:ajax event="stateChange"
+										listener="#{compoundBean.onStateChange}" />
+									<p:ajax event="pointSelect" immediate="true"
+										listener="#{compoundBean.onPointSelect}"
+										update="gmap country city" />
+								</p:gmap>
+
+							</p:column>
+						</ui:remove>
+
+						<p:column medium-screen="2">
+							<p:outputLabel for="ownerName"
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_OWNER_NAME}" />
+						</p:column>
+						<p:column>
+							<p:inputText required="true" id="ownerName"
+								validatorMessage="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_STRING_VALIDATE}  from 3 to 25 chars in length"
+								requiredMessage="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_OWNER_NAME_REQUIRED}"
+								value="#{compoundBean.selectedCompound.ownerName}">
+								<f:validateRegex pattern="^[A-Za-z\x20]+[\w-_\x20]{2,26}$" />
+							</p:inputText>
+							<p:message id="ownerNameMsg" for="ownerName"></p:message>
+						</p:column>
+
+					</p:row>
+
+
+
+					<p:row>
+						<p:column medium-screen="2">
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_FIRST_EMAIL}"
+								for="firstEmail" />
+						</p:column>
+
+						<p:column medium-screen="4">
+							<p:inputText id="firstEmail" required="true"
+								value="#{compoundBean.selectedCompound.firstEmail}"
+								requiredMessage="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_FIRST_EMAIL_REQUIRED}"
+								validatorMessage=" only email form like: asd@ntg.com">
+								<f:validateRegex
+									pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+
+							</p:inputText>
+							<p:message id="firstEmailMsg" for="firstEmail"></p:message>
+						</p:column>
+						<p:column medium-screen="2">
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_SECOND_EMAIL}"
+								for="secondEmail" />
+						</p:column>
+
+						<p:column medium-screen="4">
+							<p:inputText id="secondEmail"
+								validatorMessage=" only email form like: asd@ntg.com"
+								value="#{compoundBean.selectedCompound.secondEmail}">
+								<f:validateRegex
+									pattern="(^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$)?" />
+							</p:inputText>
+							<p:message id="secondEmailMsg" for="secondEmail"></p:message>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column medium-screen="2">
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_THIRD_EMAIL}"
+								for="thirdEmail" />
+						</p:column>
+						<p:column medium-screen="4">
+							<p:inputText id="thirdEmail"
+								validatorMessage=" only email form like: asd@ntg.com"
+								value="#{compoundBean.selectedCompound.thirdEmail}">
+								<f:validateRegex
+									pattern="(^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$)?" />
+							</p:inputText>
+							<p:message id="thirdEmailMsg" for="thirdEmail"></p:message>
+
+						</p:column>
+						<p:column medium-screen="2">
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_FIRST_PHONE_NUMBER}"
+								for="firstPhoneNumber" />
+						</p:column>
+
+						<p:column medium-screen="4">
+							<p:inputText id="firstPhoneNumber"
+								validatorMessage="only phone number form .. min 8 digits  "
+								value="#{compoundBean.selectedCompound.firstPhoneNumber}">
+								<f:validateRegex pattern="^([+]?[\d]+)?$" />
+							</p:inputText>
+							<p:message id="firstPhoneNumberMsg" for="firstPhoneNumber"></p:message>
+						</p:column>
+					</p:row>
+
+
+
+
+
+
+
+
+
+
+
+
+					<p:row>
+						<p:column medium-screen="2">
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_SECOND_PHONE_NUMBER}"
+								for="secondPhoneNumber" />
+						</p:column>
+						<p:column medium-screen="4">
+							<p:inputText id="secondPhoneNumber"
+								validatorMessage="only phone number form .. min 8 digits  "
+								value="#{compoundBean.selectedCompound.secondPhoneNumber}">
+								<f:validateRegex pattern="^([+]?[\d]+)?$" />
+							</p:inputText>
+							<p:message id="secondPhoneNumberMsg" for="secondPhoneNumber"></p:message>
+
+						</p:column>
+						<p:column medium-screen="2">
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_THIRD_PHONE_NUMBER}"
+								for="thirdPhoneNumber" />
+						</p:column>
+
+						<p:column medium-screen="4">
+							<p:inputText id="thirdPhoneNumber" maxlength="11" minlength="8"
+								validatorMessage="only phone number form .. min 8 digits  "
+								value="#{compoundBean.selectedCompound.thirdPhoneNumber}">
+								<f:validateRegex pattern="^([+]?[\d]+)?$" />
+							</p:inputText>
+							<p:message id="thirdPhoneNumberMsg" for="thirdPhoneNumber"></p:message>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column medium-screen="2">
+							<p:outputLabel for="domainName"
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_COMPOUND_DOMAIN}" />
+						</p:column>
+						<p:column medium-screen="4">
+							<p:inputText id="domainName"
+								requiredMessage="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_COMPOUND_DOMAIN_REQUIRED}"
+								validatorMessage="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_COMPOUND_DOMAIN_EXAMPLE}"
+								required="true" value="#{compoundBean.selectedCompound.domain}">
+
+								<f:validateRegex pattern="^[A-Za-z]+[\w-]{2,26}$" />
+							</p:inputText>
+							<p:message id="domainNameMsg" for="domainName"></p:message>
+						</p:column>
+
+					</p:row>
+					<p:row>
+						<p:column medium-screen="2">
+
+							<p:outputLabel for="country"
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_COUNTRY}" />
+						</p:column>
+						<p:column medium-screen="4">
+							<p:inputText id="country"
+								validatorMessage="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_STRING_VALIDATE} from 3 to 25 in length"
+								value="#{compoundBean.selectedCompound.country}">
+								<f:validateRegex pattern="^[A-Za-z\x20]+[\w-_\x20]{2,26}$" />
+							</p:inputText>
+
+							<p:message id="selectedCountryMsg" for="country"></p:message>
+
+
+						</p:column>
+						<p:column medium-screen="2">
+
+							<p:outputLabel value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_CITY}"
+								for="city" />
+						</p:column>
+						<p:column medium-screen="4">
+							<p:inputText id="city"
+								validatorMessage="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_STRING_VALIDATE} from 3 to 25 in length"
+								value="#{compoundBean.selectedCompound.city}">
+								<f:validateRegex pattern="^[A-Za-z\x20]+[\w-_\x20]{2,26}$" />
+							</p:inputText>
+
+							<p:message id="selectedCityMsg" for="city"></p:message>
+						</p:column>
+
+
+
+					</p:row>
+
+
+
+
+				</p:panelGrid>
+
+				<p:panelGrid>
+					<p:row>
+
+
+						<p:column colspan="2">
+							<center>
+								<p:commandButton actionListener="#{compoundBean.insertCompound}"
+									update=":CompoundListForm @form :createCompoundForm:compoundName "
+									oncomplete="if (args &amp;&amp; !args.validationFailed) if(handleDialogSubmit(xhr,status,args))PF('createCompoundDialog').hide()"
+									value="#{msgs.SMART_COMPOUND_ORDER_PAGE_SUBMIT_BUTTON}" />
+							</center>
+						</p:column>
+						<p:column colspan="2">
+
+							<p:commandButton oncomplete="PF('createCompoundDialog').hide()"
+								immediate="true"
+								value="#{msgs.SMART_COMPOUND_COMPOUND_PAGE_CANCEL_BUTTON}" />
+						</p:column>
+
+					</p:row>
+				</p:panelGrid>
+			</h:form>
+			<p:ajax update=":CompoundListForm"></p:ajax>
+		</center>
+	</p:dialog>
+
+</ui:composition>

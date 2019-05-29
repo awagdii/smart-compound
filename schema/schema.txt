@@ -1,0 +1,3409 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.3.5
+-- Dumped by pg_dump version 9.3.5
+-- Started on 2016-07-13 12:51:41
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+DROP DATABASE ng_nts_smartcompound;
+--
+-- TOC entry 2378 (class 1262 OID 41717)
+-- Name: ng_nts_smartcompound; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE ng_nts_smartcompound WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'English_United States.1252' LC_CTYPE = 'English_United States.1252';
+
+
+ALTER DATABASE ng_nts_smartcompound OWNER TO postgres;
+
+\connect ng_nts_smartcompound
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- TOC entry 6 (class 2615 OID 62164)
+-- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA public;
+
+
+ALTER SCHEMA public OWNER TO postgres;
+
+--
+-- TOC entry 231 (class 3079 OID 11750)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2379 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- TOC entry 230 (class 3079 OID 16384)
+-- Name: adminpack; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS adminpack WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2380 (class 0 OID 0)
+-- Dependencies: 230
+-- Name: EXTENSION adminpack; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION adminpack IS 'administrative functions for PostgreSQL';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 170 (class 1259 OID 62166)
+-- Name: ng_nts_bill; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_bill (
+    recid integer NOT NULL,
+    bill_number integer,
+    issue_date date,
+    bill_from date,
+    bill_to date,
+    tenant_id integer,
+    total_amount numeric(12,2),
+    collected integer,
+    collection_date date,
+    payment_method text,
+    collected_by text,
+    compound_id integer
+);
+
+
+ALTER TABLE public.ng_nts_bill OWNER TO postgres;
+
+--
+-- TOC entry 171 (class 1259 OID 62172)
+-- Name: ng_nts_bill_calculation; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_bill_calculation (
+    recid integer NOT NULL,
+    calculation_date date,
+    previous_meter_reading numeric(12,2),
+    current_meter_reading numeric(12,2),
+    installation_value numeric(12,2),
+    nrc_value numeric(12,2),
+    mrc_value numeric(12,2),
+    usage_amount numeric(12,2),
+    usage_value numeric(12,2),
+    calculation_base text,
+    description text,
+    calculated_by text,
+    compound_id integer,
+    service_id integer,
+    order_id integer,
+    facility_id integer
+);
+
+
+ALTER TABLE public.ng_nts_bill_calculation OWNER TO postgres;
+
+--
+-- TOC entry 172 (class 1259 OID 62178)
+-- Name: ng_nts_bill_calculation_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_bill_calculation_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_bill_calculation_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2381 (class 0 OID 0)
+-- Dependencies: 172
+-- Name: ng_nts_bill_calculation_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_bill_calculation_recid_seq OWNED BY ng_nts_bill_calculation.recid;
+
+
+--
+-- TOC entry 173 (class 1259 OID 62180)
+-- Name: ng_nts_bill_cycle_history; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_bill_cycle_history (
+    recid integer NOT NULL,
+    compound_id integer,
+    month integer,
+    year integer,
+    has_ended integer
+);
+
+
+ALTER TABLE public.ng_nts_bill_cycle_history OWNER TO postgres;
+
+--
+-- TOC entry 174 (class 1259 OID 62183)
+-- Name: ng_nts_bill_cycle_history_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_bill_cycle_history_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_bill_cycle_history_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2382 (class 0 OID 0)
+-- Dependencies: 174
+-- Name: ng_nts_bill_cycle_history_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_bill_cycle_history_recid_seq OWNED BY ng_nts_bill_cycle_history.recid;
+
+
+--
+-- TOC entry 175 (class 1259 OID 62185)
+-- Name: ng_nts_bill_details; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_bill_details (
+    recid integer NOT NULL,
+    service_id integer,
+    nrc_value numeric(12,2),
+    mrc_value numeric(12,2),
+    installation numeric(12,2),
+    total_amount numeric(12,2),
+    bill_id integer,
+    compound_id integer,
+    usage_value numeric(12,2),
+    facility_id integer
+);
+
+
+ALTER TABLE public.ng_nts_bill_details OWNER TO postgres;
+
+--
+-- TOC entry 176 (class 1259 OID 62188)
+-- Name: ng_nts_bill_details_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_bill_details_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_bill_details_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2383 (class 0 OID 0)
+-- Dependencies: 176
+-- Name: ng_nts_bill_details_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_bill_details_recid_seq OWNED BY ng_nts_bill_details.recid;
+
+
+--
+-- TOC entry 177 (class 1259 OID 62190)
+-- Name: ng_nts_bill_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_bill_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_bill_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2384 (class 0 OID 0)
+-- Dependencies: 177
+-- Name: ng_nts_bill_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_bill_recid_seq OWNED BY ng_nts_bill.recid;
+
+
+--
+-- TOC entry 178 (class 1259 OID 62192)
+-- Name: ng_nts_cities; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_cities (
+    recid integer NOT NULL,
+    name text,
+    country_id integer
+);
+
+
+ALTER TABLE public.ng_nts_cities OWNER TO postgres;
+
+--
+-- TOC entry 179 (class 1259 OID 62198)
+-- Name: ng_nts_cities_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_cities_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_cities_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2385 (class 0 OID 0)
+-- Dependencies: 179
+-- Name: ng_nts_cities_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_cities_recid_seq OWNED BY ng_nts_cities.recid;
+
+
+--
+-- TOC entry 180 (class 1259 OID 62200)
+-- Name: ng_nts_compounds; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_compounds (
+    recid integer NOT NULL,
+    compound_name text,
+    lattitude numeric(12,2),
+    longtude numeric(12,2),
+    country text,
+    city text,
+    owner_name text,
+    compound_image text,
+    domain text,
+    first_email text,
+    second_email text,
+    third_email text,
+    first_phone_number text,
+    second_phone_number text,
+    third_phone_number text,
+    first_email1 text,
+    second_email2 text,
+    third_email3 text,
+    first_phone_number4 text,
+    second_phone_number5 text,
+    third_phone_number6 text
+);
+
+
+ALTER TABLE public.ng_nts_compounds OWNER TO postgres;
+
+--
+-- TOC entry 181 (class 1259 OID 62206)
+-- Name: ng_nts_compounds_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_compounds_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_compounds_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2386 (class 0 OID 0)
+-- Dependencies: 181
+-- Name: ng_nts_compounds_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_compounds_recid_seq OWNED BY ng_nts_compounds.recid;
+
+
+--
+-- TOC entry 182 (class 1259 OID 62208)
+-- Name: ng_nts_countries; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_countries (
+    recid integer NOT NULL,
+    name text
+);
+
+
+ALTER TABLE public.ng_nts_countries OWNER TO postgres;
+
+--
+-- TOC entry 183 (class 1259 OID 62214)
+-- Name: ng_nts_countries_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_countries_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_countries_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2387 (class 0 OID 0)
+-- Dependencies: 183
+-- Name: ng_nts_countries_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_countries_recid_seq OWNED BY ng_nts_countries.recid;
+
+
+--
+-- TOC entry 184 (class 1259 OID 62216)
+-- Name: ng_nts_employee_groups; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_employee_groups (
+    recid integer NOT NULL,
+    employee_id integer,
+    group_id integer
+);
+
+
+ALTER TABLE public.ng_nts_employee_groups OWNER TO postgres;
+
+--
+-- TOC entry 185 (class 1259 OID 62219)
+-- Name: ng_nts_employee_groups_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_employee_groups_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_employee_groups_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2388 (class 0 OID 0)
+-- Dependencies: 185
+-- Name: ng_nts_employee_groups_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_employee_groups_recid_seq OWNED BY ng_nts_employee_groups.recid;
+
+
+--
+-- TOC entry 186 (class 1259 OID 62221)
+-- Name: ng_nts_employees; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_employees (
+    recid integer NOT NULL,
+    salutation text,
+    username text,
+    password text,
+    first_name text,
+    middle_name text,
+    last_name text,
+    email text,
+    job text,
+    gender text,
+    identification_type text,
+    identification_number text,
+    address text,
+    phone_number1 text,
+    phone_number2 text,
+    mobile_number1 text,
+    mobile_number2 text,
+    status text,
+    hire_date date,
+    group_name text,
+    compound_id integer,
+    salutation_lookup_id integer,
+    gender_lookup_id integer,
+    status_lookup_id integer,
+    group_id integer,
+    identificationtype_lookup_id integer,
+    super_admin_flag integer,
+    created_by integer
+);
+
+
+ALTER TABLE public.ng_nts_employees OWNER TO postgres;
+
+--
+-- TOC entry 187 (class 1259 OID 62227)
+-- Name: ng_nts_employees_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_employees_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_employees_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2389 (class 0 OID 0)
+-- Dependencies: 187
+-- Name: ng_nts_employees_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_employees_recid_seq OWNED BY ng_nts_employees.recid;
+
+
+--
+-- TOC entry 188 (class 1259 OID 62229)
+-- Name: ng_nts_facilities; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_facilities (
+    recid integer NOT NULL,
+    facility_type text,
+    block text,
+    street text,
+    building_number integer,
+    floor_number integer,
+    facility_number integer,
+    lattitude numeric(12,2),
+    longtude numeric(12,2),
+    status text,
+    is_for_rent integer,
+    area numeric(12,2),
+    description text,
+    picture_url text,
+    compound_id integer,
+    tenant_id integer,
+    facility_type_lookup_id integer,
+    status_lookup_id integer
+);
+
+
+ALTER TABLE public.ng_nts_facilities OWNER TO postgres;
+
+--
+-- TOC entry 189 (class 1259 OID 62235)
+-- Name: ng_nts_facilities_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_facilities_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_facilities_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2390 (class 0 OID 0)
+-- Dependencies: 189
+-- Name: ng_nts_facilities_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_facilities_recid_seq OWNED BY ng_nts_facilities.recid;
+
+
+--
+-- TOC entry 190 (class 1259 OID 62237)
+-- Name: ng_nts_groups; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_groups (
+    recid integer NOT NULL,
+    group_name text,
+    compound_id integer,
+    created_by integer
+);
+
+
+ALTER TABLE public.ng_nts_groups OWNER TO postgres;
+
+--
+-- TOC entry 191 (class 1259 OID 62243)
+-- Name: ng_nts_groups_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_groups_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_groups_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2391 (class 0 OID 0)
+-- Dependencies: 191
+-- Name: ng_nts_groups_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_groups_recid_seq OWNED BY ng_nts_groups.recid;
+
+
+--
+-- TOC entry 192 (class 1259 OID 62245)
+-- Name: ng_nts_lookup; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_lookup (
+    recid integer NOT NULL,
+    lookup_name text,
+    type_name text,
+    type_id integer
+);
+
+
+ALTER TABLE public.ng_nts_lookup OWNER TO postgres;
+
+--
+-- TOC entry 193 (class 1259 OID 62251)
+-- Name: ng_nts_lookup_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_lookup_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_lookup_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2392 (class 0 OID 0)
+-- Dependencies: 193
+-- Name: ng_nts_lookup_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_lookup_recid_seq OWNED BY ng_nts_lookup.recid;
+
+
+--
+-- TOC entry 194 (class 1259 OID 62253)
+-- Name: ng_nts_lookup_types; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_lookup_types (
+    recid integer NOT NULL,
+    type_name text
+);
+
+
+ALTER TABLE public.ng_nts_lookup_types OWNER TO postgres;
+
+--
+-- TOC entry 195 (class 1259 OID 62259)
+-- Name: ng_nts_lookup_types_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_lookup_types_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_lookup_types_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2393 (class 0 OID 0)
+-- Dependencies: 195
+-- Name: ng_nts_lookup_types_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_lookup_types_recid_seq OWNED BY ng_nts_lookup_types.recid;
+
+
+--
+-- TOC entry 196 (class 1259 OID 62261)
+-- Name: ng_nts_menu_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_menu_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_menu_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 197 (class 1259 OID 62263)
+-- Name: ng_nts_menu; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_menu (
+    recid integer DEFAULT nextval('ng_nts_menu_recid_seq'::regclass) NOT NULL,
+    name text,
+    status_id integer,
+    description text
+);
+
+
+ALTER TABLE public.ng_nts_menu OWNER TO postgres;
+
+--
+-- TOC entry 198 (class 1259 OID 62270)
+-- Name: ng_nts_menu_item_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_menu_item_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_menu_item_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 199 (class 1259 OID 62272)
+-- Name: ng_nts_menu_item; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_menu_item (
+    recid integer DEFAULT nextval('ng_nts_menu_item_recid_seq'::regclass) NOT NULL,
+    name text,
+    status_id integer,
+    url text,
+    menu_id integer,
+    super_admin_flag integer,
+    description text
+);
+
+
+ALTER TABLE public.ng_nts_menu_item OWNER TO postgres;
+
+--
+-- TOC entry 200 (class 1259 OID 62279)
+-- Name: ng_nts_menu_item_group_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_menu_item_group_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_menu_item_group_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 201 (class 1259 OID 62281)
+-- Name: ng_nts_menu_item_group; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_menu_item_group (
+    group_id integer NOT NULL,
+    menu_item_id integer NOT NULL,
+    recid integer DEFAULT nextval('ng_nts_menu_item_group_recid_seq'::regclass) NOT NULL
+);
+
+
+ALTER TABLE public.ng_nts_menu_item_group OWNER TO postgres;
+
+--
+-- TOC entry 202 (class 1259 OID 62285)
+-- Name: ng_nts_nationalities; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_nationalities (
+    recid integer NOT NULL,
+    name text
+);
+
+
+ALTER TABLE public.ng_nts_nationalities OWNER TO postgres;
+
+--
+-- TOC entry 203 (class 1259 OID 62291)
+-- Name: ng_nts_nationalities_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_nationalities_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_nationalities_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2394 (class 0 OID 0)
+-- Dependencies: 203
+-- Name: ng_nts_nationalities_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_nationalities_recid_seq OWNED BY ng_nts_nationalities.recid;
+
+
+--
+-- TOC entry 204 (class 1259 OID 62293)
+-- Name: ng_nts_orders; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_orders (
+    recid integer NOT NULL,
+    service_name text,
+    request_date date,
+    acceptence_date date,
+    status text,
+    channel text,
+    notes text,
+    service_location_lattitude numeric(12,2),
+    service_location_longtude numeric(12,2),
+    service_location_desc text,
+    compound_id integer,
+    tenant_id integer,
+    service_id integer,
+    facility_id integer,
+    created_by integer,
+    accepted_by integer,
+    channel_lookup_id integer,
+    meter_last_reading numeric(12,2),
+    meter_last_reading_date date,
+    status_lookup_id integer,
+    is_biled_before integer
+);
+
+
+ALTER TABLE public.ng_nts_orders OWNER TO postgres;
+
+--
+-- TOC entry 205 (class 1259 OID 62299)
+-- Name: ng_nts_orders_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_orders_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_orders_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2395 (class 0 OID 0)
+-- Dependencies: 205
+-- Name: ng_nts_orders_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_orders_recid_seq OWNED BY ng_nts_orders.recid;
+
+
+--
+-- TOC entry 206 (class 1259 OID 62301)
+-- Name: ng_nts_service_usage_rates; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_service_usage_rates (
+    recid integer NOT NULL,
+    usage_amount_from numeric(12,2),
+    usage_amount_to numeric(12,2),
+    unit_price numeric(12,2),
+    service_name text,
+    compound_id integer,
+    service_id integer
+);
+
+
+ALTER TABLE public.ng_nts_service_usage_rates OWNER TO postgres;
+
+--
+-- TOC entry 207 (class 1259 OID 62307)
+-- Name: ng_nts_service_usage_rates_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_service_usage_rates_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_service_usage_rates_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2396 (class 0 OID 0)
+-- Dependencies: 207
+-- Name: ng_nts_service_usage_rates_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_service_usage_rates_recid_seq OWNED BY ng_nts_service_usage_rates.recid;
+
+
+--
+-- TOC entry 208 (class 1259 OID 62309)
+-- Name: ng_nts_services; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_services (
+    recid integer NOT NULL,
+    service_name text,
+    description text,
+    is_active integer,
+    severity integer,
+    flat_or_usage text,
+    estimated_delivery_days integer,
+    nrc integer,
+    mrc integer,
+    installation_price integer,
+    is_prepaid integer,
+    creation_date timestamp without time zone,
+    measuring_unit text,
+    compound_id integer,
+    measuring_unit_lookup_id integer,
+    flat_or_usage_lookup integer,
+    activity_status_lookup integer,
+    is_facility_related integer
+);
+
+
+ALTER TABLE public.ng_nts_services OWNER TO postgres;
+
+--
+-- TOC entry 209 (class 1259 OID 62315)
+-- Name: ng_nts_services_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_services_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_services_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2397 (class 0 OID 0)
+-- Dependencies: 209
+-- Name: ng_nts_services_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_services_recid_seq OWNED BY ng_nts_services.recid;
+
+
+--
+-- TOC entry 210 (class 1259 OID 62317)
+-- Name: ng_nts_system_configuration; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_system_configuration (
+    id integer NOT NULL,
+    key text,
+    value text
+);
+ALTER TABLE ONLY ng_nts_system_configuration ALTER COLUMN key SET STATISTICS 0;
+ALTER TABLE ONLY ng_nts_system_configuration ALTER COLUMN value SET STATISTICS 0;
+
+
+ALTER TABLE public.ng_nts_system_configuration OWNER TO postgres;
+
+--
+-- TOC entry 211 (class 1259 OID 62323)
+-- Name: ng_nts_system_configuration_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_system_configuration_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_system_configuration_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2398 (class 0 OID 0)
+-- Dependencies: 211
+-- Name: ng_nts_system_configuration_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_system_configuration_id_seq OWNED BY ng_nts_system_configuration.id;
+
+
+--
+-- TOC entry 212 (class 1259 OID 62325)
+-- Name: ng_nts_tenant_facilities; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_tenant_facilities (
+    recid integer NOT NULL,
+    is_leased integer,
+    leasing_or_ownership_start_date date,
+    leasing_or_ownership_end_date date,
+    compound_id integer,
+    tenant_id integer,
+    facility_id integer
+);
+
+
+ALTER TABLE public.ng_nts_tenant_facilities OWNER TO postgres;
+
+--
+-- TOC entry 213 (class 1259 OID 62328)
+-- Name: ng_nts_tenant_facilities_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_tenant_facilities_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_tenant_facilities_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2399 (class 0 OID 0)
+-- Dependencies: 213
+-- Name: ng_nts_tenant_facilities_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_tenant_facilities_recid_seq OWNED BY ng_nts_tenant_facilities.recid;
+
+
+--
+-- TOC entry 214 (class 1259 OID 62330)
+-- Name: ng_nts_tenants; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_tenants (
+    recid integer NOT NULL,
+    salutation text,
+    username text,
+    password text,
+    first_name text,
+    middle_name text,
+    last_name text,
+    email text,
+    job text,
+    gender text,
+    nationality text,
+    date_of_birth date,
+    identification_type text,
+    identification_number text,
+    best_connection_method text,
+    address text,
+    country text,
+    city text,
+    postal_code text,
+    phone_number1 text,
+    phone_number2 text,
+    mobile_number1 text,
+    mobile_number2 text,
+    facebook text,
+    whatsapp text,
+    compound_id integer,
+    salutation_lookup_id integer,
+    gender_lookup_id integer,
+    tenant_image text
+);
+
+
+ALTER TABLE public.ng_nts_tenants OWNER TO postgres;
+
+--
+-- TOC entry 215 (class 1259 OID 62336)
+-- Name: ng_nts_tenants_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_tenants_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_tenants_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2400 (class 0 OID 0)
+-- Dependencies: 215
+-- Name: ng_nts_tenants_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_tenants_recid_seq OWNED BY ng_nts_tenants.recid;
+
+
+--
+-- TOC entry 216 (class 1259 OID 62338)
+-- Name: ng_nts_ticket_histories_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_ticket_histories_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_ticket_histories_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 217 (class 1259 OID 62340)
+-- Name: ng_nts_ticket_image; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_ticket_image (
+    recid integer NOT NULL,
+    image_url text,
+    ticket_id integer
+);
+
+
+ALTER TABLE public.ng_nts_ticket_image OWNER TO postgres;
+
+--
+-- TOC entry 218 (class 1259 OID 62346)
+-- Name: ng_nts_ticket_image_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_ticket_image_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_ticket_image_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 219 (class 1259 OID 62348)
+-- Name: ng_nts_ticket_image_recid_seq1; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_ticket_image_recid_seq1
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_ticket_image_recid_seq1 OWNER TO postgres;
+
+--
+-- TOC entry 2401 (class 0 OID 0)
+-- Dependencies: 219
+-- Name: ng_nts_ticket_image_recid_seq1; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_ticket_image_recid_seq1 OWNED BY ng_nts_ticket_image.recid;
+
+
+--
+-- TOC entry 220 (class 1259 OID 62350)
+-- Name: ng_nts_ticket_status_sequences; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_ticket_status_sequences (
+    recid integer NOT NULL,
+    to_ticket_status integer NOT NULL,
+    from_ticket_status integer NOT NULL
+);
+
+
+ALTER TABLE public.ng_nts_ticket_status_sequences OWNER TO postgres;
+
+--
+-- TOC entry 221 (class 1259 OID 62353)
+-- Name: ng_nts_ticket_status_sequences_from_ticket_status_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_ticket_status_sequences_from_ticket_status_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_ticket_status_sequences_from_ticket_status_seq OWNER TO postgres;
+
+--
+-- TOC entry 2402 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: ng_nts_ticket_status_sequences_from_ticket_status_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_ticket_status_sequences_from_ticket_status_seq OWNED BY ng_nts_ticket_status_sequences.from_ticket_status;
+
+
+--
+-- TOC entry 222 (class 1259 OID 62355)
+-- Name: ng_nts_ticket_status_sequences_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_ticket_status_sequences_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_ticket_status_sequences_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2403 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: ng_nts_ticket_status_sequences_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_ticket_status_sequences_recid_seq OWNED BY ng_nts_ticket_status_sequences.recid;
+
+
+--
+-- TOC entry 223 (class 1259 OID 62357)
+-- Name: ng_nts_ticket_status_sequences_to_ticket_status_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_ticket_status_sequences_to_ticket_status_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_ticket_status_sequences_to_ticket_status_seq OWNER TO postgres;
+
+--
+-- TOC entry 2404 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: ng_nts_ticket_status_sequences_to_ticket_status_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_ticket_status_sequences_to_ticket_status_seq OWNED BY ng_nts_ticket_status_sequences.to_ticket_status;
+
+
+--
+-- TOC entry 224 (class 1259 OID 62359)
+-- Name: ng_nts_ticket_statuses; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_ticket_statuses (
+    recid integer NOT NULL,
+    name character varying(40)
+);
+
+
+ALTER TABLE public.ng_nts_ticket_statuses OWNER TO postgres;
+
+--
+-- TOC entry 225 (class 1259 OID 62362)
+-- Name: ng_nts_ticket_statuses_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_ticket_statuses_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_ticket_statuses_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2405 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: ng_nts_ticket_statuses_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_ticket_statuses_recid_seq OWNED BY ng_nts_ticket_statuses.recid;
+
+
+--
+-- TOC entry 226 (class 1259 OID 62364)
+-- Name: ng_nts_tickets; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_tickets (
+    recid integer NOT NULL,
+    ticket_subject text,
+    description text,
+    problem_date timestamp without time zone,
+    open_date timestamp without time zone,
+    channel text,
+    last_status text,
+    severity integer,
+    feedback text,
+    service_name text,
+    compound_id integer,
+    facility_id integer,
+    service_id integer,
+    related_tenant_id integer,
+    assigned_group_id integer,
+    opened_by integer,
+    channel_lookup_id integer,
+    group_name text,
+    rate numeric(5,2),
+    ticket_last_status_id integer,
+    is_facility_based integer
+);
+
+
+ALTER TABLE public.ng_nts_tickets OWNER TO postgres;
+
+--
+-- TOC entry 227 (class 1259 OID 62370)
+-- Name: ng_nts_tickets_histories; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ng_nts_tickets_histories (
+    recid integer DEFAULT nextval('ng_nts_ticket_histories_recid_seq'::regclass) NOT NULL,
+    action_date timestamp without time zone,
+    is_completed integer,
+    comment text,
+    previous_status text,
+    currenet_status text,
+    compound_id integer,
+    ticket_id integer,
+    action_by integer,
+    opened_by integer
+);
+
+
+ALTER TABLE public.ng_nts_tickets_histories OWNER TO postgres;
+
+--
+-- TOC entry 228 (class 1259 OID 62377)
+-- Name: ng_nts_tickets_histories_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_tickets_histories_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_tickets_histories_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2406 (class 0 OID 0)
+-- Dependencies: 228
+-- Name: ng_nts_tickets_histories_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_tickets_histories_recid_seq OWNED BY ng_nts_tickets_histories.recid;
+
+
+--
+-- TOC entry 229 (class 1259 OID 62379)
+-- Name: ng_nts_tickets_recid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE ng_nts_tickets_recid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ng_nts_tickets_recid_seq OWNER TO postgres;
+
+--
+-- TOC entry 2407 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: ng_nts_tickets_recid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE ng_nts_tickets_recid_seq OWNED BY ng_nts_tickets.recid;
+
+
+--
+-- TOC entry 2015 (class 2604 OID 62381)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_bill ALTER COLUMN recid SET DEFAULT nextval('ng_nts_bill_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2016 (class 2604 OID 62382)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_bill_calculation ALTER COLUMN recid SET DEFAULT nextval('ng_nts_bill_calculation_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2017 (class 2604 OID 62383)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_bill_cycle_history ALTER COLUMN recid SET DEFAULT nextval('ng_nts_bill_cycle_history_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2018 (class 2604 OID 62384)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_bill_details ALTER COLUMN recid SET DEFAULT nextval('ng_nts_bill_details_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2019 (class 2604 OID 62385)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_cities ALTER COLUMN recid SET DEFAULT nextval('ng_nts_cities_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2020 (class 2604 OID 62386)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_compounds ALTER COLUMN recid SET DEFAULT nextval('ng_nts_compounds_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2021 (class 2604 OID 62387)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_countries ALTER COLUMN recid SET DEFAULT nextval('ng_nts_countries_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2022 (class 2604 OID 62388)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_employee_groups ALTER COLUMN recid SET DEFAULT nextval('ng_nts_employee_groups_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2023 (class 2604 OID 62389)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_employees ALTER COLUMN recid SET DEFAULT nextval('ng_nts_employees_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2024 (class 2604 OID 62390)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_facilities ALTER COLUMN recid SET DEFAULT nextval('ng_nts_facilities_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2025 (class 2604 OID 62391)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_groups ALTER COLUMN recid SET DEFAULT nextval('ng_nts_groups_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2026 (class 2604 OID 62392)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_lookup ALTER COLUMN recid SET DEFAULT nextval('ng_nts_lookup_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2027 (class 2604 OID 62393)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_lookup_types ALTER COLUMN recid SET DEFAULT nextval('ng_nts_lookup_types_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2031 (class 2604 OID 62394)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_nationalities ALTER COLUMN recid SET DEFAULT nextval('ng_nts_nationalities_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2032 (class 2604 OID 62395)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_orders ALTER COLUMN recid SET DEFAULT nextval('ng_nts_orders_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2033 (class 2604 OID 62396)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_service_usage_rates ALTER COLUMN recid SET DEFAULT nextval('ng_nts_service_usage_rates_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2034 (class 2604 OID 62397)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_services ALTER COLUMN recid SET DEFAULT nextval('ng_nts_services_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2035 (class 2604 OID 62398)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_system_configuration ALTER COLUMN id SET DEFAULT nextval('ng_nts_system_configuration_id_seq'::regclass);
+
+
+--
+-- TOC entry 2036 (class 2604 OID 62399)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tenant_facilities ALTER COLUMN recid SET DEFAULT nextval('ng_nts_tenant_facilities_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2037 (class 2604 OID 62400)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tenants ALTER COLUMN recid SET DEFAULT nextval('ng_nts_tenants_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2038 (class 2604 OID 62401)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_ticket_image ALTER COLUMN recid SET DEFAULT nextval('ng_nts_ticket_image_recid_seq1'::regclass);
+
+
+--
+-- TOC entry 2039 (class 2604 OID 62402)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_ticket_status_sequences ALTER COLUMN recid SET DEFAULT nextval('ng_nts_ticket_status_sequences_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2040 (class 2604 OID 62403)
+-- Name: to_ticket_status; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_ticket_status_sequences ALTER COLUMN to_ticket_status SET DEFAULT nextval('ng_nts_ticket_status_sequences_to_ticket_status_seq'::regclass);
+
+
+--
+-- TOC entry 2041 (class 2604 OID 62404)
+-- Name: from_ticket_status; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_ticket_status_sequences ALTER COLUMN from_ticket_status SET DEFAULT nextval('ng_nts_ticket_status_sequences_from_ticket_status_seq'::regclass);
+
+
+--
+-- TOC entry 2042 (class 2604 OID 62405)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_ticket_statuses ALTER COLUMN recid SET DEFAULT nextval('ng_nts_ticket_statuses_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2043 (class 2604 OID 62406)
+-- Name: recid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tickets ALTER COLUMN recid SET DEFAULT nextval('ng_nts_tickets_recid_seq'::regclass);
+
+
+--
+-- TOC entry 2314 (class 0 OID 62166)
+-- Dependencies: 170
+-- Data for Name: ng_nts_bill; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2315 (class 0 OID 62172)
+-- Dependencies: 171
+-- Data for Name: ng_nts_bill_calculation; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2408 (class 0 OID 0)
+-- Dependencies: 172
+-- Name: ng_nts_bill_calculation_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_bill_calculation_recid_seq', 1, true);
+
+
+--
+-- TOC entry 2317 (class 0 OID 62180)
+-- Dependencies: 173
+-- Data for Name: ng_nts_bill_cycle_history; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2409 (class 0 OID 0)
+-- Dependencies: 174
+-- Name: ng_nts_bill_cycle_history_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_bill_cycle_history_recid_seq', 2, true);
+
+
+--
+-- TOC entry 2319 (class 0 OID 62185)
+-- Dependencies: 175
+-- Data for Name: ng_nts_bill_details; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2410 (class 0 OID 0)
+-- Dependencies: 176
+-- Name: ng_nts_bill_details_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_bill_details_recid_seq', 1, true);
+
+
+--
+-- TOC entry 2411 (class 0 OID 0)
+-- Dependencies: 177
+-- Name: ng_nts_bill_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_bill_recid_seq', 2, true);
+
+
+--
+-- TOC entry 2322 (class 0 OID 62192)
+-- Dependencies: 178
+-- Data for Name: ng_nts_cities; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (8, 'Al Sharqia', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (9, 'Alexandria', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (10, 'Aswan', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (11, 'Asyut', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (12, 'Beheira', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (13, 'Beni Suef', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (14, 'Cairo', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (15, 'Dakahlia', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (16, 'Damietta', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (17, 'Faiyum', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (18, 'Gharbia', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (19, 'Giza', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (20, 'Ismailia', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (21, 'Kafr el-Sheikh', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (22, 'Luxor', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (23, 'Matruh', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (24, 'Minya', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (25, 'Monufia', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (26, 'New Valley', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (27, 'North Sinai', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (28, 'Port Said', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (29, 'Qalyubia', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (30, 'Qena', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (31, 'Red Sea', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (32, 'Sohag', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (33, 'South Sinai', 1);
+INSERT INTO ng_nts_cities (recid, name, country_id) VALUES (34, 'Suez', 1);
+
+
+--
+-- TOC entry 2412 (class 0 OID 0)
+-- Dependencies: 179
+-- Name: ng_nts_cities_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_cities_recid_seq', 34, true);
+
+
+--
+-- TOC entry 2324 (class 0 OID 62200)
+-- Dependencies: 180
+-- Data for Name: ng_nts_compounds; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2413 (class 0 OID 0)
+-- Dependencies: 181
+-- Name: ng_nts_compounds_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_compounds_recid_seq', 57, true);
+
+
+--
+-- TOC entry 2326 (class 0 OID 62208)
+-- Dependencies: 182
+-- Data for Name: ng_nts_countries; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO ng_nts_countries (recid, name) VALUES (1, 'Egypt');
+
+
+--
+-- TOC entry 2414 (class 0 OID 0)
+-- Dependencies: 183
+-- Name: ng_nts_countries_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_countries_recid_seq', 4, true);
+
+
+--
+-- TOC entry 2328 (class 0 OID 62216)
+-- Dependencies: 184
+-- Data for Name: ng_nts_employee_groups; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO ng_nts_employee_groups (recid, employee_id, group_id) VALUES (1, 1, 1);
+
+
+--
+-- TOC entry 2415 (class 0 OID 0)
+-- Dependencies: 185
+-- Name: ng_nts_employee_groups_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_employee_groups_recid_seq', 52, true);
+
+
+--
+-- TOC entry 2330 (class 0 OID 62221)
+-- Dependencies: 186
+-- Data for Name: ng_nts_employees; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO ng_nts_employees (recid, salutation, username, password, first_name, middle_name, last_name, email, job, gender, identification_type, identification_number, address, phone_number1, phone_number2, mobile_number1, mobile_number2, status, hire_date, group_name, compound_id, salutation_lookup_id, gender_lookup_id, status_lookup_id, group_id, identificationtype_lookup_id, super_admin_flag, created_by) VALUES (1, NULL, 'admin', 'admin123', 'Super', 'Admin', 'admin', 'admin@gmail.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL);
+
+
+--
+-- TOC entry 2416 (class 0 OID 0)
+-- Dependencies: 187
+-- Name: ng_nts_employees_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_employees_recid_seq', 52, true);
+
+
+--
+-- TOC entry 2332 (class 0 OID 62229)
+-- Dependencies: 188
+-- Data for Name: ng_nts_facilities; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2417 (class 0 OID 0)
+-- Dependencies: 189
+-- Name: ng_nts_facilities_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_facilities_recid_seq', 7, true);
+
+
+--
+-- TOC entry 2334 (class 0 OID 62237)
+-- Dependencies: 190
+-- Data for Name: ng_nts_groups; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO ng_nts_groups (recid, group_name, compound_id, created_by) VALUES (1, 'super adminstrators', NULL, 1);
+
+
+--
+-- TOC entry 2418 (class 0 OID 0)
+-- Dependencies: 191
+-- Name: ng_nts_groups_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_groups_recid_seq', 12, true);
+
+
+--
+-- TOC entry 2336 (class 0 OID 62245)
+-- Dependencies: 192
+-- Data for Name: ng_nts_lookup; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (3, 'Phone', 'Best Connection Method', 9);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (4, 'Mobile', 'Best Connection Method', 9);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (5, 'Mail', 'Best Connection Method', 9);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (6, 'Passport', 'Identification Type', 7);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (7, 'National ID', 'Identification Type', 7);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (8, 'Male', 'Gender', 5);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (9, 'Female', 'Gender', 5);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (11, 'ENG', 'Salutation', 4);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (10, 'DR', 'Salutation', 4);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (15, 'House', 'Facility Type', 6);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (16, 'MRS', 'Salutation', 4);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (17, 'MR', 'Salutation', 4);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (12, 'Flat', 'Service Type', 2);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (13, 'Usage', 'Service Type', 2);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (14, 'OneTime', 'Service Type', 2);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (18, 'New', 'Order Status', 8);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (19, 'In Progress', 'Order Status', 8);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (20, 'Done', 'Order Status', 8);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (21, 'Working', 'Employee Status', 10);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (22, 'Fired', 'Employee Status', 10);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (23, 'Resigned', 'Employee Status', 10);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (24, 'Kilowatt', 'Measurement Units', 1);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (25, 'Meter Cubic', 'Measurement Units', 1);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (26, 'Mega Byte', 'Measurement Units', 1);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (27, 'Hour', 'Measurement Units', 1);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (28, 'Done and billed', 'Order Status', 8);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (29, 'Owned Apartment', 'Facility Status', 11);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (1, 'Active', 'General Status', 3);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (2, 'InActive', 'General Status', 3);
+INSERT INTO ng_nts_lookup (recid, lookup_name, type_name, type_id) VALUES (30, 'Canceled', 'Order Status', 8);
+
+
+--
+-- TOC entry 2419 (class 0 OID 0)
+-- Dependencies: 193
+-- Name: ng_nts_lookup_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_lookup_recid_seq', 5, true);
+
+
+--
+-- TOC entry 2338 (class 0 OID 62253)
+-- Dependencies: 194
+-- Data for Name: ng_nts_lookup_types; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO ng_nts_lookup_types (recid, type_name) VALUES (9, 'Best Connection Method');
+INSERT INTO ng_nts_lookup_types (recid, type_name) VALUES (7, 'Identification Type');
+INSERT INTO ng_nts_lookup_types (recid, type_name) VALUES (4, 'Salutation');
+INSERT INTO ng_nts_lookup_types (recid, type_name) VALUES (5, 'Gender');
+INSERT INTO ng_nts_lookup_types (recid, type_name) VALUES (1, 'Measurement Units');
+INSERT INTO ng_nts_lookup_types (recid, type_name) VALUES (3, 'General Status');
+INSERT INTO ng_nts_lookup_types (recid, type_name) VALUES (8, 'Order Status');
+INSERT INTO ng_nts_lookup_types (recid, type_name) VALUES (6, 'Factility Type');
+INSERT INTO ng_nts_lookup_types (recid, type_name) VALUES (2, 'Service Type');
+INSERT INTO ng_nts_lookup_types (recid, type_name) VALUES (10, 'Employee Status');
+INSERT INTO ng_nts_lookup_types (recid, type_name) VALUES (11, 'Facility Status');
+
+
+--
+-- TOC entry 2420 (class 0 OID 0)
+-- Dependencies: 195
+-- Name: ng_nts_lookup_types_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_lookup_types_recid_seq', 1, false);
+
+
+--
+-- TOC entry 2341 (class 0 OID 62263)
+-- Dependencies: 197
+-- Data for Name: ng_nts_menu; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO ng_nts_menu (recid, name, status_id, description) VALUES (1, 'System Administration', 1, NULL);
+INSERT INTO ng_nts_menu (recid, name, status_id, description) VALUES (2, 'CRM', 1, NULL);
+INSERT INTO ng_nts_menu (recid, name, status_id, description) VALUES (3, 'Service Catalog ', 1, NULL);
+INSERT INTO ng_nts_menu (recid, name, status_id, description) VALUES (4, 'Order Management ', 1, NULL);
+INSERT INTO ng_nts_menu (recid, name, status_id, description) VALUES (5, 'Ticket Management', 1, NULL);
+INSERT INTO ng_nts_menu (recid, name, status_id, description) VALUES (7, 'Access And Security', 1, NULL);
+INSERT INTO ng_nts_menu (recid, name, status_id, description) VALUES (8, 'Profile Settings', 1, NULL);
+INSERT INTO ng_nts_menu (recid, name, status_id, description) VALUES (6, 'Billing', 1, '');
+
+
+--
+-- TOC entry 2343 (class 0 OID 62272)
+-- Dependencies: 199
+-- Data for Name: ng_nts_menu_item; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO ng_nts_menu_item (recid, name, status_id, url, menu_id, super_admin_flag, description) VALUES (1, 'Compound Management', 1, '/admin/compound/index.xhtml', 1, 1, NULL);
+INSERT INTO ng_nts_menu_item (recid, name, status_id, url, menu_id, super_admin_flag, description) VALUES (2, 'Employees Management', 1, '/admin/employee/index.xhtml', 2, NULL, NULL);
+INSERT INTO ng_nts_menu_item (recid, name, status_id, url, menu_id, super_admin_flag, description) VALUES (3, 'Groups', 1, '/admin/group/index.xhtml', 2, NULL, NULL);
+INSERT INTO ng_nts_menu_item (recid, name, status_id, url, menu_id, super_admin_flag, description) VALUES (4, 'Employee Groups', 1, '/admin/groupEmployees/index.xhtml', 2, NULL, NULL);
+INSERT INTO ng_nts_menu_item (recid, name, status_id, url, menu_id, super_admin_flag, description) VALUES (6, 'Tenants Management', 1, '/admin/tenant/index.xhtml', 2, NULL, NULL);
+INSERT INTO ng_nts_menu_item (recid, name, status_id, url, menu_id, super_admin_flag, description) VALUES (7, 'Facilities Management', 1, '/admin/facility/index.xhtml', 2, NULL, NULL);
+INSERT INTO ng_nts_menu_item (recid, name, status_id, url, menu_id, super_admin_flag, description) VALUES (8, 'Services Management', 1, '/admin/service/index.xhtml', 3, NULL, NULL);
+INSERT INTO ng_nts_menu_item (recid, name, status_id, url, menu_id, super_admin_flag, description) VALUES (9, 'Orders', 1, '/admin/order/index.xhtml', 4, NULL, NULL);
+INSERT INTO ng_nts_menu_item (recid, name, status_id, url, menu_id, super_admin_flag, description) VALUES (10, 'Tickets', 1, '/admin/ticket/index.xhtml', 5, NULL, NULL);
+INSERT INTO ng_nts_menu_item (recid, name, status_id, url, menu_id, super_admin_flag, description) VALUES (13, 'Change Password', 1, '/admin/resetPassword.xhtml', 8, NULL, NULL);
+INSERT INTO ng_nts_menu_item (recid, name, status_id, url, menu_id, super_admin_flag, description) VALUES (14, 'Billing Cycle Management', 1, '/admin/bill/billingCycleManagement/index.xhtml', 6, NULL, NULL);
+INSERT INTO ng_nts_menu_item (recid, name, status_id, url, menu_id, super_admin_flag, description) VALUES (16, 'Bills', 1, '/admin/bill/index.xhtml', 6, NULL, NULL);
+INSERT INTO ng_nts_menu_item (recid, name, status_id, url, menu_id, super_admin_flag, description) VALUES (15, 'Enter Usage Rates', 1, '/admin/bill/enterTenantUsages/index.xhtml', 6, NULL, NULL);
+INSERT INTO ng_nts_menu_item (recid, name, status_id, url, menu_id, super_admin_flag, description) VALUES (11, 'Modules', 1, '/admin/module/index.xhtml', 7, 1, NULL);
+INSERT INTO ng_nts_menu_item (recid, name, status_id, url, menu_id, super_admin_flag, description) VALUES (12, 'SubModules', 1, '/admin/submodule/index.xhtml', 7, 1, NULL);
+INSERT INTO ng_nts_menu_item (recid, name, status_id, url, menu_id, super_admin_flag, description) VALUES (5, 'Groups Access', 1, '/admin/access/index.xhtml', 2, NULL, '');
+
+
+--
+-- TOC entry 2345 (class 0 OID 62281)
+-- Dependencies: 201
+-- Data for Name: ng_nts_menu_item_group; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO ng_nts_menu_item_group (group_id, menu_item_id, recid) VALUES (1, 3, 3);
+INSERT INTO ng_nts_menu_item_group (group_id, menu_item_id, recid) VALUES (1, 4, 6);
+INSERT INTO ng_nts_menu_item_group (group_id, menu_item_id, recid) VALUES (1, 5, 7);
+INSERT INTO ng_nts_menu_item_group (group_id, menu_item_id, recid) VALUES (1, 11, 10);
+INSERT INTO ng_nts_menu_item_group (group_id, menu_item_id, recid) VALUES (1, 12, 11);
+INSERT INTO ng_nts_menu_item_group (group_id, menu_item_id, recid) VALUES (1, 13, 12);
+INSERT INTO ng_nts_menu_item_group (group_id, menu_item_id, recid) VALUES (1, 2, 15);
+INSERT INTO ng_nts_menu_item_group (group_id, menu_item_id, recid) VALUES (1, 1, 16);
+
+
+--
+-- TOC entry 2421 (class 0 OID 0)
+-- Dependencies: 200
+-- Name: ng_nts_menu_item_group_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_menu_item_group_recid_seq', 17, true);
+
+
+--
+-- TOC entry 2422 (class 0 OID 0)
+-- Dependencies: 198
+-- Name: ng_nts_menu_item_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_menu_item_recid_seq', 1, false);
+
+
+--
+-- TOC entry 2423 (class 0 OID 0)
+-- Dependencies: 196
+-- Name: ng_nts_menu_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_menu_recid_seq', 1, false);
+
+
+--
+-- TOC entry 2346 (class 0 OID 62285)
+-- Dependencies: 202
+-- Data for Name: ng_nts_nationalities; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO ng_nts_nationalities (recid, name) VALUES (1, 'Egyption');
+
+
+--
+-- TOC entry 2424 (class 0 OID 0)
+-- Dependencies: 203
+-- Name: ng_nts_nationalities_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_nationalities_recid_seq', 4, true);
+
+
+--
+-- TOC entry 2348 (class 0 OID 62293)
+-- Dependencies: 204
+-- Data for Name: ng_nts_orders; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2425 (class 0 OID 0)
+-- Dependencies: 205
+-- Name: ng_nts_orders_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_orders_recid_seq', 6, true);
+
+
+--
+-- TOC entry 2350 (class 0 OID 62301)
+-- Dependencies: 206
+-- Data for Name: ng_nts_service_usage_rates; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2426 (class 0 OID 0)
+-- Dependencies: 207
+-- Name: ng_nts_service_usage_rates_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_service_usage_rates_recid_seq', 2, true);
+
+
+--
+-- TOC entry 2352 (class 0 OID 62309)
+-- Dependencies: 208
+-- Data for Name: ng_nts_services; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2427 (class 0 OID 0)
+-- Dependencies: 209
+-- Name: ng_nts_services_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_services_recid_seq', 7, true);
+
+
+--
+-- TOC entry 2354 (class 0 OID 62317)
+-- Dependencies: 210
+-- Data for Name: ng_nts_system_configuration; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2428 (class 0 OID 0)
+-- Dependencies: 211
+-- Name: ng_nts_system_configuration_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_system_configuration_id_seq', 1, false);
+
+
+--
+-- TOC entry 2356 (class 0 OID 62325)
+-- Dependencies: 212
+-- Data for Name: ng_nts_tenant_facilities; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2429 (class 0 OID 0)
+-- Dependencies: 213
+-- Name: ng_nts_tenant_facilities_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_tenant_facilities_recid_seq', 1, false);
+
+
+--
+-- TOC entry 2358 (class 0 OID 62330)
+-- Dependencies: 214
+-- Data for Name: ng_nts_tenants; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2430 (class 0 OID 0)
+-- Dependencies: 215
+-- Name: ng_nts_tenants_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_tenants_recid_seq', 3, true);
+
+
+--
+-- TOC entry 2431 (class 0 OID 0)
+-- Dependencies: 216
+-- Name: ng_nts_ticket_histories_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_ticket_histories_recid_seq', 2, true);
+
+
+--
+-- TOC entry 2361 (class 0 OID 62340)
+-- Dependencies: 217
+-- Data for Name: ng_nts_ticket_image; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2432 (class 0 OID 0)
+-- Dependencies: 218
+-- Name: ng_nts_ticket_image_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_ticket_image_recid_seq', 9, true);
+
+
+--
+-- TOC entry 2433 (class 0 OID 0)
+-- Dependencies: 219
+-- Name: ng_nts_ticket_image_recid_seq1; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_ticket_image_recid_seq1', 1, false);
+
+
+--
+-- TOC entry 2364 (class 0 OID 62350)
+-- Dependencies: 220
+-- Data for Name: ng_nts_ticket_status_sequences; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO ng_nts_ticket_status_sequences (recid, to_ticket_status, from_ticket_status) VALUES (1, 1, 1);
+INSERT INTO ng_nts_ticket_status_sequences (recid, to_ticket_status, from_ticket_status) VALUES (2, 2, 1);
+INSERT INTO ng_nts_ticket_status_sequences (recid, to_ticket_status, from_ticket_status) VALUES (3, 4, 1);
+INSERT INTO ng_nts_ticket_status_sequences (recid, to_ticket_status, from_ticket_status) VALUES (4, 2, 2);
+INSERT INTO ng_nts_ticket_status_sequences (recid, to_ticket_status, from_ticket_status) VALUES (5, 3, 2);
+INSERT INTO ng_nts_ticket_status_sequences (recid, to_ticket_status, from_ticket_status) VALUES (6, 4, 2);
+INSERT INTO ng_nts_ticket_status_sequences (recid, to_ticket_status, from_ticket_status) VALUES (7, 3, 3);
+INSERT INTO ng_nts_ticket_status_sequences (recid, to_ticket_status, from_ticket_status) VALUES (8, 5, 3);
+INSERT INTO ng_nts_ticket_status_sequences (recid, to_ticket_status, from_ticket_status) VALUES (9, 5, 4);
+INSERT INTO ng_nts_ticket_status_sequences (recid, to_ticket_status, from_ticket_status) VALUES (10, 1, 5);
+INSERT INTO ng_nts_ticket_status_sequences (recid, to_ticket_status, from_ticket_status) VALUES (11, 2, 5);
+INSERT INTO ng_nts_ticket_status_sequences (recid, to_ticket_status, from_ticket_status) VALUES (12, 4, 5);
+INSERT INTO ng_nts_ticket_status_sequences (recid, to_ticket_status, from_ticket_status) VALUES (13, 5, 5);
+
+
+--
+-- TOC entry 2434 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: ng_nts_ticket_status_sequences_from_ticket_status_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_ticket_status_sequences_from_ticket_status_seq', 1, false);
+
+
+--
+-- TOC entry 2435 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: ng_nts_ticket_status_sequences_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_ticket_status_sequences_recid_seq', 1, false);
+
+
+--
+-- TOC entry 2436 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: ng_nts_ticket_status_sequences_to_ticket_status_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_ticket_status_sequences_to_ticket_status_seq', 1, false);
+
+
+--
+-- TOC entry 2368 (class 0 OID 62359)
+-- Dependencies: 224
+-- Data for Name: ng_nts_ticket_statuses; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO ng_nts_ticket_statuses (recid, name) VALUES (2, 'In Progress');
+INSERT INTO ng_nts_ticket_statuses (recid, name) VALUES (3, 'Solved');
+INSERT INTO ng_nts_ticket_statuses (recid, name) VALUES (5, 'Reopened');
+INSERT INTO ng_nts_ticket_statuses (recid, name) VALUES (1, 'New');
+INSERT INTO ng_nts_ticket_statuses (recid, name) VALUES (4, 'Canceled');
+
+
+--
+-- TOC entry 2437 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: ng_nts_ticket_statuses_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_ticket_statuses_recid_seq', 1, false);
+
+
+--
+-- TOC entry 2370 (class 0 OID 62364)
+-- Dependencies: 226
+-- Data for Name: ng_nts_tickets; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2371 (class 0 OID 62370)
+-- Dependencies: 227
+-- Data for Name: ng_nts_tickets_histories; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2438 (class 0 OID 0)
+-- Dependencies: 228
+-- Name: ng_nts_tickets_histories_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_tickets_histories_recid_seq', 1, false);
+
+
+--
+-- TOC entry 2439 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: ng_nts_tickets_recid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('ng_nts_tickets_recid_seq', 22, true);
+
+
+--
+-- TOC entry 2082 (class 2606 OID 62408)
+-- Name: menu_item_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_menu_item
+    ADD CONSTRAINT menu_item_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2080 (class 2606 OID 62410)
+-- Name: menu_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_menu
+    ADD CONSTRAINT menu_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2048 (class 2606 OID 62412)
+-- Name: ng_nts_bill_calculation_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_bill_calculation
+    ADD CONSTRAINT ng_nts_bill_calculation_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2050 (class 2606 OID 62414)
+-- Name: ng_nts_bill_cycle_history_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_bill_cycle_history
+    ADD CONSTRAINT ng_nts_bill_cycle_history_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2052 (class 2606 OID 62416)
+-- Name: ng_nts_bill_details_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_bill_details
+    ADD CONSTRAINT ng_nts_bill_details_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2046 (class 2606 OID 62418)
+-- Name: ng_nts_bill_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_bill
+    ADD CONSTRAINT ng_nts_bill_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2054 (class 2606 OID 62420)
+-- Name: ng_nts_cities_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_cities
+    ADD CONSTRAINT ng_nts_cities_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2056 (class 2606 OID 62422)
+-- Name: ng_nts_compounds_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_compounds
+    ADD CONSTRAINT ng_nts_compounds_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2058 (class 2606 OID 62424)
+-- Name: ng_nts_countries_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_countries
+    ADD CONSTRAINT ng_nts_countries_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2065 (class 2606 OID 62426)
+-- Name: ng_nts_employees_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_employees
+    ADD CONSTRAINT ng_nts_employees_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2070 (class 2606 OID 62428)
+-- Name: ng_nts_facilities_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_facilities
+    ADD CONSTRAINT ng_nts_facilities_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2073 (class 2606 OID 62430)
+-- Name: ng_nts_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_groups
+    ADD CONSTRAINT ng_nts_groups_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2076 (class 2606 OID 62432)
+-- Name: ng_nts_lookup_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_lookup
+    ADD CONSTRAINT ng_nts_lookup_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2078 (class 2606 OID 62434)
+-- Name: ng_nts_lookup_types_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_lookup_types
+    ADD CONSTRAINT ng_nts_lookup_types_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2086 (class 2606 OID 62436)
+-- Name: ng_nts_nationalities_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_nationalities
+    ADD CONSTRAINT ng_nts_nationalities_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2095 (class 2606 OID 62438)
+-- Name: ng_nts_orders_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_orders
+    ADD CONSTRAINT ng_nts_orders_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2099 (class 2606 OID 62440)
+-- Name: ng_nts_service_usage_rates_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_service_usage_rates
+    ADD CONSTRAINT ng_nts_service_usage_rates_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2104 (class 2606 OID 62442)
+-- Name: ng_nts_services_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_services
+    ADD CONSTRAINT ng_nts_services_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2106 (class 2606 OID 62444)
+-- Name: ng_nts_system_configuration_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_system_configuration
+    ADD CONSTRAINT ng_nts_system_configuration_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2111 (class 2606 OID 62446)
+-- Name: ng_nts_tenant_facilities_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_tenant_facilities
+    ADD CONSTRAINT ng_nts_tenant_facilities_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2116 (class 2606 OID 62448)
+-- Name: ng_nts_tenants_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_tenants
+    ADD CONSTRAINT ng_nts_tenants_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2119 (class 2606 OID 62450)
+-- Name: ng_nts_ticket_image_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_ticket_image
+    ADD CONSTRAINT ng_nts_ticket_image_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2121 (class 2606 OID 62452)
+-- Name: ng_nts_ticket_status_sequences_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_ticket_status_sequences
+    ADD CONSTRAINT ng_nts_ticket_status_sequences_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2123 (class 2606 OID 62454)
+-- Name: ng_nts_ticket_statuses_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_ticket_statuses
+    ADD CONSTRAINT ng_nts_ticket_statuses_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2139 (class 2606 OID 62456)
+-- Name: ng_nts_tickets_histories_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_tickets_histories
+    ADD CONSTRAINT ng_nts_tickets_histories_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2133 (class 2606 OID 62458)
+-- Name: ng_nts_tickets_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_tickets
+    ADD CONSTRAINT ng_nts_tickets_pkey PRIMARY KEY (recid);
+
+
+--
+-- TOC entry 2084 (class 2606 OID 62460)
+-- Name: pkc_name; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY ng_nts_menu_item_group
+    ADD CONSTRAINT pkc_name PRIMARY KEY (group_id, menu_item_id);
+
+
+--
+-- TOC entry 2071 (class 1259 OID 62461)
+-- Name: fki_created_by_fk; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX fki_created_by_fk ON ng_nts_groups USING btree (created_by);
+
+
+--
+-- TOC entry 2100 (class 1259 OID 62462)
+-- Name: fki_ng_nts_activity_lookup_fk; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX fki_ng_nts_activity_lookup_fk ON ng_nts_services USING btree (activity_status_lookup);
+
+
+--
+-- TOC entry 2124 (class 1259 OID 62463)
+-- Name: fki_ticket_ticket_status_id_fk; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX fki_ticket_ticket_status_id_fk ON ng_nts_tickets USING btree (ticket_last_status_id);
+
+
+--
+-- TOC entry 2059 (class 1259 OID 62464)
+-- Name: idx_ng_nts_employees__compound_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_employees__compound_id ON ng_nts_employees USING btree (compound_id);
+
+
+--
+-- TOC entry 2060 (class 1259 OID 62465)
+-- Name: idx_ng_nts_employees__gender_lookup_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_employees__gender_lookup_id ON ng_nts_employees USING btree (gender_lookup_id);
+
+
+--
+-- TOC entry 2061 (class 1259 OID 62466)
+-- Name: idx_ng_nts_employees__group_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_employees__group_id ON ng_nts_employees USING btree (group_id);
+
+
+--
+-- TOC entry 2062 (class 1259 OID 62467)
+-- Name: idx_ng_nts_employees__salutation_lookup_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_employees__salutation_lookup_id ON ng_nts_employees USING btree (salutation_lookup_id);
+
+
+--
+-- TOC entry 2063 (class 1259 OID 62468)
+-- Name: idx_ng_nts_employees__status_lookup_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_employees__status_lookup_id ON ng_nts_employees USING btree (status_lookup_id);
+
+
+--
+-- TOC entry 2066 (class 1259 OID 62469)
+-- Name: idx_ng_nts_facilities__compound_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_facilities__compound_id ON ng_nts_facilities USING btree (compound_id);
+
+
+--
+-- TOC entry 2067 (class 1259 OID 62470)
+-- Name: idx_ng_nts_facilities__facility_lookup_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_facilities__facility_lookup_id ON ng_nts_facilities USING btree (facility_type_lookup_id);
+
+
+--
+-- TOC entry 2068 (class 1259 OID 62471)
+-- Name: idx_ng_nts_facilities__tenant_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_facilities__tenant_id ON ng_nts_facilities USING btree (tenant_id);
+
+
+--
+-- TOC entry 2074 (class 1259 OID 62472)
+-- Name: idx_ng_nts_lookup__type_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_lookup__type_id ON ng_nts_lookup USING btree (type_id);
+
+
+--
+-- TOC entry 2087 (class 1259 OID 62473)
+-- Name: idx_ng_nts_orders__accepted_by; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_orders__accepted_by ON ng_nts_orders USING btree (accepted_by);
+
+
+--
+-- TOC entry 2088 (class 1259 OID 62474)
+-- Name: idx_ng_nts_orders__channel_lookup_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_orders__channel_lookup_id ON ng_nts_orders USING btree (channel_lookup_id);
+
+
+--
+-- TOC entry 2089 (class 1259 OID 62475)
+-- Name: idx_ng_nts_orders__compound_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_orders__compound_id ON ng_nts_orders USING btree (compound_id);
+
+
+--
+-- TOC entry 2090 (class 1259 OID 62476)
+-- Name: idx_ng_nts_orders__created_by; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_orders__created_by ON ng_nts_orders USING btree (created_by);
+
+
+--
+-- TOC entry 2091 (class 1259 OID 62477)
+-- Name: idx_ng_nts_orders__facility_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_orders__facility_id ON ng_nts_orders USING btree (facility_id);
+
+
+--
+-- TOC entry 2092 (class 1259 OID 62478)
+-- Name: idx_ng_nts_orders__service_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_orders__service_id ON ng_nts_orders USING btree (service_id);
+
+
+--
+-- TOC entry 2093 (class 1259 OID 62479)
+-- Name: idx_ng_nts_orders__tenant_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_orders__tenant_id ON ng_nts_orders USING btree (tenant_id);
+
+
+--
+-- TOC entry 2096 (class 1259 OID 62480)
+-- Name: idx_ng_nts_service_usage_rates__compound_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_service_usage_rates__compound_id ON ng_nts_service_usage_rates USING btree (compound_id);
+
+
+--
+-- TOC entry 2097 (class 1259 OID 62481)
+-- Name: idx_ng_nts_service_usage_rates__service_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_service_usage_rates__service_id ON ng_nts_service_usage_rates USING btree (service_id);
+
+
+--
+-- TOC entry 2101 (class 1259 OID 62482)
+-- Name: idx_ng_nts_services__compound_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_services__compound_id ON ng_nts_services USING btree (compound_id);
+
+
+--
+-- TOC entry 2102 (class 1259 OID 62483)
+-- Name: idx_ng_nts_services__measuring_unit_lookup_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_services__measuring_unit_lookup_id ON ng_nts_services USING btree (measuring_unit_lookup_id);
+
+
+--
+-- TOC entry 2107 (class 1259 OID 62484)
+-- Name: idx_ng_nts_tenant_facilities__compound_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tenant_facilities__compound_id ON ng_nts_tenant_facilities USING btree (compound_id);
+
+
+--
+-- TOC entry 2108 (class 1259 OID 62485)
+-- Name: idx_ng_nts_tenant_facilities__facility_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tenant_facilities__facility_id ON ng_nts_tenant_facilities USING btree (facility_id);
+
+
+--
+-- TOC entry 2109 (class 1259 OID 62486)
+-- Name: idx_ng_nts_tenant_facilities__tenant_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tenant_facilities__tenant_id ON ng_nts_tenant_facilities USING btree (tenant_id);
+
+
+--
+-- TOC entry 2112 (class 1259 OID 62487)
+-- Name: idx_ng_nts_tenants__compound_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tenants__compound_id ON ng_nts_tenants USING btree (compound_id);
+
+
+--
+-- TOC entry 2113 (class 1259 OID 62488)
+-- Name: idx_ng_nts_tenants__gender_lookup_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tenants__gender_lookup_id ON ng_nts_tenants USING btree (gender_lookup_id);
+
+
+--
+-- TOC entry 2114 (class 1259 OID 62489)
+-- Name: idx_ng_nts_tenants__salutation_lookup_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tenants__salutation_lookup_id ON ng_nts_tenants USING btree (salutation_lookup_id);
+
+
+--
+-- TOC entry 2117 (class 1259 OID 62490)
+-- Name: idx_ng_nts_ticket_image__compound_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_ticket_image__compound_id ON ng_nts_ticket_image USING btree (ticket_id);
+
+
+--
+-- TOC entry 2125 (class 1259 OID 62491)
+-- Name: idx_ng_nts_tickets__assigned_group_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tickets__assigned_group_id ON ng_nts_tickets USING btree (assigned_group_id);
+
+
+--
+-- TOC entry 2126 (class 1259 OID 62492)
+-- Name: idx_ng_nts_tickets__channel_lookup_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tickets__channel_lookup_id ON ng_nts_tickets USING btree (channel_lookup_id);
+
+
+--
+-- TOC entry 2127 (class 1259 OID 62493)
+-- Name: idx_ng_nts_tickets__compound_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tickets__compound_id ON ng_nts_tickets USING btree (compound_id);
+
+
+--
+-- TOC entry 2128 (class 1259 OID 62494)
+-- Name: idx_ng_nts_tickets__facility_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tickets__facility_id ON ng_nts_tickets USING btree (facility_id);
+
+
+--
+-- TOC entry 2129 (class 1259 OID 62495)
+-- Name: idx_ng_nts_tickets__opened_by; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tickets__opened_by ON ng_nts_tickets USING btree (opened_by);
+
+
+--
+-- TOC entry 2130 (class 1259 OID 62496)
+-- Name: idx_ng_nts_tickets__related_tenant_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tickets__related_tenant_id ON ng_nts_tickets USING btree (related_tenant_id);
+
+
+--
+-- TOC entry 2131 (class 1259 OID 62497)
+-- Name: idx_ng_nts_tickets__service_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tickets__service_id ON ng_nts_tickets USING btree (service_id);
+
+
+--
+-- TOC entry 2134 (class 1259 OID 62498)
+-- Name: idx_ng_nts_tickets_histories__action_by; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tickets_histories__action_by ON ng_nts_tickets_histories USING btree (action_by);
+
+
+--
+-- TOC entry 2135 (class 1259 OID 62499)
+-- Name: idx_ng_nts_tickets_histories__compound_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tickets_histories__compound_id ON ng_nts_tickets_histories USING btree (compound_id);
+
+
+--
+-- TOC entry 2136 (class 1259 OID 62500)
+-- Name: idx_ng_nts_tickets_histories__opened_by; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tickets_histories__opened_by ON ng_nts_tickets_histories USING btree (opened_by);
+
+
+--
+-- TOC entry 2137 (class 1259 OID 62501)
+-- Name: idx_ng_nts_tickets_histories__ticket_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_ng_nts_tickets_histories__ticket_id ON ng_nts_tickets_histories USING btree (ticket_id);
+
+
+--
+-- TOC entry 2164 (class 2606 OID 62502)
+-- Name: created_by_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_groups
+    ADD CONSTRAINT created_by_fk FOREIGN KEY (created_by) REFERENCES ng_nts_employees(recid);
+
+
+--
+-- TOC entry 2154 (class 2606 OID 62507)
+-- Name: fk_ng_nts_employees__compound_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_employees
+    ADD CONSTRAINT fk_ng_nts_employees__compound_id FOREIGN KEY (compound_id) REFERENCES ng_nts_compounds(recid);
+
+
+--
+-- TOC entry 2155 (class 2606 OID 62512)
+-- Name: fk_ng_nts_employees__createdby; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_employees
+    ADD CONSTRAINT fk_ng_nts_employees__createdby FOREIGN KEY (created_by) REFERENCES ng_nts_employees(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2156 (class 2606 OID 62517)
+-- Name: fk_ng_nts_employees__gender_lookup_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_employees
+    ADD CONSTRAINT fk_ng_nts_employees__gender_lookup_id FOREIGN KEY (gender_lookup_id) REFERENCES ng_nts_lookup(recid);
+
+
+--
+-- TOC entry 2157 (class 2606 OID 62522)
+-- Name: fk_ng_nts_employees__group_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_employees
+    ADD CONSTRAINT fk_ng_nts_employees__group_id FOREIGN KEY (group_id) REFERENCES ng_nts_groups(recid);
+
+
+--
+-- TOC entry 2158 (class 2606 OID 62527)
+-- Name: fk_ng_nts_employees__salutation_lookup_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_employees
+    ADD CONSTRAINT fk_ng_nts_employees__salutation_lookup_id FOREIGN KEY (salutation_lookup_id) REFERENCES ng_nts_lookup(recid);
+
+
+--
+-- TOC entry 2159 (class 2606 OID 62532)
+-- Name: fk_ng_nts_employees__status_lookup_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_employees
+    ADD CONSTRAINT fk_ng_nts_employees__status_lookup_id FOREIGN KEY (status_lookup_id) REFERENCES ng_nts_lookup(recid);
+
+
+--
+-- TOC entry 2160 (class 2606 OID 62537)
+-- Name: fk_ng_nts_facilities__compound_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_facilities
+    ADD CONSTRAINT fk_ng_nts_facilities__compound_id FOREIGN KEY (compound_id) REFERENCES ng_nts_compounds(recid);
+
+
+--
+-- TOC entry 2161 (class 2606 OID 62542)
+-- Name: fk_ng_nts_facilities__facility_lookup_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_facilities
+    ADD CONSTRAINT fk_ng_nts_facilities__facility_lookup_id FOREIGN KEY (facility_type_lookup_id) REFERENCES ng_nts_lookup(recid);
+
+
+--
+-- TOC entry 2162 (class 2606 OID 62547)
+-- Name: fk_ng_nts_facilities__tenant_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_facilities
+    ADD CONSTRAINT fk_ng_nts_facilities__tenant_id FOREIGN KEY (tenant_id) REFERENCES ng_nts_tenants(recid);
+
+
+--
+-- TOC entry 2166 (class 2606 OID 62552)
+-- Name: fk_ng_nts_lookup__type_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_lookup
+    ADD CONSTRAINT fk_ng_nts_lookup__type_id FOREIGN KEY (type_id) REFERENCES ng_nts_lookup_types(recid);
+
+
+--
+-- TOC entry 2172 (class 2606 OID 62557)
+-- Name: fk_ng_nts_orders__accepted_by; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_orders
+    ADD CONSTRAINT fk_ng_nts_orders__accepted_by FOREIGN KEY (accepted_by) REFERENCES ng_nts_employees(recid);
+
+
+--
+-- TOC entry 2173 (class 2606 OID 62562)
+-- Name: fk_ng_nts_orders__channel_lookup_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_orders
+    ADD CONSTRAINT fk_ng_nts_orders__channel_lookup_id FOREIGN KEY (channel_lookup_id) REFERENCES ng_nts_lookup(recid);
+
+
+--
+-- TOC entry 2174 (class 2606 OID 62567)
+-- Name: fk_ng_nts_orders__compound_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_orders
+    ADD CONSTRAINT fk_ng_nts_orders__compound_id FOREIGN KEY (compound_id) REFERENCES ng_nts_compounds(recid);
+
+
+--
+-- TOC entry 2175 (class 2606 OID 62572)
+-- Name: fk_ng_nts_orders__created_by; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_orders
+    ADD CONSTRAINT fk_ng_nts_orders__created_by FOREIGN KEY (created_by) REFERENCES ng_nts_employees(recid);
+
+
+--
+-- TOC entry 2176 (class 2606 OID 62577)
+-- Name: fk_ng_nts_orders__facility_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_orders
+    ADD CONSTRAINT fk_ng_nts_orders__facility_id FOREIGN KEY (facility_id) REFERENCES ng_nts_facilities(recid);
+
+
+--
+-- TOC entry 2177 (class 2606 OID 62582)
+-- Name: fk_ng_nts_orders__service_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_orders
+    ADD CONSTRAINT fk_ng_nts_orders__service_id FOREIGN KEY (service_id) REFERENCES ng_nts_services(recid);
+
+
+--
+-- TOC entry 2178 (class 2606 OID 62587)
+-- Name: fk_ng_nts_orders__tenant_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_orders
+    ADD CONSTRAINT fk_ng_nts_orders__tenant_id FOREIGN KEY (tenant_id) REFERENCES ng_nts_tenants(recid);
+
+
+--
+-- TOC entry 2180 (class 2606 OID 62592)
+-- Name: fk_ng_nts_service_usage_rates__compound_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_service_usage_rates
+    ADD CONSTRAINT fk_ng_nts_service_usage_rates__compound_id FOREIGN KEY (compound_id) REFERENCES ng_nts_compounds(recid);
+
+
+--
+-- TOC entry 2181 (class 2606 OID 62597)
+-- Name: fk_ng_nts_service_usage_rates__service_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_service_usage_rates
+    ADD CONSTRAINT fk_ng_nts_service_usage_rates__service_id FOREIGN KEY (service_id) REFERENCES ng_nts_services(recid);
+
+
+--
+-- TOC entry 2182 (class 2606 OID 62602)
+-- Name: fk_ng_nts_services__compound_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_services
+    ADD CONSTRAINT fk_ng_nts_services__compound_id FOREIGN KEY (compound_id) REFERENCES ng_nts_compounds(recid);
+
+
+--
+-- TOC entry 2183 (class 2606 OID 62607)
+-- Name: fk_ng_nts_services__measuring_unit_lookup_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_services
+    ADD CONSTRAINT fk_ng_nts_services__measuring_unit_lookup_id FOREIGN KEY (measuring_unit_lookup_id) REFERENCES ng_nts_lookup(recid);
+
+
+--
+-- TOC entry 2186 (class 2606 OID 62612)
+-- Name: fk_ng_nts_tenant_facilities__compound_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tenant_facilities
+    ADD CONSTRAINT fk_ng_nts_tenant_facilities__compound_id FOREIGN KEY (compound_id) REFERENCES ng_nts_compounds(recid);
+
+
+--
+-- TOC entry 2187 (class 2606 OID 62617)
+-- Name: fk_ng_nts_tenant_facilities__facility_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tenant_facilities
+    ADD CONSTRAINT fk_ng_nts_tenant_facilities__facility_id FOREIGN KEY (facility_id) REFERENCES ng_nts_facilities(recid);
+
+
+--
+-- TOC entry 2188 (class 2606 OID 62622)
+-- Name: fk_ng_nts_tenant_facilities__tenant_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tenant_facilities
+    ADD CONSTRAINT fk_ng_nts_tenant_facilities__tenant_id FOREIGN KEY (tenant_id) REFERENCES ng_nts_tenants(recid);
+
+
+--
+-- TOC entry 2189 (class 2606 OID 62627)
+-- Name: fk_ng_nts_tenants__compound_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tenants
+    ADD CONSTRAINT fk_ng_nts_tenants__compound_id FOREIGN KEY (compound_id) REFERENCES ng_nts_compounds(recid);
+
+
+--
+-- TOC entry 2190 (class 2606 OID 62632)
+-- Name: fk_ng_nts_tenants__gender_lookup_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tenants
+    ADD CONSTRAINT fk_ng_nts_tenants__gender_lookup_id FOREIGN KEY (gender_lookup_id) REFERENCES ng_nts_lookup(recid);
+
+
+--
+-- TOC entry 2191 (class 2606 OID 62637)
+-- Name: fk_ng_nts_tenants__salutation_lookup_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tenants
+    ADD CONSTRAINT fk_ng_nts_tenants__salutation_lookup_id FOREIGN KEY (salutation_lookup_id) REFERENCES ng_nts_lookup(recid);
+
+
+--
+-- TOC entry 2195 (class 2606 OID 62642)
+-- Name: fk_ng_nts_tickets__assigned_group_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tickets
+    ADD CONSTRAINT fk_ng_nts_tickets__assigned_group_id FOREIGN KEY (assigned_group_id) REFERENCES ng_nts_groups(recid);
+
+
+--
+-- TOC entry 2196 (class 2606 OID 62647)
+-- Name: fk_ng_nts_tickets__channel_lookup_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tickets
+    ADD CONSTRAINT fk_ng_nts_tickets__channel_lookup_id FOREIGN KEY (channel_lookup_id) REFERENCES ng_nts_lookup(recid);
+
+
+--
+-- TOC entry 2197 (class 2606 OID 62652)
+-- Name: fk_ng_nts_tickets__compound_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tickets
+    ADD CONSTRAINT fk_ng_nts_tickets__compound_id FOREIGN KEY (compound_id) REFERENCES ng_nts_compounds(recid);
+
+
+--
+-- TOC entry 2198 (class 2606 OID 62657)
+-- Name: fk_ng_nts_tickets__facility_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tickets
+    ADD CONSTRAINT fk_ng_nts_tickets__facility_id FOREIGN KEY (facility_id) REFERENCES ng_nts_facilities(recid);
+
+
+--
+-- TOC entry 2199 (class 2606 OID 62662)
+-- Name: fk_ng_nts_tickets__opened_by; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tickets
+    ADD CONSTRAINT fk_ng_nts_tickets__opened_by FOREIGN KEY (opened_by) REFERENCES ng_nts_employees(recid);
+
+
+--
+-- TOC entry 2200 (class 2606 OID 62667)
+-- Name: fk_ng_nts_tickets__related_tenant_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tickets
+    ADD CONSTRAINT fk_ng_nts_tickets__related_tenant_id FOREIGN KEY (related_tenant_id) REFERENCES ng_nts_tenants(recid);
+
+
+--
+-- TOC entry 2201 (class 2606 OID 62672)
+-- Name: fk_ng_nts_tickets__service_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tickets
+    ADD CONSTRAINT fk_ng_nts_tickets__service_id FOREIGN KEY (service_id) REFERENCES ng_nts_services(recid);
+
+
+--
+-- TOC entry 2203 (class 2606 OID 62677)
+-- Name: fk_ng_nts_tickets_histories__action_by; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tickets_histories
+    ADD CONSTRAINT fk_ng_nts_tickets_histories__action_by FOREIGN KEY (action_by) REFERENCES ng_nts_employees(recid);
+
+
+--
+-- TOC entry 2204 (class 2606 OID 62682)
+-- Name: fk_ng_nts_tickets_histories__compound_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tickets_histories
+    ADD CONSTRAINT fk_ng_nts_tickets_histories__compound_id FOREIGN KEY (compound_id) REFERENCES ng_nts_compounds(recid);
+
+
+--
+-- TOC entry 2205 (class 2606 OID 62687)
+-- Name: fk_ng_nts_tickets_histories__opened_by; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tickets_histories
+    ADD CONSTRAINT fk_ng_nts_tickets_histories__opened_by FOREIGN KEY (opened_by) REFERENCES ng_nts_employees(recid);
+
+
+--
+-- TOC entry 2206 (class 2606 OID 62692)
+-- Name: fk_ng_nts_tickets_histories__ticket_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tickets_histories
+    ADD CONSTRAINT fk_ng_nts_tickets_histories__ticket_id FOREIGN KEY (ticket_id) REFERENCES ng_nts_tickets(recid);
+
+
+--
+-- TOC entry 2167 (class 2606 OID 62697)
+-- Name: menu_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_menu
+    ADD CONSTRAINT menu_fk FOREIGN KEY (status_id) REFERENCES ng_nts_lookup(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2168 (class 2606 OID 62702)
+-- Name: menu_item_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_menu_item
+    ADD CONSTRAINT menu_item_fk FOREIGN KEY (status_id) REFERENCES ng_nts_lookup(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2169 (class 2606 OID 62707)
+-- Name: menu_item_fk1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_menu_item
+    ADD CONSTRAINT menu_item_fk1 FOREIGN KEY (menu_id) REFERENCES ng_nts_menu(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2170 (class 2606 OID 62712)
+-- Name: menu_item_group_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_menu_item_group
+    ADD CONSTRAINT menu_item_group_fk FOREIGN KEY (group_id) REFERENCES ng_nts_groups(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2171 (class 2606 OID 62717)
+-- Name: menu_item_group_fk1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_menu_item_group
+    ADD CONSTRAINT menu_item_group_fk1 FOREIGN KEY (menu_item_id) REFERENCES ng_nts_menu_item(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2184 (class 2606 OID 62722)
+-- Name: ng_nts_activity_lookup_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_services
+    ADD CONSTRAINT ng_nts_activity_lookup_fk FOREIGN KEY (activity_status_lookup) REFERENCES ng_nts_lookup(recid);
+
+
+--
+-- TOC entry 2142 (class 2606 OID 62727)
+-- Name: ng_nts_bill_calculation_facility_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_bill_calculation
+    ADD CONSTRAINT ng_nts_bill_calculation_facility_id_fkey FOREIGN KEY (facility_id) REFERENCES ng_nts_facilities(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2143 (class 2606 OID 62732)
+-- Name: ng_nts_bill_calculation_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_bill_calculation
+    ADD CONSTRAINT ng_nts_bill_calculation_fk FOREIGN KEY (compound_id) REFERENCES ng_nts_compounds(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2144 (class 2606 OID 62737)
+-- Name: ng_nts_bill_calculation_fk1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_bill_calculation
+    ADD CONSTRAINT ng_nts_bill_calculation_fk1 FOREIGN KEY (service_id) REFERENCES ng_nts_services(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2145 (class 2606 OID 62742)
+-- Name: ng_nts_bill_calculation_fk2; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_bill_calculation
+    ADD CONSTRAINT ng_nts_bill_calculation_fk2 FOREIGN KEY (order_id) REFERENCES ng_nts_orders(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2140 (class 2606 OID 62747)
+-- Name: ng_nts_bill_compound_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_bill
+    ADD CONSTRAINT ng_nts_bill_compound_id_fkey FOREIGN KEY (compound_id) REFERENCES ng_nts_compounds(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2146 (class 2606 OID 62752)
+-- Name: ng_nts_bill_cycle_history_compund_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_bill_cycle_history
+    ADD CONSTRAINT ng_nts_bill_cycle_history_compund_id_fkey FOREIGN KEY (compound_id) REFERENCES ng_nts_compounds(recid);
+
+
+--
+-- TOC entry 2147 (class 2606 OID 62757)
+-- Name: ng_nts_bill_details_bill_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_bill_details
+    ADD CONSTRAINT ng_nts_bill_details_bill_id_fkey FOREIGN KEY (bill_id) REFERENCES ng_nts_bill(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2148 (class 2606 OID 62762)
+-- Name: ng_nts_bill_details_compound_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_bill_details
+    ADD CONSTRAINT ng_nts_bill_details_compound_id_fkey FOREIGN KEY (compound_id) REFERENCES ng_nts_compounds(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2149 (class 2606 OID 62767)
+-- Name: ng_nts_bill_details_facility_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_bill_details
+    ADD CONSTRAINT ng_nts_bill_details_facility_id_fkey FOREIGN KEY (facility_id) REFERENCES ng_nts_facilities(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2150 (class 2606 OID 62772)
+-- Name: ng_nts_bill_details_service_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_bill_details
+    ADD CONSTRAINT ng_nts_bill_details_service_id_fkey FOREIGN KEY (service_id) REFERENCES ng_nts_services(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2141 (class 2606 OID 62777)
+-- Name: ng_nts_bill_tenant_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_bill
+    ADD CONSTRAINT ng_nts_bill_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES ng_nts_tenants(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2151 (class 2606 OID 62782)
+-- Name: ng_nts_cities_country_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_cities
+    ADD CONSTRAINT ng_nts_cities_country_id_fkey FOREIGN KEY (country_id) REFERENCES ng_nts_countries(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2152 (class 2606 OID 62787)
+-- Name: ng_nts_employee_groups_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_employee_groups
+    ADD CONSTRAINT ng_nts_employee_groups_fk FOREIGN KEY (employee_id) REFERENCES ng_nts_employees(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2153 (class 2606 OID 62792)
+-- Name: ng_nts_employee_groups_fk1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_employee_groups
+    ADD CONSTRAINT ng_nts_employee_groups_fk1 FOREIGN KEY (group_id) REFERENCES ng_nts_groups(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2163 (class 2606 OID 62797)
+-- Name: ng_nts_facilities_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_facilities
+    ADD CONSTRAINT ng_nts_facilities_fk FOREIGN KEY (status_lookup_id) REFERENCES ng_nts_lookup(recid);
+
+
+--
+-- TOC entry 2165 (class 2606 OID 62802)
+-- Name: ng_nts_groups_compound_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_groups
+    ADD CONSTRAINT ng_nts_groups_compound_id_fkey FOREIGN KEY (compound_id) REFERENCES ng_nts_compounds(recid);
+
+
+--
+-- TOC entry 2179 (class 2606 OID 62807)
+-- Name: ng_nts_orders_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_orders
+    ADD CONSTRAINT ng_nts_orders_fk FOREIGN KEY (status_lookup_id) REFERENCES ng_nts_lookup(recid);
+
+
+--
+-- TOC entry 2192 (class 2606 OID 62812)
+-- Name: ng_nts_ticket_image_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_ticket_image
+    ADD CONSTRAINT ng_nts_ticket_image_fk FOREIGN KEY (ticket_id) REFERENCES ng_nts_tickets(recid);
+
+
+--
+-- TOC entry 2193 (class 2606 OID 62817)
+-- Name: ng_nts_ticket_status_sequences_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_ticket_status_sequences
+    ADD CONSTRAINT ng_nts_ticket_status_sequences_fk FOREIGN KEY (to_ticket_status) REFERENCES ng_nts_ticket_statuses(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2194 (class 2606 OID 62822)
+-- Name: ng_nts_ticket_status_sequences_fk1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_ticket_status_sequences
+    ADD CONSTRAINT ng_nts_ticket_status_sequences_fk1 FOREIGN KEY (from_ticket_status) REFERENCES ng_nts_ticket_statuses(recid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2185 (class 2606 OID 62827)
+-- Name: ng_nts_usage_lookup_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_services
+    ADD CONSTRAINT ng_nts_usage_lookup_fk FOREIGN KEY (flat_or_usage_lookup) REFERENCES ng_nts_lookup(recid);
+
+
+--
+-- TOC entry 2202 (class 2606 OID 62832)
+-- Name: ticket_ticket_status_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY ng_nts_tickets
+    ADD CONSTRAINT ticket_ticket_status_id_fk FOREIGN KEY (ticket_last_status_id) REFERENCES ng_nts_ticket_statuses(recid);
+
+
+-- Completed on 2016-07-13 12:51:43
+
+--
+-- PostgreSQL database dump complete
+--
+

@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<h:form id="menuListForm">
+
+
+		<p:messages id="msg" autoUpdate="true" showDetail="true"
+			closable="true" />
+
+		<p:dataTable var="menu" rows="10" paginator="true"
+			widgetVar="menuTable" value="#{menuBean.lazyMenuModel}"
+			resizableColumns="true" draggableColumns="true" rowKey="#{menu.id}"
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			rowsPerPageTemplate="5,10,15" selectionMode="single" dynamic="true"
+			selection="#{menuBean.menu}" id="menuTable" lazy="true">
+
+
+			<p:ajax event="rowSelect" update="@form"></p:ajax>
+			<p:ajax event="page" listener="#{menuBean.disableButton()}"
+				update=":menuListForm:outpnl"></p:ajax>
+
+			<p:column
+				headerText="#{msgs.SMART_COMPOUND_MENU_LIST_PAGE_MENU_NAME}"
+				filterBy="#{menu.name}">
+				<h:outputText value="#{menu.name}" />
+			</p:column>
+
+			<p:column filterMatchMode="exact"
+				headerText="#{msgs.SMART_COMPOUND_MENU_LIST_PAGE_MENU_STATUS}"
+				filterBy="#{menu.status.lookupName}">
+				<f:facet name="filter">
+					<p:selectOneMenu onchange="PF('menuTable').filter()">
+						<p:ajax listener="#{menuBean.disableButton()}" update="@form" />
+						<f:selectItem
+							itemLabel="#{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_STATUS_LABEL}"
+							noSelectionOption="true" />
+						<f:selectItems value="#{menuBean.allLookup}" var="status"
+							itemValue="#{status.lookupName}" itemLabel="#{status.lookupName}" />
+					</p:selectOneMenu>
+				</f:facet>
+				<h:outputText value="#{menu.status.lookupName}" />
+			</p:column>
+
+			<p:column
+				headerText="#{msgs.SMART_COMPOUND_MENU_LIST_PAGE_MENU_DESCRIPTION}"
+				filterBy="#{menu.description}">
+				<h:outputText value="#{menu.description}" />
+			</p:column>
+		</p:dataTable>
+
+		<p:outputPanel id="outpnl">
+
+			<p:commandButton id="editbutton"
+				value="#{msgs.SMART_COMPOUND_MENUITEM_PAGE_MENUITEM_EDIT_BUTTON}"
+				icon="ui-icon-refresh" update=":editMenuDialog"
+				disabled="#{empty menuBean.menu.id}"
+				oncomplete="PF('editMenuDialog').show()"></p:commandButton>
+		</p:outputPanel>
+	</h:form>
+
+
+</ui:composition>

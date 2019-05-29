@@ -1,0 +1,73 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<p:dialog id="viewFacilityDialog" widgetVar="viewFacilityDialog"
+		modal="true" resizable="false" closeOnEscape="true"
+		header="#{msgs.SMART_COMPOUND_FACILITY_PAGE_VIEW_DIALOG}">
+		<h:form id="viewFacilityForm">
+
+
+			<p:panelGrid columns="2" style="width:800px">
+				<h:outputText
+					value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_FACILITY_TYPE}" />
+
+				<h:outputText value="#{facilityBean.selectedFacility.facilityType}" />
+
+				<h:outputText value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_BLOCK}" />
+
+				<h:outputText value="#{facilityBean.selectedFacility.block}" />
+
+				<h:outputText value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_STREET}" />
+
+				<h:outputText value="#{facilityBean.selectedFacility.street}" />
+
+				<h:outputText
+					value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_BUILDING_NUMBER}" />
+
+				<h:outputText
+					value="#{facilityBean.selectedFacility.buildingNumber}" />
+
+				<h:outputText
+					value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_FLOOR_NUMBER}" />
+
+				<h:outputText value="#{facilityBean.selectedFacility.floorNumber}" />
+
+				<h:outputText
+					value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_FACILITY_NUMBER}" />
+
+				<h:outputText
+					value="#{facilityBean.selectedFacility.facilityNumber}" />
+				<ui:remove>
+					<h:outputText value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_STATUS}" />
+
+					<h:outputText value="#{facilityBean.selectedFacility.status}" />
+				</ui:remove>
+				<h:outputText value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_AREA}" />
+
+				<h:outputText value="#{facilityBean.selectedFacility.area} M2" />
+
+				<h:outputText
+					value="#{msgs.SMART_COMPOUND_FACILITY_PAGE_DESCRIPTION}" />
+
+				<h:outputText value="#{facilityBean.selectedFacility.description}" />
+
+			</p:panelGrid>
+			<p:panelGrid>
+				<center>
+					<p:commandButton oncomplete="PF('viewFacilityDialog').hide()"
+						value="#{msgs.SMART_COMPOUND_VIEW_GIALOG_CLOSE_BUTTON}" />
+				</center>
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+</ui:composition>
+
+
+
+
+
+
+

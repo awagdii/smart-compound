@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CustomAccessDeniedHandler extends AccessDeniedHandlerImpl {
-	private final String HOME_PAGE = "/index.xhtml";
+	private final String HOME_PAGE = "/smart-compound/access_denied.xhtml";
 
 	@Override
 	public void handle(HttpServletRequest request,

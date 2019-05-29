@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+<h:head>
+
+
+	<meta charset="utf-8"></meta>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+	<meta
+		content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+		name="viewport"></meta>
+
+	<h:outputStylesheet library="css" name="bootstrap.min.css" />
+	<h:outputStylesheet library="css" name="AdminLTE.min.css" />
+	<h:outputStylesheet library="css" name="_all-skins.min.css" />
+	<h:outputStylesheet library="css" name="blue.css" />
+	<h:outputStylesheet library="css" name="morris.css" />
+	<h:outputStylesheet library="css" name="font-awesome.css" />
+	<h:outputStylesheet library="css" name="ionicons.min.css" />
+	<h:outputScript library="js" name="bootstrap.min.js" />
+	<h:outputScript library="js" name="morris.min.js" />
+	<h:outputScript library="js" name="app.min.js" />
+	<h:outputScript library="js" name="validateDialog.js" />
+	<h:outputScript library="js" name="raphael-min.js" />
+	<h:outputScript library="js" name="jquery-ui.min.js" />
+	<h:outputScript library="js" name="js.js" />
+
+	<title><ui:insert name="title"></ui:insert></title>
+	<h:outputScript library="js" name="smart-compound-scripts.js" />
+	<h:outputStylesheet library="css" name="smart-compound-style.css"></h:outputStylesheet>
+	<ui:insert name="customHeader"></ui:insert>
+
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{loginBean.isSessionInvalidated}" />
+	</f:metadata>
+</h:head>
+<h:body styleClass="hold-transition skin-blue sidebar-mini" 
+    onpageshow="if (event.persisted) noBack();" onunload="">
+	<div class="wrapper">
+
+
+
+
+		<div id="page">
+			<div id="header">
+				<ui:insert name="header">
+					<ui:include src="header.xhtml" />
+				</ui:insert>
+			</div>
+
+			<div id="mainSidebar">
+				<ui:insert name="mainSidebar">
+					<ui:include src="mainSidebar.xhtml" />
+				</ui:insert>
+			</div>
+
+
+
+
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="img/bar.gif" />
+			</p:dialog>
+
+
+
+
+
+
+
+			<div id="content">
+				<div class="content-wrapper">
+					<!-- Content Header (Page header) -->
+					<section class="content-header">
+					<h1>
+						<ui:insert name="contentTitle"></ui:insert>
+					</h1>
+					</section>
+
+					<!-- Main content -->
+					<section class="content"> <ui:insert name="content">
+					</ui:insert> </section>
+				</div>
+
+			</div>
+
+			<div id="footer">
+				<ui:insert name="footer">
+					<ui:include src="footer.xhtml" />
+				</ui:insert>
+			</div>
+
+			<!-- 			<div id="controlSidebar"> -->
+			<!-- 				<ui:insert name="controlSidebar"> -->
+			<!-- 					<ui:include src="controlSidebar.xhtml" /> -->
+			<!-- 				</ui:insert> -->
+			<!-- 			</div> -->
+
+
+
+		</div>
+	</div>
+</h:body>
+</html>

@@ -1,0 +1,496 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+
+	<p:dialog widgetVar="createTenantDialog" 
+		header="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_CREATE_TITLE}"
+		onHide="PF('wiz').loadStep('personal', true)" modal="true" 
+		resizable="false" closeOnEscape="true" width="85%" height="370px">
+		
+		<p:ajax event="close" update=":tenantForm" resetValues="true" />
+		<h:form id="tenantForm"
+			title="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_CREATE_TITLE}">
+		
+			<p:wizard widgetVar="wiz">
+				<p:tab id="personal"
+					title="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_TAB_PERSONAL}">
+					<p:panel
+						header="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_TAB_PERSONAL_INFO}">
+						<h:panelGrid columns="3" columnClasses="label, value">
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_SALUTATION}"
+								style="color:black;font-size: 100%;" />
+							<p:selectOneMenu id="salutationSOM"
+								value="#{tenantBean.tenant.salutationLookup}" required="true"
+								requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_SALUTATION_REQ}"
+								converter="#{lookupConverter}">
+								<f:selectItem itemValue="#{null}" itemLabel="Select One" itemDisabled="true"/>
+								<f:selectItems value="#{tenantBean.salutationLookup}"
+									var="salutation" itemValue="#{salutation}"
+									itemLabel="#{salutation.lookupName}" />
+							</p:selectOneMenu>
+							<p:message for="salutationSOM" display="text"/>
+							<p:outputLabel value="#{msgs.SMART_COMPOUND_TENANT_PAGE_GENDER}"
+								style="color:black;font-size: 100%;" />
+							<p:selectOneMenu id="genderSOM"
+								value="#{tenantBean.tenant.genderLookup}" required="true"
+								requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_GENDER_REQ}"
+								converter="#{lookupConverter}">
+
+								<f:selectItems value="#{tenantBean.genderLookup}" var="gender"
+									itemValue="#{gender}" itemLabel="#{gender.lookupName}" />
+							</p:selectOneMenu>
+							<p:message for="genderSOM" display="text" />
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_FIRSTNAME}"
+								style="color:black;font-size: 100%;" for="firstName" />
+							<p:inputText value="#{tenantBean.tenant.firstName}"
+								label="#{msgs.SMART_COMPOUND_TENANT_PAGE_FIRSTNAME}"
+								required="true" id="firstName"
+								requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_FIRSTNAME_REQ}"
+								validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_FIRSTNAME_VALIDATION}">
+								<f:validateLength minimum="3" maximum="20" />
+								<f:validateRegex pattern="[a-zA-Z]+" />
+							</p:inputText>
+							<p:message for="firstName" display="text" />
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_MIDDLENAME}"
+								style="color:black;font-size: 100%;" for="middleName" />
+							<p:inputText id="middleName"
+								value="#{tenantBean.tenant.middleName}"
+								label="#{msgs.SMART_COMPOUND_TENANT_PAGE_MIDDLENAME}"
+								validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_MIDDLENAME_VALIDATION}">
+								<f:validateLength maximum="20" />
+								<f:validateRegex pattern="^([a-zA-Z]+|)" />
+							</p:inputText>
+							<p:message for="middleName"  display="text"/>
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_LASTNAME}"
+								style="color:black;font-size: 100%;" for="lastName" />
+							<p:inputText id="lastName" value="#{tenantBean.tenant.lastName}"
+								label="#{msgs.SMART_COMPOUND_TENANT_PAGE_LASTNAME}"
+								required="true"
+								requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_LASTNAME_REQ}"
+								validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_LASTNAME_VALIDATION}">
+								<f:validateLength minimum="3" maximum="20" />
+								<f:validateRegex pattern="[a-zA-Z]+" />
+							</p:inputText>
+							<p:message for="lastName" display="text"/>
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_DATE_OF_BIRTH}"
+								style="color:black;font-size: 100%;" for="dateOfBirth" />
+							<p:calendar id="dateOfBirth"
+								value="#{tenantBean.tenant.dateOfBirth}" maxdate="calwidget.today()" widgetVar="calwidget"/>
+							<p:message for="dateOfBirth" display="text"/>
+
+
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+				<p:tab id="account"
+					title="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_TAB_ACCOUNT}">
+					<p:panel
+						header="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_TAB_ACCOUNT_INFO}">
+						<h:panelGrid columns="3" columnClasses="label, value" width="100%">
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_USERNAME}"
+								style="color:black;font-size: 100%;" for="username" />
+							<p:inputText id="username" value="#{tenantBean.tenant.username}"
+								required="true" validator="#{tenantBean.checkUserName}"
+								requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_USERNAME_REQ}">
+								<p:ajax event="blur" update="userNameMsg" />
+							</p:inputText>
+							<p:message id="userNameMsg" for="username" display="text"/>
+
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_PASSWORD}"
+								style="color:black;font-size: 100%;" for="password" />
+							<p:password id="password" value="#{tenantBean.tenant.password}"
+								required="true" redisplay="true" 
+								requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_PASSWORD_REQ}"
+								validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_PASSWORD_VALIDATION}">
+								<f:validateLength minimum="6" maximum="25" />
+							</p:password>
+							<p:message for="password" display="text"/>
+							<ui:remove>
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_PASSWORD_CONFIRM}" 
+								style="color:black;font-size: 100%;" for="passwordConfirm" />
+							<p:password id="passwordConfirm" value="#{tenantBean.tenant.password}"
+								required="true" match="password"
+								requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_PASSWORD_CONFIRM_REQ}"
+								validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_PASSWORD_CONFIRM_VALIDATION}">
+								
+								 <p:ajax process="password passwordConfirm" event="blur"/>
+							</p:password>
+							<p:message for="passwordConfirm" display="text"/>
+							</ui:remove>
+							<p:outputLabel value="#{msgs.SMART_COMPOUND_TENANT_PAGE_EMAIL}"
+								style="color:black;font-size: 100%;" for="email" />
+							<p:inputText id="email" value="#{tenantBean.tenant.email}"
+								requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_EMAIL_REQ}"
+								validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_EMAIL_VALIDATION}">
+								<f:validateRegex
+									pattern="^([\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]|)" />
+							</p:inputText>
+							<p:message for="email" display="text"/>
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+				<p:tab id="ID"
+					title="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_TAB_IDENDIFICATION}">
+					<p:panel
+						header="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_TAB_IDENDIFICATION_INFO}">
+						<h:panelGrid columns="4" >
+
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_NATIONALITY}"
+								style="color:black;font-size: 100%;" for="nationality" />
+								<p:spacer width="15" />
+							<p:selectOneMenu id="nationality"
+								value="#{tenantBean.tenant.nationality}" required="true"
+								requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_NATIONALITY_REQ}">
+								<f:selectItem itemValue="#{tenantBean.nationalities.get(0)}"
+									itemLabel="#{tenantBean.nationalities.get(0)}"
+									itemDisabled="true" />
+								<f:selectItems value="#{tenantBean.nationalities}"
+									var="nationality" itemValue="#{nationality}"
+									itemLabel="#{nationality}" />
+							</p:selectOneMenu>
+							<p:message for="nationality" display="text"/>
+
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_IDENTIFICATION_TYPE}"
+								style="color:black;font-size: 100%;" for="idType" />
+								<p:spacer width="15" />
+							<p:selectOneMenu id="idType"
+								value="#{tenantBean.tenant.identificationType}" required="true"
+								requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_IDENTIFICATION_TYPE_REQ}"
+								validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_IDENTIFICATION_TYPE_VALIDATION}">
+								<f:selectItem
+									itemValue="#{null}"
+									itemLabel="#{msgs.SMART_COMPOUND_TENANT_PAGE_IDENTIFICATION_TYPE_SELECT}"
+									itemDisabled="true" />
+								<f:selectItems value="#{tenantBean.identificationTypeLookup}"
+									var="idType" itemValue="#{idType}" itemLabel="#{idType}" />
+								<p:ajax update="@form" />
+							</p:selectOneMenu>
+							<p:message for="idType" display="text"/>
+				
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_NATIONAL_ID_IDENTIFICATION_NUMBER}"
+									style="color:black;font-size: 100%;" for="nationalIDidNumber" 
+									rendered="#{tenantBean.tenant.identificationType eq 'National ID'}"/>
+									<p:spacer width="15" 
+									rendered="#{tenantBean.tenant.identificationType eq 'National ID'}"/>
+								<p:inputText id="nationalIDidNumber"
+									value="#{tenantBean.tenant.identificationNumber}"
+									required="true"
+									rendered="#{tenantBean.tenant.identificationType eq 'National ID'}"
+									requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_IDENTIFICATION_NUMBER_REQ}"
+									validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_NATIONAL_ID_IDENTIFICATION_NUMBER_VALIDATION}">
+									<f:validateRegex pattern="^(?:[0-9]{14})$" />
+								</p:inputText>
+								<p:message for="nationalIDidNumber" display="text"
+								rendered="#{tenantBean.tenant.identificationType eq 'National ID'}" />
+
+								<p:outputLabel
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_PASSPORT_IDENTIFICATION_NUMBER}"
+									style="color:black;font-size: 100%;" for="passportidNumber" 
+									rendered="#{tenantBean.tenant.identificationType eq 'Passport'}"/>
+									<p:spacer width="20" 
+									rendered="#{tenantBean.tenant.identificationType eq 'Passport'}"/>
+								<p:inputText id="passportidNumber"
+									value="#{tenantBean.tenant.identificationNumber}"
+									required="true"
+									rendered="#{tenantBean.tenant.identificationType eq 'Passport'}"
+									requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_IDENTIFICATION_NUMBER_REQ}"
+									validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_PASSPORT_IDENTIFICATION_NUMBER_VALIDATION}">
+									<f:validateRegex pattern="^(?:[a-zA-Z]{1}[0-9]{9})$" />
+								</p:inputText>
+								<p:message for="passportidNumber"  display="text"
+								rendered="#{tenantBean.tenant.identificationType eq 'Passport'}"/>
+						
+							<p:outputLabel value="#{msgs.SMART_COMPOUND_TENANT_PAGE_JOB}"
+								style="color:black;font-size: 100%;" for="job" />
+								<p:spacer width="20" />
+							<p:inputText id="job" value="#{tenantBean.tenant.job}"
+								label="#{msgs.SMART_COMPOUND_TENANT_PAGE_JOB}" required="true"
+								requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_JOB_REQ}"
+								validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_JOB_VALIDATION}">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+							<p:message for="job" display="text"/>
+
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+				<p:tab title="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_TAB_ADDRESS}">
+					<p:panel
+						header="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_TAB_ADDRESS_INFO}">
+						<h:panelGrid columns="3" columnClasses="label, value">
+							<p:outputLabel value="#{msgs.SMART_COMPOUND_TENANT_PAGE_COUNTRY}"
+								style="color:black;font-size: 100%;" for="country" />
+							<p:selectOneMenu id="country"
+								value="#{tenantBean.selectedCountry}" required="true"
+								requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_COUNTRY_REQ}"
+								converter="#{countryConverter}">
+								<p:ajax listener="#{tenantBean.onCountryChange()}"
+									update="tenantForm" />
+								<f:selectItem itemValue="#{null}"
+									itemLabel="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_SELECT_COUNTRY}"
+									itemDisabled="true" />
+								<f:selectItems value="#{tenantBean.countries}" var="country"
+									itemValue="#{country}" itemLabel="#{country.name}" />
+							</p:selectOneMenu>
+							<p:message for="country" display="text"/>
+							<p:outputLabel value="#{msgs.SMART_COMPOUND_TENANT_PAGE_CITY}"
+								style="color:black;font-size: 100%;" for="city" />
+							<p:selectOneMenu id="city" value="#{tenantBean.tenant.city}"
+								required="true"
+								requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_CITY_REQ}"
+								disabled="#{empty tenantBean.selectedCountry.id}">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_SELECT_CITY}"
+									itemDisabled="true" />
+								<f:selectItems value="#{tenantBean.cities}" var="city"
+									itemValue="#{city}" itemLabel="#{city}" />
+							</p:selectOneMenu>
+							<p:message for="city" display="text"/>
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_POSTAL_CODE}"
+								style="color:black;font-size: 100%;" for="postalCode" />
+							<p:inputText id="postalCode"
+								value="#{tenantBean.tenant.postalCode}"
+								label="#{msgs.SMART_COMPOUND_TENANT_PAGE_POSTAL_CODE}"
+								validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_POSTAL_CODE}">
+								<f:validateRegex pattern="^([0-9]+|)$" />
+							</p:inputText>
+							<p:message for="postalCode" display="text"/>
+							<p:outputLabel value="#{msgs.SMART_COMPOUND_TENANT_PAGE_ADDRESS}"
+								style="color:black;font-size: 100%;" for="addressID" />
+							<p:inputTextarea id="addressID"
+								value="#{tenantBean.tenant.address}" required="true"
+								requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_ADDRESS_REQ}"
+								validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_ADDRESS_VALIDATION}">
+								<f:validateLength minimum="3" maximum="100" />
+							</p:inputTextarea>
+							<p:message for="addressID" display="text"/>
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+				<p:tab id="contact"
+					title="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_TAB_CONTACTS}">
+					<p:panel
+						header="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_TAB_CONTACTS_INFO}">
+						<h:panelGrid columns="6" columnClasses="label, value">
+
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_MOBILE_NUMBER1}"
+								style="color:black;font-size: 100%;" for="mobile1" />
+							<p:inputText id="mobile1"
+								value="#{tenantBean.tenant.mobileNumber1}"
+								label="#{msgs.SMART_COMPOUND_TENANT_PAGE_MOBILE_NUMBER1}"
+								required="true"
+								requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_MOBILE_NUMBER1_REQ}"
+								validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_MOBILE_NUMBER1_VALIDATION}">
+								<f:validateRegex pattern="^([0-9]+|)$" />
+								<f:validateLength minimum="11" maximum="11" />
+							</p:inputText>
+							<p:message for="mobile1" display="text"/>
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_MOBILE_NUMBER2}"
+								style="color:black;font-size: 100%;" for="mobile2" />
+							<p:inputText id="mobile2"
+								value="#{tenantBean.tenant.mobileNumber2}"
+								label="#{msgs.SMART_COMPOUND_TENANT_PAGE_MOBILE_NUMBER2}"
+								validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_MOBILE_NUMBER2_VALIDATION}">
+								<f:validateRegex pattern="^([0-9]+|)$" />
+
+								<f:validateLength maximum="11" />
+							</p:inputText>
+							<p:message for="mobile2" display="text"/>
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_PHONE_NUMBER1}"
+								style="color:black;font-size: 100%;" for="phone1" />
+							<p:inputText id="phone1"
+								value="#{tenantBean.tenant.phoneNumber1}"
+								label="#{msgs.SMART_COMPOUND_TENANT_PAGE_PHONE_NUMBER1}"
+								validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_PHONE_NUMBER1_VALIDATION}">
+								<f:validateRegex pattern="^([0-9]+|)$" />
+
+								<f:validateLength maximum="11" />
+							</p:inputText>
+							<p:message for="phone1" display="text"/>
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_PHONE_NUMBER2}"
+								style="color:black;font-size: 100%;" for="phone2" />
+							<p:inputText id="phone2"
+								value="#{tenantBean.tenant.phoneNumber2}"
+								label="#{msgs.SMART_COMPOUND_TENANT_PAGE_PHONE_NUMBER2}"
+								validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_PHONE_NUMBER2_VALIDATION}">
+								<f:validateRegex pattern="^([0-9]+|)$" />
+
+								<f:validateLength maximum="11" />
+							</p:inputText>
+							<p:message for="phone2" display="text"/>
+
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_FACEBOOK}"
+								style="color:black;font-size: 100%;" for="facebook" />
+							<p:inputText id="facebook" value="#{tenantBean.tenant.facebook}"
+								label="#{msgs.SMART_COMPOUND_TENANT_PAGE_FACEBOOK}" />
+							<p:message for="facebook" display="text"/>
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_WHATSAPP}"
+								style="color:black;font-size: 100%;" for="whatsapp" />
+							<p:inputText id="whatsapp" value="#{tenantBean.tenant.whatsapp}"
+								label="#{msgs.SMART_COMPOUND_TENANT_PAGE_WHATSAPP}" />
+							<p:message for="whatsapp" display="text"/>
+							<p:outputLabel
+								value="#{msgs.SMART_COMPOUND_TENANT_PAGE_BEST_CONNECTION_METHOD}"
+								style="color:black;font-size: 100%;" for="bestConnMethod" />
+							<p:selectOneMenu id="bestConnMethod"
+								value="#{tenantBean.tenant.bestConnectionMethod}"
+								required="true"
+								requiredMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_BEST_CONNECTION_METHOD_REQ}"
+								validatorMessage="#{msgs.SMART_COMPOUND_TENANT_PAGE_BEST_CONNECTION_METHOD_VALIDATION}">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_SELECT_BESTCONNECTION_METHOD}"
+									itemDisabled="true" />
+								<f:selectItems value="#{tenantBean.bestConnectionMethodLookup}"
+									var="bestConnMethod" itemValue="#{bestConnMethod}"
+									itemLabel="#{bestConnMethod}" />
+							</p:selectOneMenu>
+							<p:message for="bestConnMethod" display="text"/>
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+				<p:tab id="confirm"
+					title="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_TAB_CONFIRMATION}">
+					<p:panel
+						header="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_TAB_CONFIRMATION_INFO}">
+						<h:panelGrid columns="2" columnClasses="grid,grid">
+							<h:panelGrid columns="2" columnClasses="label, value"
+								width="100%">
+								<h:outputText
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_SALUTATION}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText
+									value="#{tenantBean.tenant.salutationLookup.lookupName}"
+									styleClass="outputLabel" />
+								<h:outputText
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_FIRSTNAME}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.firstName}"
+									styleClass="outputLabel" />
+								<h:outputText
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_MIDDLENAME}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.middleName}"
+									styleClass="outputLabel" />
+								<h:outputText
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_LASTNAME}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.lastName}"
+									styleClass="outputLabel" />
+
+								<h:outputText
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_PHONE_NUMBER1}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.phoneNumber1}"
+									styleClass="outputLabel" />
+								<h:outputText
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_PHONE_NUMBER2}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.phoneNumber2}"
+									styleClass="outputLabel" />
+
+								<h:outputText
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_MOBILE_NUMBER1}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.mobileNumber1}"
+									styleClass="outputLabel" />
+								<h:outputText
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_MOBILE_NUMBER2}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.mobileNumber2}"
+									styleClass="outputLabel" />
+								<h:outputText value="#{msgs.SMART_COMPOUND_TENANT_PAGE_ADDRESS}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.address}"
+									styleClass="outputLabel" />
+								<h:outputText value="#{msgs.SMART_COMPOUND_TENANT_PAGE_COUNTRY}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.country}"
+									styleClass="outputLabel" />
+							</h:panelGrid>
+							<h:panelGrid columns="2" columnClasses="label, value">
+								<h:outputText value="#{msgs.SMART_COMPOUND_TENANT_PAGE_CITY}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.city}"
+									styleClass="outputLabel" />
+								<h:outputText
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_POSTAL_CODE}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.postalCode}"
+									styleClass="outputLabel" />
+								<h:outputText
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_NATIONALITY}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.nationality}"
+									styleClass="outputLabel" />
+								<h:outputText
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_IDENTIFICATION_TYPE}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.identificationType}"
+									styleClass="outputLabel" />
+								<h:outputText
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_IDENTIFICATION_NUMBER}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.identificationNumber}"
+									styleClass="outputLabel" />
+								<h:outputText
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_BEST_CONNECTION_METHOD}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.bestConnectionMethod}"
+									styleClass="outputLabel" />
+								<h:outputText
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_USERNAME}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.username}"
+									styleClass="outputLabel" />
+								<h:outputText
+									value="#{msgs.SMART_COMPOUND_TENANT_PAGE_PASSWORD}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.password}"
+									styleClass="outputLabel" />
+								<h:outputText value="#{msgs.SMART_COMPOUND_TENANT_PAGE_EMAIL}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText value="#{tenantBean.tenant.email}"
+									styleClass="outputLabel" />
+								<h:outputText value="#{msgs.SMART_COMPOUND_TENANT_PAGE_GENDER}"
+									style="color:black;font-size: 100%; font-family:Arial;font-size:14px;padding:30px 37px;" />
+								<h:outputText
+									value="#{tenantBean.tenant.genderLookup.lookupName}"
+									styleClass="outputLabel" />
+							</h:panelGrid>
+						</h:panelGrid>
+					</p:panel>
+					<p:commandButton
+						value="#{msgs.SMART_COMPOUND_TENANT_PAGE_CREATE_BUTTON}"
+						actionListener="#{tenantBean.addTenant()}"
+						oncomplete="if (args &amp;&amp; !args.validationFailed) 
+							PF('createTenantDialog').hide()"
+						update="tenantForm :tenantListForm:msg :tenantListForm" />
+					<p:commandButton
+						value="#{msgs.SMART_COMPOUND_TENANT_PAGE_TENANT_HIDE_BUTTON}"
+						oncomplete="PF('createTenantDialog').hide()" immediate="true" />
+				</p:tab>
+			</p:wizard>
+		</h:form>
+	</p:dialog>
+</ui:composition>

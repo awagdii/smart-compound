@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<p:dialog id="viewServiceDialog" widgetVar="viewServiceDialog"
+		modal="true" closeOnEscape="true" resizable="false"
+		header="#{msgs.SMART_COMPOUND_SERVICE_PAGE_VIEW_SERVICE_TITLE}" minHeight="30"  width="850" height="350">
+
+		<h:form id="viewServiceForm">
+			<p:panelGrid columns="2" style="width:800px">
+				<p:outputLabel value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_NAME}" style="color:#191970;"/>
+ 				<p:outputLabel value="#{serviceBean.createdService.serviceName}" />
+ 				<p:outputLabel value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_DATE_CREATED}" style="color:#191970;"/>
+ 				<p:outputLabel value="#{serviceBean.createdService.creationDate}" />
+ 				<p:outputLabel value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_FLAT_OR_USAGE}" style="color:#191970;"/>
+ 				<p:outputLabel value="#{serviceBean.createdService.flatOrUsage}" />
+ 				<p:outputLabel value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_IS_ACTIVE}" style="color:#191970;"/>
+ 				<p:outputLabel value="#{serviceBean.createdService.activityStatusLookup.lookupName}" />
+ 				<p:outputLabel value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_UNIT_OF_MEASURE}" style="color:#191970;"/>
+ 				<p:outputLabel value="#{serviceBean.createdService.measuringUnitLookupId.lookupName}" />
+ 				<p:outputLabel value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_NRC}" style="color:#191970;"/>
+ 				<p:outputLabel value="#{serviceBean.createdService.nrc}" />
+ 				<p:outputLabel value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_MRC}" rendered="#{serviceBean.createdService.flatOrUsage != 'One Time'}" style="color:#191970;"/>
+ 				<p:outputLabel value="#{serviceBean.createdService.mrc}"  rendered="#{serviceBean.createdService.flatOrUsage != 'One Time'}"/>
+ 				<p:outputLabel value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_ESTIMATED_DELIVERY_DAYS}" style="color:#191970;"/>
+ 				<p:outputLabel value="#{serviceBean.createdService.estimatedDeliveryDays}" />
+ 				<p:outputLabel value="Facility Related" style="color:#191970;"/>
+ 				<p:outputLabel value="#{serviceBean.facilityRelated}"/>
+ 				<p:outputLabel value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_INSTALLATION_PRICE}" style="color:#191970;"  rendered="#{serviceBean.createdService.flatOrUsage != 'One Time'}"/>
+ 				<p:outputLabel value="#{serviceBean.createdService.installationPrice}"  rendered="#{serviceBean.createdService.flatOrUsage != 'One Time'}"/>
+ 				<p:outputLabel value="#{msgs.SMART_COMPOUND_SERVICE_PAGE_RATES}"  rendered="#{serviceBean.createdService.isUsage()}" style="color:#191970;"/>
+ 				<p:panel  rendered="#{serviceBean.createdService.isUsage()}">
+ 					<p:dataTable style="width:400px;"
+								var="currentRate" value="#{serviceBean.createdService.serviceUsageRates}">
+ 						<p:column headerText="#{msgs.SMART_COMPOUND_SERVICE_PAGE_FROM_HEADER}" style="color:#191970;">
+ 							<p:outputLabel value="#{currentRate.usageAmountFrom}" />
+ 						</p:column>
+ 						<p:column headerText="#{msgs.SMART_COMPOUND_SERVICE_PAGE_TO_HEADER}" style="color:#191970;">
+ 							<p:outputLabel value="#{currentRate.usageAmountTo}" />
+ 						</p:column>
+ 						<p:column headerText="#{msgs.SMART_COMPOUND_SERVICE_PAGE_PRICE_HEADER}" style="color:#191970;">
+ 							<p:outputLabel value="#{currentRate.unitPrice}" />
+ 						</p:column>
+ 					</p:dataTable>
+ 				</p:panel>
+ 			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+
+</ui:composition>

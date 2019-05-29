@@ -1,0 +1,123 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+	<p:dialog id="viewOrderDialog" widgetVar="viewOrderDialog" modal="true"
+		resizable="false" closeOnEscape="true"
+		header="#{msgs.SMART_COMPOUND_ORDER_PAGE_VIEW_DIALOG}">
+		<h:form id="viewOrderForm">
+			<p:panelGrid style="width:800px">
+
+				<p:row>
+					<p:column medium-screen="2">
+						<h:outputText
+							value="#{msgs.SMART_COMPOUND_ORDER_PAGE_SERVICE_NAME}" />
+					</p:column>
+					<p:column medium-screen="4">
+
+						<h:outputText
+							value="#{orderBean.selectedOrder.service.serviceName}" />
+
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						<h:outputText value="#{msgs.SMART_COMPOUND_ORDER_PAGE_NOTES}" />
+					</p:column>
+					<p:column>
+						<h:outputText value="#{orderBean.selectedOrder.notes}" />
+
+
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column medium-screen="2">
+						<h:outputText value="#{msgs.SMART_COMPOUND_ORDER_PAGE_TENANT_ID}" />
+					</p:column>
+					<p:column medium-screen="4">
+
+						<h:outputText value="#{orderBean.selectedOrder.tenant.firstName}" />
+
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column medium-screen="2">
+						<h:outputText value="#{msgs.SMART_COMPOUND_ORDER_PAGE_CREATED_BY}" />
+					</p:column>
+					<p:column medium-screen="4">
+
+						<h:outputText
+							value="#{orderBean.selectedOrder.createdBy.username}" />
+
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column medium-screen="2">
+						<h:outputText
+							value="#{msgs.SMART_COMPOUND_ORDER_PAGE_CREATION_DATE}" />
+					</p:column>
+					<p:column medium-screen="4">
+
+						<h:outputText value="#{orderBean.selectedOrder.requestDate}" />
+
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column medium-screen="2">
+						<h:outputText value="#{msgs.SMART_COMPOUND_ORDER_PAGE_STATUS}" />
+					</p:column>
+					<p:column medium-screen="4">
+
+						<h:outputText value="#{orderBean.selectedOrder.statusLookup.lookupName}" />
+
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column medium-screen="2">
+						<h:outputText
+							value="#{msgs.SMART_COMPOUND_ORDER_PAGE_ACCEPTANCE_DATE}" />
+					</p:column>
+					<p:column medium-screen="4">
+
+						<h:outputText value="#{orderBean.selectedOrder.acceptanceDate}" />
+
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column medium-screen="2">
+						<h:outputText value="#{msgs.SMART_COMPOUND_ORDER_PAGE_CHANNEL}" />
+					</p:column>
+					<p:column medium-screen="4">
+
+						<h:outputText value="#{orderBean.selectedOrder.channel}" />
+
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column medium-screen="2">
+						<h:outputText
+							value="#{msgs.SMART_COMPOUND_ORDER_PAGE_FACILITY_ID}" />
+					</p:column>
+					<p:column medium-screen="4">
+
+						<h:outputText value="#{orderBean.selectedOrder.facility.id}" />
+
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						<p:commandButton oncomplete="PF('viewOrderDialog').hide()"
+							value="#{msgs.SMART_COMPOUND_VIEW_GIALOG_CLOSE_BUTTON}" />
+					</p:column>
+				</p:row>
+
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+</ui:composition>

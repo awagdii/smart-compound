@@ -1,0 +1,47 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui"
+	template="/WEB-INF/template/master.xhtml">
+	<ui:define name="title">#{msgs.SMART_COMPOUND_ORDER_LIST_PAGE}</ui:define>
+	<ui:define name="contentTitle">#{msgs.SMART_COMPOUND_ORDER_LIST_PAGE_TITLE}</ui:define>
+	<ui:define name="customHeader">
+		<style>
+.ui-growl {
+	position: absolute;
+	top: 40px;
+	left: 200px;
+	width: 360px;
+	height: 210px;
+	z-index: 100000000;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="content">
+		<p:growl widgetVar="growlWV" />
+
+		<ui:include src="orderList.xhtml"></ui:include>
+		<ui:include src="create.xhtml"></ui:include>
+		<ui:include src="edit.xhtml"></ui:include>
+		<ui:include src="view.xhtml"></ui:include>
+
+		<script>
+		function showGrowlMessage(message)
+		{
+			try{
+			PF('growlWV').renderMessage({"summary":message,
+                "detail":"",
+                "severity":"fatal"})
+			}catch(e)
+			{
+
+			}
+		}
+	</script>
+
+	</ui:define>
+
+</ui:composition>

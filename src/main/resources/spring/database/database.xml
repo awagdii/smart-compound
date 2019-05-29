@@ -11,11 +11,12 @@
 
 
 
+
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.postgresql.Driver" />
 		<property name="url"
-			value="jdbc:postgresql://localhost:5432/NG_NTS_SMARTCOMPOUND"></property>
+			value="jdbc:postgresql://localhost:5432/ng_nts_smartcompound"></property>
 		<property name="username" value="postgres" />
 		<property name="password" value="postgres" />
 	</bean>
@@ -36,12 +37,23 @@
 
 		<property name="hibernateProperties">
 			<props>
-<!-- 				<prop key="hbm2ddl.auto">create</prop> -->
+				<!-- <prop key="hibernate.hbm2ddl.auto">validate</prop> -->
 				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
-				<prop key="hibernate.show_sql">true</prop>
-			</props>
-		</property> 
+				<!-- show sql slowing down the application so it gonna be commented -->
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="current_session_context_class">thread</prop>
+		
+
+	</props>
+	</property>
 	</bean>
+
+	<!-- <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" -->
+	<!-- p:cache-manager-ref="ehcache" /> -->
+	<!-- <bean id="ehcache" -->
+	<!-- class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" -->
+	<!-- p:config-location="classpath:ehcache.xml" p:shared="true" /> -->
+
 
 
 	<bean id="transactionManager"
@@ -49,6 +61,38 @@
 		<property name="sessionFactory" ref="sessionfactoryBean" />
 	</bean>
 
+	<!-- Start update by Karim -->
+	<!-- Send Email -->
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.gmail.com" />
+		<property name="port" value="587" />
+		<property name="username" value="compoundCompound@gmail.com" />
+		<property name="password" value="Compound1234Compound" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="mailer" class="com.ntgclarity.smartcompound.common.dto.mail.Mailer">
+		<property name="mailSender" ref="mailSender" />
+		<property name="velocityEngine" ref="velocityEngine" />
+	</bean>
+
+	<bean id="velocityEngine"
+		class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+		<property name="velocityProperties">
+			<props>
+				<prop key="resource.loader">class</prop>
+				<prop key="class.resource.loader.class">
+					org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+				</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- END update by Karim -->
 
 
 

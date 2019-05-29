@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<h:form id="serviceListForm">
+		<p:dataTable var="service" rows="10" paginator="true"
+			value="#{serviceBean.lazyServiceModel}" resizableColumns="true"
+			draggableColumns="true" rowKey="#{service.id}"
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			rowsPerPageTemplate="5,10,15" selectionMode="single" dynamic="true"
+			selection="#{serviceBean.createdService}" id="serviceTable"
+			lazy="true">
+			<p:ajax event="rowSelect" update="@form"></p:ajax>
+
+			<p:column headerText="#{msgs.SMART_COMPOUND_SERVICE_LIST_PAGE_NAME}"
+				filterBy="#{service.serviceName}">
+				<p:outputLabel value="#{service.serviceName}" />
+			</p:column>
+
+			<p:column
+				headerText="#{msgs.SMART_COMPOUND_SERVICE_LIST_PAGE_INSTALLATION_PRICE}"
+				filterBy="#{service.installationPrice}">
+				<p:outputLabel value="#{service.installationPrice}" />
+			</p:column>
+
+
+			<p:column
+				headerText="#{msgs.SMART_COMPOUND_SERVICE_LIST_PAGE_STATUS}" filterBy="#{service.activityStatusLookup.lookupName}">
+				<p:outputLabel
+					value="#{service.activityStatusLookup.lookupName}" />
+			</p:column>
+
+			<p:column
+				headerText="#{msgs.SMART_COMPOUND_SERVICE_LIST_PAGE_ESTIMATED_DELIVERY_DAYS}"
+				filterBy="#{service.estimatedDeliveryDays}">
+				<p:outputLabel value="#{service.estimatedDeliveryDays}" />
+			</p:column>
+
+			<p:column
+				headerText="#{msgs.SMART_COMPOUND_SERVICE_LIST_PAGE_FLAT_OR_USAGE}"
+				filterBy="#{service.flatOrUsage}">
+				<p:outputLabel value="#{service.flatOrUsage}" />
+			</p:column>
+
+		</p:dataTable>
+
+		<p:commandButton 
+			value="#{msgs.SMART_COMPOUND_SERVICE_LIST_PAGE_CREATE_NEW_SERVICE}"
+			actionListener="#{serviceBean.initiateNewService()}" update=":createServiceForm"
+			oncomplete="PF('createServiceDialog').show()">
+		</p:commandButton>
+
+		<p:commandButton
+		actionListener="#{serviceBean.getCompleteService()}"
+			value="#{msgs.SMART_COMPOUND_SERVICE_LIST_PAGE_VIEW_SERVICE}"
+			update=":viewServiceForm"
+			disabled="#{ empty serviceBean.createdService.id}"
+			oncomplete="PF('viewServiceDialog').show()">
+		
+			
+		</p:commandButton>
+
+		<p:commandButton
+		actionListener="#{serviceBean.getCompleteService()}"
+			value="#{msgs.SMART_COMPOUND_SERVICE_LIST_PAGE_EDIT_SERVICE}"
+			update=":editServiceForm"
+			disabled="#{ empty serviceBean.createdService.id }"
+			oncomplete="PF('editServiceDialog').show()">
+			
+		</p:commandButton>
+	
+	</h:form>
+</ui:composition>

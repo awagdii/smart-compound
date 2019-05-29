@@ -1,0 +1,50 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+	<h:form id="systemConfigurationListForm" prependId="false">
+	
+				
+				
+		<p:dataTable var="systemConfiguration" rows="10" paginator="true"
+			value="#{systemConfigurationBean.lazySystemConfigurationModel}"
+			resizableColumns="true" draggableColumns="true"
+			rowKey="#{systemConfiguration.id}"
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			rowsPerPageTemplate="5,10,15" selectionMode="single" dynamic="true"
+			selection="#{systemConfigurationBean.selectedSystemConfiguration}"
+			id="systemConfigurationTable" lazy="true" >
+			
+			<p:ajax event="rowSelect" update="@form" />
+
+			<p:column 
+				headerText="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_LIST_PAGE_ID}">
+				<h:outputText value="#{systemConfiguration.id}" />
+			</p:column>
+			<p:column filterBy="#{systemConfiguration.key}"
+				headerText="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_LIST_PAGE_KEY}">
+				<h:outputText value="#{systemConfiguration.key}" />
+			</p:column>
+			<p:column filterBy="#{systemConfiguration.value}"
+				headerText="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_LIST_PAGE_VALUE}">
+				<h:outputText value="#{systemConfiguration.value}" />
+			</p:column>
+		</p:dataTable>
+
+		<p:commandButton
+			value="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_LIST_PAGE_CREATE_NEW_SYSTEM_CONFIGURATION}"
+			actionListener="#{systemConfigurationBean.initiateNewSystemConfiguration()}"
+			update=":createSystemConfigurationForm"
+			oncomplete="PF('createSystemConfigurationDialog').show()"></p:commandButton>
+	
+		<p:commandButton id="systemConfigurationEditButton"
+			value="#{msgs.SMART_COMPOUND_SYSTEM_CONFIGURATION_LIST_PAGE_EDIT_SELECTED_SYSTEM_CONFIGURATION}"
+			disabled="#{ empty systemConfigurationBean.selectedSystemConfiguration.id }"
+			update=":editSystemConfigurationForm"
+			oncomplete="PF('editSystemConfigurationDialog').show()"></p:commandButton>
+
+
+	</h:form>
+</ui:composition>
